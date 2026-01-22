@@ -1772,7 +1772,49 @@
                         </div>
                         
                         <div class="activity-list" id="recentActivityList">
-                            <!-- Activity items will be loaded from localStorage -->
+                            <div class="activity-item">
+                                <div class="activity-icon success">
+                                    <i class="fas fa-arrow-down"></i>
+                                </div>
+                                <div class="activity-details">
+                                    <div class="activity-title">Received Bitcoin</div>
+                                    <div class="activity-meta">From: 0x1a2b...3c4d • 2 hours ago</div>
+                                </div>
+                                <div class="activity-amount positive">+0.05 BTC</div>
+                            </div>
+                            
+                            <div class="activity-item">
+                                <div class="activity-icon sent">
+                                    <i class="fas fa-arrow-up"></i>
+                                </div>
+                                <div class="activity-details">
+                                    <div class="activity-title">Sent Ethereum</div>
+                                    <div class="activity-meta">To: 0x5e6f...7g8h • 5 hours ago</div>
+                                </div>
+                                <div class="activity-amount negative">-2.1 ETH</div>
+                            </div>
+                            
+                            <div class="activity-item">
+                                <div class="activity-icon success">
+                                    <i class="fas fa-exchange-alt"></i>
+                                </div>
+                                <div class="activity-details">
+                                    <div class="activity-title">Exchange Completed</div>
+                                    <div class="activity-meta">BTC → ETH • Yesterday</div>
+                                </div>
+                                <div class="activity-amount neutral">Exchange</div>
+                            </div>
+                            
+                            <div class="activity-item">
+                                <div class="activity-icon success">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div class="activity-details">
+                                    <div class="activity-title">Staking Rewards</div>
+                                    <div class="activity-meta">ADA Staking • 2 days ago</div>
+                                </div>
+                                <div class="activity-amount positive">+42.5 ADA</div>
+                            </div>
                         </div>
                     </div>
                     
@@ -1805,9 +1847,7 @@
         let filteredMarketData = [];
         let userAssets = [];
         let pendingTransactions = [];
-        let recentActivities = [];
         let cashBalance = 50000.00;
-        let currentLanguage = 'en';
         let refreshInterval;
         let currentPage = 1;
         const coinsPerPage = 10;
@@ -1848,83 +1888,12 @@
             SELL: 'sell'
         };
 
-        // ==================== LOCALSTORAGE MANAGEMENT ====================
-        function saveToLocalStorage() {
-            try {
-                localStorage.setItem('cryptowallet_userAssets', JSON.stringify(userAssets));
-                localStorage.setItem('cryptowallet_pendingTransactions', JSON.stringify(pendingTransactions));
-                localStorage.setItem('cryptowallet_cashBalance', cashBalance.toString());
-                localStorage.setItem('cryptowallet_recentActivities', JSON.stringify(recentActivities || []));
-                localStorage.setItem('cryptowallet_lastLanguage', currentLanguage);
-            } catch (error) {
-                console.error('Error saving to localStorage:', error);
-            }
-        }
-
-        function loadFromLocalStorage() {
-            try {
-                const savedAssets = localStorage.getItem('cryptowallet_userAssets');
-                const savedPending = localStorage.getItem('cryptowallet_pendingTransactions');
-                const savedCash = localStorage.getItem('cryptowallet_cashBalance');
-                const savedActivities = localStorage.getItem('cryptowallet_recentActivities');
-                const savedLanguage = localStorage.getItem('cryptowallet_lastLanguage');
-                
-                if (savedAssets) {
-                    const parsedAssets = JSON.parse(savedAssets);
-                    userAssets = parsedAssets.filter(asset => asset && asset.id);
-                }
-                
-                if (savedPending) {
-                    const parsedPending = JSON.parse(savedPending);
-                    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-                    pendingTransactions = parsedPending.filter(transaction => 
-                        transaction && new Date(transaction.timestamp) > twentyFourHoursAgo
-                    );
-                }
-                
-                if (savedCash) {
-                    cashBalance = parseFloat(savedCash) || 50000.00;
-                }
-                
-                if (savedActivities) {
-                    recentActivities = JSON.parse(savedActivities);
-                    if (recentActivities.length > 50) {
-                        recentActivities = recentActivities.slice(0, 50);
-                    }
-                }
-                
-                if (savedLanguage) {
-                    currentLanguage = savedLanguage;
-                }
-            } catch (error) {
-                console.error('Error loading from localStorage:', error);
-                userAssets = [...initialUserAssets];
-                cashBalance = 50000.00;
-                pendingTransactions = [];
-                recentActivities = [];
-                currentLanguage = 'en';
-            }
-        }
-
         // ==================== DASHBOARD INITIALIZATION ====================
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('CryptoWallet Dashboard Initialized - Persistent Version');
+            console.log('CryptoWallet Dashboard Initialized');
             
-            // Load data from localStorage
-            loadFromLocalStorage();
-            
-            // Initialize user assets if empty
-            if (userAssets.length === 0) {
-                userAssets = [...initialUserAssets];
-            }
-            
-            // Update language button state
-            document.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if (btn.dataset.lang === currentLanguage) {
-                    btn.classList.add('active');
-                }
-            });
+            // Initialize user assets
+            userAssets = [...initialUserAssets];
             
             // Initialize all modules
             initSidebar();
@@ -1941,9 +1910,6 @@
             updatePendingListDisplay();
             updatePendingCount();
             
-            // Load recent activities
-            loadRecentActivities();
-            
             // Load initial data
             loadMarketData();
             updateAllBalances();
@@ -1951,14 +1917,14 @@
             // Start auto-refresh for market data
             startMarketDataAutoRefresh();
             
-            // Save data before page unload
-            window.addEventListener('beforeunload', saveToLocalStorage);
+            // Start simulation of admin approval
+            simulateAdminApproval();
         });
 
         // ==================== API FUNCTIONS ====================
         async function loadMarketData() {
             try {
-                showToast(getText('loadingMarketData'), 'info');
+                showToast('Loading live market data...', 'info');
                 
                 const response = await fetch(
                     `${COINGECKO_API.MARKET_DATA}?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=true&price_change_percentage=24h`
@@ -1975,12 +1941,12 @@
                 renderMarketDataPage();
                 updateAllBalances();
                 
-                showToast(getText('marketDataLoaded'), 'success');
+                showToast('Market data loaded successfully!', 'success');
                 updateLastUpdated();
                 
             } catch (error) {
                 console.error('Error loading market data:', error);
-                showToast(getText('marketDataFailed'), 'error');
+                showToast('Failed to load market data. Using simulated data.', 'error');
                 loadSimulatedMarketData();
             }
         }
@@ -2042,80 +2008,6 @@
             });
         }
 
-        // ==================== TEXT MANAGEMENT ====================
-        function getText(key) {
-            const translations = {
-                en: {
-                    // Toast messages
-                    loadingMarketData: 'Loading live market data...',
-                    marketDataLoaded: 'Market data loaded successfully!',
-                    marketDataFailed: 'Failed to load market data. Using simulated data.',
-                    languageSwitched: 'Language switched to English',
-                    transactionSubmitted: 'Transaction submitted! Waiting for approval.',
-                    transactionApproved: 'Transaction approved!',
-                    transactionRejected: 'Transaction rejected!',
-                    noAssetsToSend: 'No assets available to send',
-                    noAssetsToExchange: 'No assets available to exchange',
-                    noAssetsToStake: 'No assets available for staking',
-                    noAssetsToSell: 'No assets available to sell',
-                    coinNotFound: 'Coin not found',
-                    insufficientBalance: 'Insufficient balance',
-                    invalidAmount: 'Please enter a valid amount',
-                    addressRequired: 'Please enter a wallet address',
-                    addressCopied: 'Address copied to clipboard!',
-                    generateAddressFirst: 'Please generate an address first',
-                    logoutConfirm: 'Are you sure you want to logout?',
-                    loggingOut: 'Logging out...',
-                    
-                    // Pending status
-                    integrationInProgress: 'Integration in Progress',
-                    noPendingTransactions: 'No pending transactions',
-                    pendingDescription: 'Transactions will appear here waiting for approval',
-                    
-                    // Activity status
-                    justNow: 'just now',
-                    minutesAgo: 'minutes ago',
-                    hoursAgo: 'hours ago',
-                    daysAgo: 'days ago'
-                },
-                cn: {
-                    // Toast messages
-                    loadingMarketData: '正在加载实时市场数据...',
-                    marketDataLoaded: '市场数据加载成功！',
-                    marketDataFailed: '加载市场数据失败，使用模拟数据。',
-                    languageSwitched: '语言已切换到中文',
-                    transactionSubmitted: '交易已提交！等待审批。',
-                    transactionApproved: '交易已批准！',
-                    transactionRejected: '交易已拒绝！',
-                    noAssetsToSend: '没有可发送的资产',
-                    noAssetsToExchange: '没有可兑换的资产',
-                    noAssetsToStake: '没有可质押的资产',
-                    noAssetsToSell: '没有可出售的资产',
-                    coinNotFound: '未找到货币',
-                    insufficientBalance: '余额不足',
-                    invalidAmount: '请输入有效数量',
-                    addressRequired: '请输入钱包地址',
-                    addressCopied: '地址已复制到剪贴板！',
-                    generateAddressFirst: '请先生成地址',
-                    logoutConfirm: '确定要退出登录吗？',
-                    loggingOut: '正在退出登录...',
-                    
-                    // Pending status
-                    integrationInProgress: '集成进行中',
-                    noPendingTransactions: '没有待处理交易',
-                    pendingDescription: '交易将在此等待批准',
-                    
-                    // Activity status
-                    justNow: '刚刚',
-                    minutesAgo: '分钟前',
-                    hoursAgo: '小时前',
-                    daysAgo: '天前'
-                }
-            };
-            
-            return translations[currentLanguage][key] || translations['en'][key] || key;
-        }
-
         // ==================== SIDEBAR FUNCTIONS ====================
         function initSidebar() {
             const navItems = document.querySelectorAll('.nav-item');
@@ -2125,7 +2017,7 @@
                     navItems.forEach(i => i.classList.remove('active'));
                     this.classList.add('active');
                     const navText = this.querySelector('.nav-text').textContent;
-                    showToast(`${getText('navigatingTo')} ${navText}...`, 'info');
+                    showToast(`Navigating to ${navText}...`, 'info');
                 });
             });
         }
@@ -2211,13 +2103,13 @@
                     cashBalanceContainer.innerHTML = `
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
                             <span style="color: var(--gray); font-size: 14px;">
-                                <i class="fas fa-money-bill-wave"></i> ${currentLanguage === 'cn' ? '账户现金余额 (美元)' : 'Account Cash Balance (USD)'}
+                                <i class="fas fa-money-bill-wave"></i> Account Cash Balance (USD)
                             </span>
                             <span style="font-weight: 600; color: var(--success);" id="cashBalanceAmount">
                                 $${cashBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
                             </span>
                         </div>
-                        <small style="color: var(--gray); font-size: 12px;">${currentLanguage === 'cn' ? '可用于交易和提现' : 'Available for trading and withdrawals'}</small>
+                        <small style="color: var(--gray); font-size: 12px;">Available for trading and withdrawals</small>
                     `;
                     
                     const balanceAmount = totalAssetsCard.querySelector('.balance-amount');
@@ -2252,7 +2144,7 @@
                 .slice(0, 3);
             
             if (topAssets.length === 0) {
-                assetList.innerHTML = `<div style="color: var(--gray); text-align: center; padding: 20px;">${currentLanguage === 'cn' ? '未找到资产' : 'No assets found'}</div>`;
+                assetList.innerHTML = '<div style="color: var(--gray); text-align: center; padding: 20px;">No assets found</div>';
                 return;
             }
             
@@ -2330,7 +2222,7 @@
                 <div class="modal-overlay" id="allAssetsModal">
                     <div class="modal" style="max-width: 700px;">
                         <div class="modal-header">
-                            <h3 class="modal-title">${currentLanguage === 'cn' ? '所有货币资产' : 'All Coin Assets'}</h3>
+                            <h3 class="modal-title">All Coin Assets</h3>
                             <button class="modal-close" onclick="closeModal()">×</button>
                         </div>
                         <div class="modal-body">
@@ -2340,9 +2232,9 @@
                         </div>
                         <div class="modal-footer">
                             <button class="modal-btn secondary" onclick="showSellModal()">
-                                <i class="fas fa-money-bill-wave"></i> ${currentLanguage === 'cn' ? '出售' : 'Sell'}
+                                <i class="fas fa-money-bill-wave"></i> Sell
                             </button>
-                            <button class="modal-btn secondary" onclick="closeModal()">${currentLanguage === 'cn' ? '关闭' : 'Close'}</button>
+                            <button class="modal-btn secondary" onclick="closeModal()">Close</button>
                         </div>
                     </div>
                 </div>
@@ -2370,7 +2262,7 @@
                 .sort((a, b) => b.value - a.value);
             
             if (sortedAssets.length === 0) {
-                grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--gray);">${currentLanguage === 'cn' ? '未找到资产' : 'No assets found'}</div>`;
+                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--gray);">No assets found</div>';
                 return;
             }
             
@@ -2407,7 +2299,7 @@
                     const address = document.getElementById('sendAddress').value.trim();
                     
                     if (!address) {
-                        showToast(getText('addressRequired'), 'error');
+                        showToast('Please enter a wallet address', 'error');
                         return;
                     }
                     
@@ -2430,7 +2322,7 @@
                         copyBtn.disabled = false;
                     }
                     
-                    showToast(getText('addressCopied'), 'success');
+                    showToast('New wallet address generated!', 'success');
                 });
             }
             
@@ -2439,7 +2331,7 @@
                     const address = document.getElementById('walletLinkDisplay').textContent;
                     
                     if (!address || address.includes('Click')) {
-                        showToast(getText('generateAddressFirst'), 'error');
+                        showToast('Please generate an address first', 'error');
                         return;
                     }
                     
@@ -2447,7 +2339,7 @@
                         .then(() => {
                             this.classList.add('copied');
                             this.innerHTML = '<i class="fas fa-check"></i>';
-                            showToast(getText('addressCopied'), 'success');
+                            showToast('Address copied to clipboard!', 'success');
                             
                             setTimeout(() => {
                                 this.classList.remove('copied');
@@ -2487,7 +2379,7 @@
             const userAssetsWithBalance = userAssets.filter(asset => asset.balance > 0);
             
             if (userAssetsWithBalance.length === 0) {
-                showToast(getText('noAssetsToSend'), 'error');
+                showToast('No assets available to send', 'error');
                 return;
             }
             
@@ -2495,44 +2387,44 @@
                 <div class="modal-overlay" id="sendModal">
                     <div class="modal">
                         <div class="modal-header">
-                            <h3 class="modal-title">${currentLanguage === 'cn' ? '发送加密货币' : 'Send Cryptocurrency'}</h3>
+                            <h3 class="modal-title">Send Cryptocurrency</h3>
                             <button class="modal-close" onclick="closeModal()">×</button>
                         </div>
                         <div class="modal-body">
                             <div class="modal-input-group">
-                                <label class="modal-label">${currentLanguage === 'cn' ? '钱包地址' : 'Wallet Address'}</label>
+                                <label class="modal-label">Wallet Address</label>
                                 <input type="text" class="modal-input" id="modalSendAddress" value="${address}" readonly>
                             </div>
                             
                             <div class="modal-input-group">
-                                <label class="modal-label">${currentLanguage === 'cn' ? '选择货币' : 'Select Coin'}</label>
+                                <label class="modal-label">Select Coin</label>
                                 <select class="modal-select" id="sendCoinSelect">
                                     ${userAssetsWithBalance.map(asset => 
-                                        `<option value="${asset.id}">${asset.name} (${asset.symbol.toUpperCase()}) - ${currentLanguage === 'cn' ? '可用' : 'Available'}: ${formatBalance(asset.balance, asset.symbol)}</option>`
+                                        `<option value="${asset.id}">${asset.name} (${asset.symbol.toUpperCase()}) - Balance: ${formatBalance(asset.balance, asset.symbol)}</option>`
                                     ).join('')}
                                 </select>
                             </div>
                             
                             <div class="modal-input-group">
-                                <label class="modal-label">${currentLanguage === 'cn' ? '数量 / 权益' : 'Amount / Equity'}</label>
+                                <label class="modal-label">Amount / Equity</label>
                                 <input type="number" class="modal-input" id="sendAmount" placeholder="0.00" step="0.000001" min="0" max="${userAssetsWithBalance[0].balance}">
-                                <small style="color: var(--gray); display: block; margin-top: 5px;">${currentLanguage === 'cn' ? '可用' : 'Available'}: ${formatBalance(userAssetsWithBalance[0].balance, userAssetsWithBalance[0].symbol)}</small>
+                                <small style="color: var(--gray); display: block; margin-top: 5px;">Available: ${formatBalance(userAssetsWithBalance[0].balance, userAssetsWithBalance[0].symbol)}</small>
                             </div>
                             
                             <div class="modal-info-box" id="sendCalculationBox">
                                 <div class="modal-info-row">
-                                    <span class="modal-info-label">${currentLanguage === 'cn' ? '当前价格' : 'Current Price'}:</span>
-                                    <span class="modal-info-value" id="currentPriceDisplay">${currentLanguage === 'cn' ? '加载中...' : 'Loading...'}</span>
+                                    <span class="modal-info-label">Current Price:</span>
+                                    <span class="modal-info-value" id="currentPriceDisplay">Loading...</span>
                                 </div>
                                 <div class="modal-info-row">
-                                    <span class="modal-info-label">${currentLanguage === 'cn' ? '总价值' : 'Total Value'}:</span>
+                                    <span class="modal-info-label">Total Value:</span>
                                     <span class="modal-info-value" id="totalValueDisplay">$0.00</span>
                                 </div>
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button class="modal-btn secondary" onclick="closeModal()">${currentLanguage === 'cn' ? '取消' : 'Cancel'}</button>
-                            <button class="modal-btn primary" id="confirmSendBtn">${currentLanguage === 'cn' ? '提交审批' : 'Submit for Approval'}</button>
+                            <button class="modal-btn secondary" onclick="closeModal()">Cancel</button>
+                            <button class="modal-btn primary" id="confirmSendBtn">Submit for Approval</button>
                         </div>
                     </div>
                 </div>
@@ -2558,7 +2450,7 @@
                 const selectedAsset = userAssets.find(asset => asset.id === selectedCoinId);
                 
                 if (selectedAsset) {
-                    availableLabel.textContent = `${currentLanguage === 'cn' ? '可用' : 'Available'}: ${formatBalance(selectedAsset.balance, selectedAsset.symbol)}`;
+                    availableLabel.textContent = `Available: ${formatBalance(selectedAsset.balance, selectedAsset.symbol)}`;
                     amountInput.max = selectedAsset.balance;
                     updateSendPriceDisplay(selectedAsset);
                     calculateSendTotalValue(selectedAsset, parseFloat(amountInput.value) || 0);
@@ -2580,13 +2472,13 @@
                 const amount = parseFloat(amountInput.value);
                 
                 if (!amount || amount <= 0) {
-                    showToast(getText('invalidAmount'), 'error');
+                    showToast('Please enter a valid amount', 'error');
                     return;
                 }
                 
                 const selectedAsset = userAssets.find(asset => asset.id === coinId);
                 if (amount > selectedAsset.balance) {
-                    showToast(getText('insufficientBalance'), 'error');
+                    showToast('Insufficient balance', 'error');
                     return;
                 }
                 
@@ -2596,14 +2488,13 @@
                     type: TransactionType.SEND,
                     coinId: coinId,
                     amount: amount,
-                    details: `${currentLanguage === 'cn' ? '发送' : 'Send'} ${amount} ${selectedAsset.symbol.toUpperCase()} ${currentLanguage === 'cn' ? '到' : 'to'} ${address.substring(0, 12)}...`,
+                    details: `Send ${amount} ${selectedAsset.symbol.toUpperCase()} to ${address.substring(0, 12)}...`,
                     timestamp: new Date().toISOString()
                 };
                 
                 addToPendingList(transaction);
-                saveToLocalStorage();
                 closeModal();
-                showToast(getText('transactionSubmitted'), 'info');
+                showToast(`Send request submitted! Waiting for approval.`, 'info');
             });
             
             const initialAsset = userAssets.find(asset => asset.id === coinSelect.value);
@@ -2634,7 +2525,7 @@
             
             const confirmBtn = document.getElementById('confirmSendBtn');
             if (confirmBtn) {
-                confirmBtn.textContent = `${currentLanguage === 'cn' ? '提交发送' : 'Submit Send'} $${totalValue.toFixed(2)}`;
+                confirmBtn.textContent = `Submit Send for $${totalValue.toFixed(2)}`;
             }
         }
         
@@ -2642,7 +2533,7 @@
             const userAssetsWithBalance = userAssets.filter(asset => asset.balance > 0);
             
             if (userAssetsWithBalance.length === 0) {
-                showToast(getText('noAssetsToExchange'), 'error');
+                showToast('No assets available to exchange', 'error');
                 return;
             }
             
@@ -2650,23 +2541,23 @@
                 <div class="modal-overlay" id="exchangeModal">
                     <div class="modal">
                         <div class="modal-header">
-                            <h3 class="modal-title">${currentLanguage === 'cn' ? '兑换加密货币' : 'Exchange Cryptocurrency'}</h3>
+                            <h3 class="modal-title">Exchange Cryptocurrency</h3>
                             <button class="modal-close" onclick="closeModal()">×</button>
                         </div>
                         <div class="modal-body">
                             <div class="modal-input-group">
-                                <label class="modal-label">${currentLanguage === 'cn' ? '从 (您的资产)' : 'From (Your Assets)'}</label>
+                                <label class="modal-label">From (Your Assets)</label>
                                 <select class="modal-select" id="exchangeFromSelect">
                                     ${userAssetsWithBalance.map(asset => 
-                                        `<option value="${asset.id}">${asset.name} (${asset.symbol.toUpperCase()}) - ${currentLanguage === 'cn' ? '可用' : 'Available'}: ${formatBalance(asset.balance, asset.symbol)}</option>`
+                                        `<option value="${asset.id}">${asset.name} (${asset.symbol.toUpperCase()}) - Balance: ${formatBalance(asset.balance, asset.symbol)}</option>`
                                     ).join('')}
                                 </select>
                             </div>
                             
                             <div class="modal-input-group">
-                                <label class="modal-label">${currentLanguage === 'cn' ? '到 (市场资产)' : 'To (Market Assets)'}</label>
+                                <label class="modal-label">To (Market Assets)</label>
                                 <select class="modal-select" id="exchangeToSelect">
-                                    <option value="">${currentLanguage === 'cn' ? '选择货币...' : 'Select coin...'}</option>
+                                    <option value="">Select coin...</option>
                                     ${marketData.slice(0, 50).map(coin => 
                                         `<option value="${coin.id}">${coin.name} (${coin.symbol.toUpperCase()})</option>`
                                     ).join('')}
@@ -2674,25 +2565,25 @@
                             </div>
                             
                             <div class="modal-input-group">
-                                <label class="modal-label">${currentLanguage === 'cn' ? '数量' : 'Amount'}</label>
+                                <label class="modal-label">Amount</label>
                                 <input type="number" class="modal-input" id="exchangeAmount" placeholder="0.00" step="0.000001" min="0" max="${userAssetsWithBalance[0].balance}">
-                                <small style="color: var(--gray); display: block; margin-top: 5px;">${currentLanguage === 'cn' ? '可用' : 'Available'}: ${formatBalance(userAssetsWithBalance[0].balance, userAssetsWithBalance[0].symbol)}</small>
+                                <small style="color: var(--gray); display: block; margin-top: 5px;">Available: ${formatBalance(userAssetsWithBalance[0].balance, userAssetsWithBalance[0].symbol)}</small>
                             </div>
                             
                             <div class="modal-info-box" id="exchangeInfoBox">
                                 <div class="modal-info-row">
-                                    <span class="modal-info-label">${currentLanguage === 'cn' ? '兑换率' : 'Exchange Rate'}:</span>
-                                    <span class="modal-info-value" id="exchangeRateDisplay">${currentLanguage === 'cn' ? '选择货币查看汇率' : 'Select coins to see rate'}</span>
+                                    <span class="modal-info-label">Exchange Rate:</span>
+                                    <span class="modal-info-value" id="exchangeRateDisplay">Select coins to see rate</span>
                                 </div>
                                 <div class="modal-info-row">
-                                    <span class="modal-info-label">${currentLanguage === 'cn' ? '预计收到' : 'Estimated Receive'}:</span>
+                                    <span class="modal-info-label">Estimated Receive:</span>
                                     <span class="modal-info-value positive" id="estimatedReceiveDisplay">0.00</span>
                                 </div>
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button class="modal-btn secondary" onclick="closeModal()">${currentLanguage === 'cn' ? '取消' : 'Cancel'}</button>
-                            <button class="modal-btn primary" id="confirmExchangeBtn">${currentLanguage === 'cn' ? '提交审批' : 'Submit for Approval'}</button>
+                            <button class="modal-btn secondary" onclick="closeModal()">Cancel</button>
+                            <button class="modal-btn primary" id="confirmExchangeBtn">Submit for Approval</button>
                         </div>
                     </div>
                 </div>
@@ -2720,7 +2611,7 @@
                 const amount = parseFloat(amountInput.value) || 0;
                 
                 if (!fromCoinId || !toCoinId) {
-                    exchangeRateDisplay.textContent = currentLanguage === 'cn' ? '选择货币' : 'Select coins';
+                    exchangeRateDisplay.textContent = 'Select coins';
                     estimatedReceiveDisplay.textContent = '0.00';
                     return;
                 }
@@ -2729,7 +2620,7 @@
                 const toCoin = marketData.find(coin => coin.id === toCoinId);
                 
                 if (!fromCoin || !toCoin) {
-                    exchangeRateDisplay.textContent = currentLanguage === 'cn' ? '汇率不可用' : 'Rate unavailable';
+                    exchangeRateDisplay.textContent = 'Rate unavailable';
                     estimatedReceiveDisplay.textContent = '0.00';
                     return;
                 }
@@ -2741,9 +2632,9 @@
                 estimatedReceiveDisplay.textContent = `${receiveAmount.toFixed(6)} ${toCoin.symbol.toUpperCase()}`;
                 
                 if (confirmBtn && amount > 0) {
-                    confirmBtn.textContent = `${currentLanguage === 'cn' ? '提交兑换' : 'Submit Exchange'} ${receiveAmount.toFixed(6)} ${toCoin.symbol.toUpperCase()}`;
+                    confirmBtn.textContent = `Submit Exchange for ${receiveAmount.toFixed(6)} ${toCoin.symbol.toUpperCase()}`;
                 } else {
-                    confirmBtn.textContent = currentLanguage === 'cn' ? '提交审批' : 'Submit for Approval';
+                    confirmBtn.textContent = 'Submit for Approval';
                 }
             }
             
@@ -2752,7 +2643,7 @@
                 const selectedAsset = userAssets.find(asset => asset.id === selectedCoinId);
                 
                 if (selectedAsset) {
-                    availableLabel.textContent = `${currentLanguage === 'cn' ? '可用' : 'Available'}: ${formatBalance(selectedAsset.balance, selectedAsset.symbol)}`;
+                    availableLabel.textContent = `Available: ${formatBalance(selectedAsset.balance, selectedAsset.symbol)}`;
                     amountInput.max = selectedAsset.balance;
                     updateExchangeRate();
                 }
@@ -2767,18 +2658,18 @@
                 const amount = parseFloat(amountInput.value);
                 
                 if (!amount || amount <= 0) {
-                    showToast(getText('invalidAmount'), 'error');
+                    showToast('Please enter a valid amount', 'error');
                     return;
                 }
                 
                 const fromAsset = userAssets.find(asset => asset.id === fromCoinId);
                 if (amount > fromAsset.balance) {
-                    showToast(getText('insufficientBalance'), 'error');
+                    showToast('Insufficient balance', 'error');
                     return;
                 }
                 
                 if (!toCoinId) {
-                    showToast(currentLanguage === 'cn' ? '请选择要收到的货币' : 'Please select a coin to receive', 'error');
+                    showToast('Please select a coin to receive', 'error');
                     return;
                 }
                 
@@ -2786,7 +2677,7 @@
                 const toCoin = marketData.find(coin => coin.id === toCoinId);
                 
                 if (!fromCoin || !toCoin) {
-                    showToast(currentLanguage === 'cn' ? '获取兑换率错误' : 'Error getting exchange rate', 'error');
+                    showToast('Error getting exchange rate', 'error');
                     return;
                 }
                 
@@ -2800,14 +2691,13 @@
                     toCoinId: toCoinId,
                     amount: amount,
                     receiveAmount: receiveAmount,
-                    details: `${currentLanguage === 'cn' ? '兑换' : 'Exchange'} ${amount} ${fromAsset.symbol.toUpperCase()} → ${receiveAmount.toFixed(6)} ${toCoin.symbol.toUpperCase()}`,
+                    details: `Exchange ${amount} ${fromAsset.symbol.toUpperCase()} → ${receiveAmount.toFixed(6)} ${toCoin.symbol.toUpperCase()}`,
                     timestamp: new Date().toISOString()
                 };
                 
                 addToPendingList(transaction);
-                saveToLocalStorage();
                 closeModal();
-                showToast(getText('transactionSubmitted'), 'info');
+                showToast(`Exchange request submitted! Waiting for approval.`, 'info');
             });
             
             updateExchangeRate();
@@ -2819,7 +2709,7 @@
             );
             
             if (stakeableAssets.length === 0) {
-                showToast(getText('noAssetsToStake'), 'error');
+                showToast('No assets available for staking', 'error');
                 return;
             }
             
@@ -2827,21 +2717,21 @@
                 <div class="modal-overlay" id="stakeModal">
                     <div class="modal">
                         <div class="modal-header">
-                            <h3 class="modal-title">${currentLanguage === 'cn' ? '质押赚取' : 'Stake & Earn'}</h3>
+                            <h3 class="modal-title">Stake & Earn</h3>
                             <button class="modal-close" onclick="closeModal()">×</button>
                         </div>
                         <div class="modal-body">
                             <div class="modal-input-group">
-                                <label class="modal-label">${currentLanguage === 'cn' ? '选择货币' : 'Select Coin'}</label>
+                                <label class="modal-label">Select Coin</label>
                                 <select class="modal-select" id="stakeCoinSelect">
                                     ${stakeableAssets.map(asset => 
-                                        `<option value="${asset.id}">${asset.name} (${asset.symbol.toUpperCase()}) - ${currentLanguage === 'cn' ? '可用' : 'Available'}: ${formatBalance(asset.balance, asset.symbol)}</option>`
+                                        `<option value="${asset.id}">${asset.name} (${asset.symbol.toUpperCase()}) - Balance: ${formatBalance(asset.balance, asset.symbol)}</option>`
                                     ).join('')}
                                 </select>
                             </div>
                             
                             <div class="modal-input-group">
-                                <label class="modal-label">${currentLanguage === 'cn' ? '质押投资回报计划' : 'Staking ROI Program'}</label>
+                                <label class="modal-label">Staking ROI Program</label>
                                 <div class="staking-options" id="stakingOptions">
                                     ${stakingPrograms.map((program, index) => `
                                         <div class="staking-option ${index === 0 ? 'selected' : ''}" data-period="${program.period}" data-apy="${program.apy}">
@@ -2853,29 +2743,29 @@
                             </div>
                             
                             <div class="modal-input-group">
-                                <label class="modal-label">${currentLanguage === 'cn' ? '质押数量' : 'Amount to Stake'}</label>
+                                <label class="modal-label">Amount to Stake</label>
                                 <input type="number" class="modal-input" id="stakeAmount" placeholder="0.00" step="0.000001" min="0" max="${stakeableAssets[0].balance}">
-                                <small style="color: var(--gray); display: block; margin-top: 5px;">${currentLanguage === 'cn' ? '可用' : 'Available'}: ${formatBalance(stakeableAssets[0].balance, stakeableAssets[0].symbol)}</small>
+                                <small style="color: var(--gray); display: block; margin-top: 5px;">Available: ${formatBalance(stakeableAssets[0].balance, stakeableAssets[0].symbol)}</small>
                             </div>
                             
                             <div class="modal-info-box" id="stakeInfoBox">
                                 <div class="modal-info-row">
-                                    <span class="modal-info-label">${currentLanguage === 'cn' ? '当前价格' : 'Current Price'}:</span>
-                                    <span class="modal-info-value" id="stakeCurrentPrice">${currentLanguage === 'cn' ? '加载中...' : 'Loading...'}</span>
+                                    <span class="modal-info-label">Current Price:</span>
+                                    <span class="modal-info-value" id="stakeCurrentPrice">Loading...</span>
                                 </div>
                                 <div class="modal-info-row">
-                                    <span class="modal-info-label">${currentLanguage === 'cn' ? '预计年收益' : 'Estimated Annual Reward'}:</span>
+                                    <span class="modal-info-label">Estimated Annual Reward:</span>
                                     <span class="modal-info-value positive" id="estimatedAnnualReward">$0.00</span>
                                 </div>
                                 <div class="modal-info-row">
-                                    <span class="modal-info-label">${currentLanguage === 'cn' ? '到期总价值' : 'Total Value at Maturity'}:</span>
+                                    <span class="modal-info-label">Total Value at Maturity:</span>
                                     <span class="modal-info-value positive" id="totalValueAtMaturity">$0.00</span>
                                 </div>
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button class="modal-btn secondary" onclick="closeModal()">${currentLanguage === 'cn' ? '取消' : 'Cancel'}</button>
-                            <button class="modal-btn primary" id="confirmStakeBtn">${currentLanguage === 'cn' ? '提交审批' : 'Submit for Approval'}</button>
+                            <button class="modal-btn secondary" onclick="closeModal()">Cancel</button>
+                            <button class="modal-btn primary" id="confirmStakeBtn">Submit for Approval</button>
                         </div>
                     </div>
                 </div>
@@ -2916,7 +2806,7 @@
                 const selectedAsset = userAssets.find(asset => asset.id === selectedCoinId);
                 
                 if (selectedAsset) {
-                    availableLabel.textContent = `${currentLanguage === 'cn' ? '可用' : 'Available'}: ${formatBalance(selectedAsset.balance, selectedAsset.symbol)}`;
+                    availableLabel.textContent = `Available: ${formatBalance(selectedAsset.balance, selectedAsset.symbol)}`;
                     amountInput.max = selectedAsset.balance;
                     updateStakePriceDisplay(selectedAsset);
                     updateStakeCalculations();
@@ -2930,13 +2820,13 @@
                 const amount = parseFloat(amountInput.value);
                 
                 if (!amount || amount <= 0) {
-                    showToast(getText('invalidAmount'), 'error');
+                    showToast('Please enter a valid amount', 'error');
                     return;
                 }
                 
                 const selectedAsset = userAssets.find(asset => asset.id === coinId);
                 if (amount > selectedAsset.balance) {
-                    showToast(getText('insufficientBalance'), 'error');
+                    showToast('Insufficient balance', 'error');
                     return;
                 }
                 
@@ -2948,14 +2838,13 @@
                     amount: amount,
                     period: selectedPeriod,
                     apy: selectedAPY,
-                    details: `${currentLanguage === 'cn' ? '质押' : 'Stake'} ${amount} ${selectedAsset.symbol.toUpperCase()} ${currentLanguage === 'cn' ? '期限' : 'for'} ${selectedPeriod} (APY: ${selectedAPY}%)`,
+                    details: `Stake ${amount} ${selectedAsset.symbol.toUpperCase()} for ${selectedPeriod} (APY: ${selectedAPY}%)`,
                     timestamp: new Date().toISOString()
                 };
                 
                 addToPendingList(transaction);
-                saveToLocalStorage();
                 closeModal();
-                showToast(getText('transactionSubmitted'), 'info');
+                showToast(`Staking request submitted! Waiting for approval.`, 'info');
             });
             
             const initialAsset = userAssets.find(asset => asset.id === coinSelect.value);
@@ -2978,7 +2867,7 @@
                 
                 annualRewardDisplay.textContent = `$${annualReward.toFixed(2)}`;
                 maturityValueDisplay.textContent = `$${totalValueAtMaturity.toFixed(2)}`;
-                confirmBtn.textContent = `${currentLanguage === 'cn' ? '提交质押' : 'Submit Staking'} ${selectedPeriod}`;
+                confirmBtn.textContent = `Submit Staking for ${selectedPeriod}`;
             }
             
             function updateStakePriceDisplay(asset) {
@@ -2995,7 +2884,7 @@
             const sellableAssets = userAssets.filter(asset => asset.balance > 0);
             
             if (sellableAssets.length === 0) {
-                showToast(getText('noAssetsToSell'), 'error');
+                showToast('No assets available to sell', 'error');
                 return;
             }
             
@@ -3003,47 +2892,47 @@
                 <div class="modal-overlay" id="sellModal">
                     <div class="modal">
                         <div class="modal-header">
-                            <h3 class="modal-title">${currentLanguage === 'cn' ? '出售加密货币' : 'Sell Cryptocurrency'}</h3>
+                            <h3 class="modal-title">Sell Cryptocurrency</h3>
                             <button class="modal-close" onclick="closeModal()">×</button>
                         </div>
                         <div class="modal-body">
                             <div class="modal-input-group">
-                                <label class="modal-label">${currentLanguage === 'cn' ? '选择要出售的货币' : 'Select Coin to Sell'}</label>
+                                <label class="modal-label">Select Coin to Sell</label>
                                 <select class="modal-select" id="sellCoinSelect">
                                     ${sellableAssets.map(asset => 
                                         `<option value="${asset.id}" ${coinId === asset.id ? 'selected' : ''}>
-                                            ${asset.name} (${asset.symbol.toUpperCase()}) - ${currentLanguage === 'cn' ? '可用' : 'Available'}: ${formatBalance(asset.balance, asset.symbol)}
+                                            ${asset.name} (${asset.symbol.toUpperCase()}) - Balance: ${formatBalance(asset.balance, asset.symbol)}
                                         </option>`
                                     ).join('')}
                                 </select>
                             </div>
                             
                             <div class="modal-input-group">
-                                <label class="modal-label">${currentLanguage === 'cn' ? '数量 / 批量大小' : 'Amount / Lot Size'}</label>
+                                <label class="modal-label">Amount / Lot Size</label>
                                 <input type="number" class="modal-input" id="sellAmount" placeholder="0.00" step="0.000001" min="0" max="${sellableAssets[0].balance}">
                                 <small style="color: var(--gray); display: block; margin-top: 5px;">
-                                    ${currentLanguage === 'cn' ? '可用' : 'Available'}: <span id="sellAvailable">${formatBalance(sellableAssets[0].balance, sellableAssets[0].symbol)}</span>
+                                    Available: <span id="sellAvailable">${formatBalance(sellableAssets[0].balance, sellableAssets[0].symbol)}</span>
                                 </small>
                             </div>
                             
                             <div class="modal-info-box" id="sellInfoBox">
                                 <div class="modal-info-row">
-                                    <span class="modal-info-label">${currentLanguage === 'cn' ? '当前价格' : 'Current Price'}:</span>
-                                    <span class="modal-info-value" id="sellCurrentPrice">${currentLanguage === 'cn' ? '加载中...' : 'Loading...'}</span>
+                                    <span class="modal-info-label">Current Price:</span>
+                                    <span class="modal-info-value" id="sellCurrentPrice">Loading...</span>
                                 </div>
                                 <div class="modal-info-row">
-                                    <span class="modal-info-label">${currentLanguage === 'cn' ? '总价值' : 'Total Value'}:</span>
+                                    <span class="modal-info-label">Total Value:</span>
                                     <span class="modal-info-value positive" id="sellTotalValue">$0.00</span>
                                 </div>
                                 <div class="modal-info-row">
-                                    <span class="modal-info-label">${currentLanguage === 'cn' ? '您将收到' : 'You will receive'}:</span>
+                                    <span class="modal-info-label">You will receive:</span>
                                     <span class="modal-info-value positive" id="sellReceiveAmount">$0.00 USD</span>
                                 </div>
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button class="modal-btn secondary" onclick="closeModal()">${currentLanguage === 'cn' ? '取消' : 'Cancel'}</button>
-                            <button class="modal-btn primary" id="confirmSellBtn">${currentLanguage === 'cn' ? '提交出售订单' : 'Submit Sell Order'}</button>
+                            <button class="modal-btn secondary" onclick="closeModal()">Cancel</button>
+                            <button class="modal-btn primary" id="confirmSellBtn">Submit Sell Order</button>
                         </div>
                     </div>
                 </div>
@@ -3090,7 +2979,7 @@
                     maximumFractionDigits: 2
                 })} USD`;
                 
-                confirmBtn.textContent = `${currentLanguage === 'cn' ? '提交出售' : 'Submit Sell'} $${totalValue.toFixed(2)}`;
+                confirmBtn.textContent = `Submit Sell for $${totalValue.toFixed(2)}`;
             }
             
             coinSelect.addEventListener('change', function() {
@@ -3111,13 +3000,13 @@
                 const amount = parseFloat(amountInput.value);
                 
                 if (!amount || amount <= 0) {
-                    showToast(getText('invalidAmount'), 'error');
+                    showToast('Please enter a valid amount', 'error');
                     return;
                 }
                 
                 const selectedAsset = userAssets.find(asset => asset.id === coinId);
                 if (amount > selectedAsset.balance) {
-                    showToast(getText('insufficientBalance'), 'error');
+                    showToast('Insufficient balance', 'error');
                     return;
                 }
                 
@@ -3131,14 +3020,13 @@
                     coinId: coinId,
                     amount: amount,
                     totalValue: totalValue,
-                    details: `${currentLanguage === 'cn' ? '出售' : 'Sell'} ${amount} ${selectedAsset.symbol.toUpperCase()} ${currentLanguage === 'cn' ? '获得' : 'for'} $${totalValue.toFixed(2)}`,
+                    details: `Sell ${amount} ${selectedAsset.symbol.toUpperCase()} for $${totalValue.toFixed(2)}`,
                     timestamp: new Date().toISOString()
                 };
                 
                 addToPendingList(transaction);
-                saveToLocalStorage();
                 closeModal();
-                showToast(getText('transactionSubmitted'), 'info');
+                showToast(`Sell order submitted! Waiting for approval.`, 'info');
             });
             
             const initialAsset = userAssets.find(asset => asset.id === coinSelect.value);
@@ -3226,7 +3114,7 @@
                 tbody.innerHTML = `
                     <tr>
                         <td colspan="6" class="loading-spinner">
-                            <i class="fas fa-search"></i> ${currentLanguage === 'cn' ? '未找到加密货币' : 'No cryptocurrencies found'}
+                            <i class="fas fa-search"></i> No cryptocurrencies found
                         </td>
                     </tr>
                 `;
@@ -3275,10 +3163,10 @@
                     <td>
                         <div class="action-buttons">
                             <button class="view-btn" onclick="viewCoinDetails('${coin.id}')">
-                                <i class="fas fa-chart-line"></i> ${currentLanguage === 'cn' ? '查看' : 'View'}
+                                <i class="fas fa-chart-line"></i> View
                             </button>
                             <button class="buy-btn" onclick="showBuyModal('${coin.id}')">
-                                <i class="fas fa-shopping-cart"></i> ${currentLanguage === 'cn' ? '购买' : 'Buy'}
+                                <i class="fas fa-shopping-cart"></i> Buy
                             </button>
                         </div>
                     </td>
@@ -3298,7 +3186,7 @@
             }
             
             if (pageInfo) {
-                pageInfo.textContent = `${currentLanguage === 'cn' ? '页码' : 'Page'} ${currentPage} ${currentLanguage === 'cn' ? '的' : 'of'} ${totalPages}`;
+                pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
             }
         }
         
@@ -3356,12 +3244,12 @@
             const element = document.getElementById('lastUpdated');
             if (element) {
                 const now = new Date();
-                const timeString = now.toLocaleTimeString(currentLanguage === 'cn' ? 'zh-CN' : 'en-US', {
+                const timeString = now.toLocaleTimeString('en-US', {
                     hour: '2-digit',
                     minute: '2-digit',
                     second: '2-digit'
                 });
-                element.textContent = `${currentLanguage === 'cn' ? '更新于' : 'Updated at'} ${timeString}`;
+                element.textContent = `Updated at ${timeString}`;
             }
         }
         
@@ -3435,7 +3323,7 @@
         function showBuyModal(coinId) {
             const coin = marketData.find(c => c.id === coinId);
             if (!coin) {
-                showToast(getText('coinNotFound'), 'error');
+                showToast('Coin not found', 'error');
                 return;
             }
             
@@ -3443,7 +3331,7 @@
                 <div class="modal-overlay" id="buyModal">
                     <div class="modal">
                         <div class="modal-header">
-                            <h3 class="modal-title">${currentLanguage === 'cn' ? '购买' : 'Buy'} ${coin.name}</h3>
+                            <h3 class="modal-title">Buy ${coin.name}</h3>
                             <button class="modal-close" onclick="closeModal()">×</button>
                         </div>
                         <div class="modal-body">
@@ -3464,34 +3352,34 @@
                             </div>
                             
                             <div class="modal-input-group">
-                                <label class="modal-label">${currentLanguage === 'cn' ? '数量 / 批量大小' : 'Amount / Lot Size'}</label>
+                                <label class="modal-label">Amount / Lot Size</label>
                                 <input type="number" class="modal-input" id="buyAmount" placeholder="0.00" step="0.000001" min="0">
                                 <small style="color: var(--gray); display: block; margin-top: 5px;">
-                                    ${currentLanguage === 'cn' ? '输入您要购买的数量' : 'Enter the amount you want to buy'}
+                                    Enter the amount of ${coin.symbol.toUpperCase()} you want to buy
                                 </small>
                             </div>
                             
                             <div class="modal-info-box" id="buyInfoBox">
                                 <div class="modal-info-row">
-                                    <span class="modal-info-label">${currentLanguage === 'cn' ? '当前价格' : 'Current Price'}:</span>
+                                    <span class="modal-info-label">Current Price:</span>
                                     <span class="modal-info-value">$${coin.current_price.toLocaleString('en-US', {
                                         minimumFractionDigits: coin.current_price < 1 ? 6 : 2,
                                         maximumFractionDigits: coin.current_price < 1 ? 6 : 2
                                     })}</span>
                                 </div>
                                 <div class="modal-info-row">
-                                    <span class="modal-info-label">${currentLanguage === 'cn' ? '总成本' : 'Total Cost'}:</span>
+                                    <span class="modal-info-label">Total Cost:</span>
                                     <span class="modal-info-value" id="buyTotalCost">$0.00</span>
                                 </div>
                                 <div class="modal-info-row">
-                                    <span class="modal-info-label">${currentLanguage === 'cn' ? '可用现金' : 'Available Cash'}:</span>
+                                    <span class="modal-info-label">Available Cash:</span>
                                     <span class="modal-info-value ${cashBalance >= 0 ? 'positive' : 'negative'}">$${cashBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
                                 </div>
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button class="modal-btn secondary" onclick="closeModal()">${currentLanguage === 'cn' ? '取消' : 'Cancel'}</button>
-                            <button class="modal-btn primary" id="confirmBuyBtn">${currentLanguage === 'cn' ? '提交购买订单' : 'Submit Buy Order'}</button>
+                            <button class="modal-btn secondary" onclick="closeModal()">Cancel</button>
+                            <button class="modal-btn primary" id="confirmBuyBtn">Submit Buy Order</button>
                         </div>
                     </div>
                 </div>
@@ -3528,7 +3416,7 @@
                     confirmBtn.style.opacity = '1';
                 }
                 
-                confirmBtn.textContent = `${currentLanguage === 'cn' ? '提交购买' : 'Submit Buy'} $${totalCost.toFixed(2)}`;
+                confirmBtn.textContent = `Submit Buy for $${totalCost.toFixed(2)}`;
             }
             
             amountInput.addEventListener('input', updateBuyCalculations);
@@ -3537,14 +3425,14 @@
                 const amount = parseFloat(amountInput.value);
                 
                 if (!amount || amount <= 0) {
-                    showToast(getText('invalidAmount'), 'error');
+                    showToast('Please enter a valid amount', 'error');
                     return;
                 }
                 
                 const totalCost = amount * coin.current_price;
                 
                 if (totalCost > cashBalance) {
-                    showToast(getText('insufficientBalance'), 'error');
+                    showToast('Insufficient cash balance', 'error');
                     return;
                 }
                 
@@ -3555,14 +3443,13 @@
                     coinId: coin.id,
                     amount: amount,
                     totalCost: totalCost,
-                    details: `${currentLanguage === 'cn' ? '购买' : 'Buy'} ${amount} ${coin.symbol.toUpperCase()} ${currentLanguage === 'cn' ? '花费' : 'for'} $${totalCost.toFixed(2)}`,
+                    details: `Buy ${amount} ${coin.symbol.toUpperCase()} for $${totalCost.toFixed(2)}`,
                     timestamp: new Date().toISOString()
                 };
                 
                 addToPendingList(transaction);
-                saveToLocalStorage();
                 closeModal();
-                showToast(getText('transactionSubmitted'), 'info');
+                showToast(`Buy order submitted! Waiting for approval.`, 'info');
             });
             
             updateBuyCalculations();
@@ -3573,7 +3460,7 @@
             pendingTransactions.push(transaction);
             updatePendingListDisplay();
             updatePendingCount();
-            showToast(`${currentLanguage === 'cn' ? '交易已添加到待处理列表 (ID:' : 'Transaction added to pending list (ID:'} ${transaction.id.substring(0, 8)})`, 'info');
+            showToast(`Transaction added to pending list (ID: ${transaction.id.substring(0, 8)})`, 'info');
         }
         
         function updatePendingListDisplay() {
@@ -3584,8 +3471,8 @@
                 pendingList.innerHTML = `
                     <div class="empty-state">
                         <i class="fas fa-clock"></i>
-                        <p>${getText('noPendingTransactions')}</p>
-                        <small>${getText('pendingDescription')}</small>
+                        <p>No pending transactions</p>
+                        <small>Transactions will appear here waiting for approval</small>
                     </div>
                 `;
                 return;
@@ -3603,12 +3490,12 @@
                 transactionItem.setAttribute('data-id', transaction.id);
                 
                 const icons = {
-                    [TransactionType.SEND]: { icon: 'arrow-up', color: 'sent', title: currentLanguage === 'cn' ? '发送' : 'Send' },
-                    [TransactionType.RECEIVE]: { icon: 'arrow-down', color: 'success', title: currentLanguage === 'cn' ? '接收' : 'Receive' },
-                    [TransactionType.EXCHANGE]: { icon: 'exchange-alt', color: 'success', title: currentLanguage === 'cn' ? '兑换' : 'Exchange' },
-                    [TransactionType.STAKE]: { icon: 'chart-line', color: 'success', title: currentLanguage === 'cn' ? '质押' : 'Stake' },
-                    [TransactionType.BUY]: { icon: 'shopping-cart', color: 'success', title: currentLanguage === 'cn' ? '购买' : 'Buy' },
-                    [TransactionType.SELL]: { icon: 'money-bill-wave', color: 'sent', title: currentLanguage === 'cn' ? '出售' : 'Sell' }
+                    [TransactionType.SEND]: { icon: 'arrow-up', color: 'sent', title: 'Send' },
+                    [TransactionType.RECEIVE]: { icon: 'arrow-down', color: 'success', title: 'Receive' },
+                    [TransactionType.EXCHANGE]: { icon: 'exchange-alt', color: 'success', title: 'Exchange' },
+                    [TransactionType.STAKE]: { icon: 'chart-line', color: 'success', title: 'Stake' },
+                    [TransactionType.BUY]: { icon: 'shopping-cart', color: 'success', title: 'Buy' },
+                    [TransactionType.SELL]: { icon: 'money-bill-wave', color: 'sent', title: 'Sell' }
                 };
                 
                 const typeInfo = icons[transaction.type] || icons.send;
@@ -3622,7 +3509,7 @@
                         <div class="activity-title">${typeInfo.title}: ${transaction.details}</div>
                         <div class="activity-meta">ID: ${transaction.id.substring(0, 12)}... • ${timestamp}</div>
                         <div class="activity-status" style="font-size: 12px; color: var(--secondary); margin-top: 2px;">
-                            <i class="fas fa-sync-alt"></i> ${getText('integrationInProgress')}
+                            <i class="fas fa-clock"></i> Waiting for approval
                         </div>
                     </div>
                     <div class="activity-amount pending-amount">
@@ -3641,7 +3528,7 @@
                 viewAllBtn.style.borderTop = '1px solid rgba(255, 255, 255, 0.05)';
                 viewAllBtn.innerHTML = `
                     <a href="#" style="color: var(--primary); text-decoration: none; font-size: 14px;">
-                        ${currentLanguage === 'cn' ? '查看所有' : 'View all'} ${pendingTransactions.length} ${currentLanguage === 'cn' ? '个待处理交易' : 'pending transactions'} <i class="fas fa-chevron-right"></i>
+                        View all ${pendingTransactions.length} pending transactions <i class="fas fa-chevron-right"></i>
                     </a>
                 `;
                 
@@ -3657,7 +3544,7 @@
         function updatePendingCount() {
             const pendingCount = document.getElementById('pendingCount');
             if (pendingCount) {
-                pendingCount.textContent = `${pendingTransactions.length} ${currentLanguage === 'cn' ? '待处理' : 'pending'}`;
+                pendingCount.textContent = `${pendingTransactions.length} pending`;
             }
         }
         
@@ -3666,22 +3553,22 @@
                 <div class="modal-overlay" id="allPendingModal">
                     <div class="modal" style="max-width: 800px;">
                         <div class="modal-header">
-                            <h3 class="modal-title">${currentLanguage === 'cn' ? '所有待处理交易' : 'All Pending Transactions'}</h3>
+                            <h3 class="modal-title">All Pending Transactions</h3>
                             <button class="modal-close" onclick="closeModal()">×</button>
                         </div>
                         <div class="modal-body">
                             <div style="margin-bottom: 20px; color: var(--gray); font-size: 14px;">
-                                <i class="fas fa-info-circle"></i> ${currentLanguage === 'cn' ? '这些交易正在等待管理员批准。' : 'These transactions are waiting for admin approval.'}
+                                <i class="fas fa-info-circle"></i> These transactions are waiting for admin approval.
                             </div>
                             <div class="pending-table-container" style="max-height: 400px; overflow-y: auto;">
                                 <table style="width: 100%; border-collapse: collapse;">
                                     <thead>
                                         <tr style="background: rgba(30, 41, 59, 0.8);">
                                             <th style="padding: 12px; text-align: left; color: var(--gray);">ID</th>
-                                            <th style="padding: 12px; text-align: left; color: var(--gray);">${currentLanguage === 'cn' ? '类型' : 'Type'}</th>
-                                            <th style="padding: 12px; text-align: left; color: var(--gray);">${currentLanguage === 'cn' ? '详情' : 'Details'}</th>
-                                            <th style="padding: 12px; text-align: left; color: var(--gray);">${currentLanguage === 'cn' ? '数量' : 'Amount'}</th>
-                                            <th style="padding: 12px; text-align: left; color: var(--gray);">${currentLanguage === 'cn' ? '时间' : 'Time'}</th>
+                                            <th style="padding: 12px; text-align: left; color: var(--gray);">Type</th>
+                                            <th style="padding: 12px; text-align: left; color: var(--gray);">Details</th>
+                                            <th style="padding: 12px; text-align: left; color: var(--gray);">Amount</th>
+                                            <th style="padding: 12px; text-align: left; color: var(--gray);">Time</th>
                                         </tr>
                                     </thead>
                                     <tbody id="allPendingTable">
@@ -3690,7 +3577,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button class="modal-btn secondary" onclick="closeModal()">${currentLanguage === 'cn' ? '关闭' : 'Close'}</button>
+                            <button class="modal-btn secondary" onclick="closeModal()">Close</button>
                         </div>
                     </div>
                 </div>
@@ -3711,7 +3598,7 @@
                 tableBody.innerHTML = `
                     <tr>
                         <td colspan="5" style="text-align: center; padding: 40px; color: var(--gray);">
-                            <i class="fas fa-clock"></i> ${currentLanguage === 'cn' ? '没有待处理交易' : 'No pending transactions'}
+                            <i class="fas fa-clock"></i> No pending transactions
                         </td>
                     </tr>
                 `;
@@ -3722,12 +3609,12 @@
             
             pendingTransactions.forEach(transaction => {
                 const typeNames = {
-                    [TransactionType.SEND]: currentLanguage === 'cn' ? '发送' : 'Send',
-                    [TransactionType.RECEIVE]: currentLanguage === 'cn' ? '接收' : 'Receive',
-                    [TransactionType.EXCHANGE]: currentLanguage === 'cn' ? '兑换' : 'Exchange',
-                    [TransactionType.STAKE]: currentLanguage === 'cn' ? '质押' : 'Stake',
-                    [TransactionType.BUY]: currentLanguage === 'cn' ? '购买' : 'Buy',
-                    [TransactionType.SELL]: currentLanguage === 'cn' ? '出售' : 'Sell'
+                    [TransactionType.SEND]: 'Send',
+                    [TransactionType.RECEIVE]: 'Receive',
+                    [TransactionType.EXCHANGE]: 'Exchange',
+                    [TransactionType.STAKE]: 'Stake',
+                    [TransactionType.BUY]: 'Buy',
+                    [TransactionType.SELL]: 'Sell'
                 };
                 
                 const time = new Date(transaction.timestamp).toLocaleString();
@@ -3746,65 +3633,70 @@
             });
         }
 
-        // ==================== ADMIN TRANSACTION APPROVAL ====================
-        function approveTransactionManually(transactionId, approve = true) {
+        // ==================== TRANSACTION APPROVAL SIMULATION ====================
+        function simulateAdminApproval() {
+            setInterval(() => {
+                if (pendingTransactions.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * pendingTransactions.length);
+                    const transaction = pendingTransactions[randomIndex];
+                    
+                    if (Math.random() < 0.8) {
+                        approveTransaction(transaction.id);
+                    } else {
+                        rejectTransaction(transaction.id);
+                    }
+                }
+            }, 30000);
+        }
+        
+        function approveTransaction(transactionId) {
             const transactionIndex = pendingTransactions.findIndex(t => t.id === transactionId);
-            if (transactionIndex === -1) return false;
+            if (transactionIndex === -1) return;
             
             const transaction = pendingTransactions[transactionIndex];
             
             pendingTransactions.splice(transactionIndex, 1);
             
-            if (approve) {
-                try {
-                    executeTransaction(transaction);
-                    
-                    addToRecentActivity({
-                        type: transaction.type,
-                        details: transaction.details,
-                        status: 'success',
-                        timestamp: new Date().toISOString()
-                    });
-                    
-                    showToast(getText('transactionApproved'), 'success');
-                } catch (error) {
-                    addToRecentActivity({
-                        type: transaction.type,
-                        details: `${transaction.details} (${currentLanguage === 'cn' ? '失败' : 'Failed'}: ${error.message})`,
-                        status: 'failed',
-                        timestamp: new Date().toISOString()
-                    });
-                    
-                    showToast(getText('transactionRejected'), 'error');
-                    return false;
-                }
-            } else {
-                addToRecentActivity({
-                    type: transaction.type,
-                    details: `${transaction.details} (${currentLanguage === 'cn' ? '被管理员拒绝' : 'Rejected by admin'})`,
-                    status: 'failed',
-                    timestamp: new Date().toISOString()
-                });
+            try {
+                executeTransaction(transaction);
                 
-                showToast(getText('transactionRejected'), 'error');
+                addToActivityLog(transaction.type, `${transaction.details} (Approved)`);
+                
+                showToast(`Transaction ${transactionId.substring(0, 8)} approved!`, 'success');
+            } catch (error) {
+                addToActivityLog(transaction.type, `${transaction.details} (Rejected: ${error.message})`, 'failed');
+                
+                showToast(`Transaction ${transactionId.substring(0, 8)} rejected!`, 'error');
             }
             
             updatePendingListDisplay();
             updatePendingCount();
             updateAllBalances();
-            saveToLocalStorage();
+        }
+        
+        function rejectTransaction(transactionId) {
+            const transactionIndex = pendingTransactions.findIndex(t => t.id === transactionId);
+            if (transactionIndex === -1) return;
             
-            return true;
+            const transaction = pendingTransactions[transactionIndex];
+            pendingTransactions.splice(transactionIndex, 1);
+            
+            updatePendingListDisplay();
+            updatePendingCount();
+            
+            addToActivityLog(transaction.type, `${transaction.details} (Rejected by admin)`, 'failed');
+            
+            showToast(`Transaction ${transaction.id.substring(0, 8)} rejected by admin!`, 'error');
         }
         
         function executeTransaction(transaction) {
             switch(transaction.type) {
                 case TransactionType.BUY:
                     const buyCoin = marketData.find(coin => coin.id === transaction.coinId);
-                    if (!buyCoin) throw new Error(currentLanguage === 'cn' ? '未找到货币' : 'Coin not found');
+                    if (!buyCoin) throw new Error('Coin not found');
                     
                     if (cashBalance < transaction.totalCost) {
-                        throw new Error(currentLanguage === 'cn' ? '现金余额不足' : 'Insufficient cash balance');
+                        throw new Error('Insufficient cash balance');
                     }
                     
                     cashBalance -= transaction.totalCost;
@@ -3826,10 +3718,10 @@
                     
                 case TransactionType.SELL:
                     const sellAsset = userAssets.find(asset => asset.id === transaction.coinId);
-                    if (!sellAsset) throw new Error(currentLanguage === 'cn' ? '未找到资产' : 'Asset not found');
+                    if (!sellAsset) throw new Error('Asset not found');
                     
                     if (sellAsset.balance < transaction.amount) {
-                        throw new Error(currentLanguage === 'cn' ? '资产余额不足' : 'Insufficient asset balance');
+                        throw new Error('Insufficient asset balance');
                     }
                     
                     sellAsset.balance -= transaction.amount;
@@ -3882,89 +3774,37 @@
             }
         }
 
-        // ==================== RECENT ACTIVITIES FUNCTIONS ====================
-        function loadRecentActivities() {
+        // ==================== ACTIVITY SECTION FUNCTIONS ====================
+        function initActivitySection() {
+            const viewAllBtn = document.getElementById('viewAllActivity');
+            if (viewAllBtn) {
+                viewAllBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    showToast('Opening full activity history...', 'info');
+                });
+            }
+        }
+        
+        function addToActivityLog(type, details, status = 'success') {
             const activityList = document.getElementById('recentActivityList');
             if (!activityList) return;
             
-            activityList.innerHTML = '';
-            
-            if (!recentActivities || recentActivities.length === 0) {
-                activityList.innerHTML = `
-                    <div class="activity-item">
-                        <div class="activity-icon success">
-                            <i class="fas fa-arrow-down"></i>
-                        </div>
-                        <div class="activity-details">
-                            <div class="activity-title">${currentLanguage === 'cn' ? '收到比特币' : 'Received Bitcoin'}</div>
-                            <div class="activity-meta">${currentLanguage === 'cn' ? '来自' : 'From'}: 0x1a2b...3c4d • ${currentLanguage === 'cn' ? '2小时前' : '2 hours ago'}</div>
-                        </div>
-                        <div class="activity-amount positive">+0.05 BTC</div>
-                    </div>
-                    
-                    <div class="activity-item">
-                        <div class="activity-icon sent">
-                            <i class="fas fa-arrow-up"></i>
-                        </div>
-                        <div class="activity-details">
-                            <div class="activity-title">${currentLanguage === 'cn' ? '发送以太坊' : 'Sent Ethereum'}</div>
-                            <div class="activity-meta">${currentLanguage === 'cn' ? '到' : 'To'}: 0x5e6f...7g8h • ${currentLanguage === 'cn' ? '5小时前' : '5 hours ago'}</div>
-                        </div>
-                        <div class="activity-amount negative">-2.1 ETH</div>
-                    </div>
-                    
-                    <div class="activity-item">
-                        <div class="activity-icon success">
-                            <i class="fas fa-exchange-alt"></i>
-                        </div>
-                        <div class="activity-details">
-                            <div class="activity-title">${currentLanguage === 'cn' ? '兑换完成' : 'Exchange Completed'}</div>
-                            <div class="activity-meta">BTC → ETH • ${currentLanguage === 'cn' ? '昨天' : 'Yesterday'}</div>
-                        </div>
-                        <div class="activity-amount neutral">${currentLanguage === 'cn' ? '兑换' : 'Exchange'}</div>
-                    </div>
-                    
-                    <div class="activity-item">
-                        <div class="activity-icon success">
-                            <i class="fas fa-chart-line"></i>
-                        </div>
-                        <div class="activity-details">
-                            <div class="activity-title">${currentLanguage === 'cn' ? '质押奖励' : 'Staking Rewards'}</div>
-                            <div class="activity-meta">${currentLanguage === 'cn' ? 'ADA质押' : 'ADA Staking'} • ${currentLanguage === 'cn' ? '2天前' : '2 days ago'}</div>
-                        </div>
-                        <div class="activity-amount positive">+42.5 ADA</div>
-                    </div>
-                `;
-                return;
-            }
-            
-            const recentToShow = [...recentActivities]
-                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-                .slice(0, 4);
-            
-            recentToShow.forEach(activity => {
-                const activityItem = createActivityItem(activity);
-                activityList.appendChild(activityItem);
-            });
-        }
-        
-        function createActivityItem(activity) {
-            const activityItem = document.createElement('div');
-            activityItem.className = 'activity-item';
-            
+            const now = new Date();
+            const timeAgo = 'just now';
             const types = {
-                'send': { icon: 'arrow-up', class: 'sent', title: currentLanguage === 'cn' ? '发送' : 'Send' },
-                'receive': { icon: 'arrow-down', class: 'success', title: currentLanguage === 'cn' ? '接收' : 'Receive' },
-                'exchange': { icon: 'exchange-alt', class: 'success', title: currentLanguage === 'cn' ? '兑换' : 'Exchange' },
-                'stake': { icon: 'chart-line', class: 'success', title: currentLanguage === 'cn' ? '质押' : 'Stake' },
-                'buy': { icon: 'shopping-cart', class: 'success', title: currentLanguage === 'cn' ? '购买' : 'Buy' },
-                'sell': { icon: 'money-bill-wave', class: 'sent', title: currentLanguage === 'cn' ? '出售' : 'Sell' }
+                'send': { icon: 'arrow-up', class: 'sent', title: 'Send' },
+                'receive': { icon: 'arrow-down', class: 'success', title: 'Receive' },
+                'exchange': { icon: 'exchange-alt', class: 'success', title: 'Exchange' },
+                'stake': { icon: 'chart-line', class: 'success', title: 'Stake' },
+                'buy': { icon: 'shopping-cart', class: 'success', title: 'Buy' },
+                'sell': { icon: 'money-bill-wave', class: 'sent', title: 'Sell' }
             };
             
-            const activityType = types[activity.type] || types.send;
-            const isFailed = activity.status === 'failed';
+            const activity = types[type] || types.send;
+            const isFailed = status === 'failed';
             
-            const timeAgo = getTimeAgo(activity.timestamp);
+            const activityItem = document.createElement('div');
+            activityItem.className = 'activity-item';
             
             if (isFailed) {
                 activityItem.innerHTML = `
@@ -3972,71 +3812,33 @@
                         <i class="fas fa-times"></i>
                     </div>
                     <div class="activity-details">
-                        <div class="activity-title" style="color: var(--danger);">${activityType.title} ${currentLanguage === 'cn' ? '失败' : 'Failed'}</div>
-                        <div class="activity-meta">${activity.details} • ${timeAgo}</div>
+                        <div class="activity-title" style="color: var(--danger);">${activity.title} Failed</div>
+                        <div class="activity-meta">${details} • ${timeAgo}</div>
                     </div>
                     <div class="activity-amount" style="color: var(--danger);">
-                        ${currentLanguage === 'cn' ? '失败' : 'Failed'}
+                        Failed
                     </div>
                 `;
             } else {
-                const amountMatch = activity.details.match(/([\d\.]+)\s+(\w+)/);
-                const amount = amountMatch ? amountMatch[1] : '0';
-                const symbol = amountMatch ? amountMatch[2] : '';
-                
-                const isNegative = activity.type === 'send' || activity.type === 'sell';
-                
                 activityItem.innerHTML = `
-                    <div class="activity-icon ${activityType.class}">
-                        <i class="fas fa-${activityType.icon}"></i>
+                    <div class="activity-icon ${activity.class}">
+                        <i class="fas fa-${activity.icon}"></i>
                     </div>
                     <div class="activity-details">
-                        <div class="activity-title">${activityType.title}</div>
-                        <div class="activity-meta">${activity.details} • ${timeAgo}</div>
+                        <div class="activity-title">${activity.title}</div>
+                        <div class="activity-meta">${details} • ${timeAgo}</div>
                     </div>
-                    <div class="activity-amount ${isNegative ? 'negative' : 'positive'}">
-                        ${isNegative ? '-' : '+'}${amount} ${symbol}
+                    <div class="activity-amount ${activity.class === 'sent' ? 'negative' : 'positive'}">
+                        ${type === 'send' || type === 'sell' ? '-' : '+'}${details.split(' ')[0]}
                     </div>
                 `;
             }
             
-            return activityItem;
-        }
-        
-        function getTimeAgo(timestamp) {
-            const now = new Date();
-            const past = new Date(timestamp);
-            const diffMs = now - past;
-            const diffMins = Math.floor(diffMs / 60000);
-            const diffHours = Math.floor(diffMs / 3600000);
-            const diffDays = Math.floor(diffMs / 86400000);
+            activityList.insertBefore(activityItem, activityList.firstChild);
             
-            if (diffMins < 1) {
-                return getText('justNow');
-            } else if (diffMins < 60) {
-                return `${diffMins} ${getText('minutesAgo')}`;
-            } else if (diffHours < 24) {
-                return `${diffHours} ${getText('hoursAgo')}`;
-            } else if (diffDays < 7) {
-                return `${diffDays} ${getText('daysAgo')}`;
-            } else {
-                return past.toLocaleDateString();
+            if (activityList.children.length > 4) {
+                activityList.removeChild(activityList.lastChild);
             }
-        }
-        
-        function addToRecentActivity(activity) {
-            if (!recentActivities) {
-                recentActivities = [];
-            }
-            
-            recentActivities.push(activity);
-            
-            if (recentActivities.length > 50) {
-                recentActivities = recentActivities.slice(-50);
-            }
-            
-            saveToLocalStorage();
-            loadRecentActivities();
         }
 
         // ==================== LANGUAGE SWITCHER ====================
@@ -4056,100 +3858,118 @@
         }
         
         function switchLanguage(lang) {
-            currentLanguage = lang;
+            const translations = {
+                en: {
+                    dashboardTitle: "Wallet Dashboard",
+                    dashboardSubtitle: "Welcome back! Here's your financial overview",
+                    totalBalance: "Total Balance",
+                    walletActions: "Wallet Actions",
+                    walletSubtitle: "Send, receive or manage your funds",
+                    marketOverview: "Market Overview",
+                    recentActivity: "Recent Activity",
+                    pendingTransactions: "Pending Transactions",
+                    viewAll: "View All",
+                    totalAssets: "Total Assets (USD)",
+                    coinAssets: "Coin Assets",
+                    usdtBalance: "USDT Balance",
+                    send: "Send",
+                    sendDesc: "Send crypto to another wallet address",
+                    sendPlaceholder: "Paste wallet address here...",
+                    sendNow: "Send Now",
+                    receive: "Receive",
+                    receiveDesc: "Generate your wallet address for receiving funds",
+                    generateAddress: "Generate Address",
+                    exchange: "Exchange",
+                    exchangeDesc: "Swap between cryptocurrencies instantly",
+                    exchangeNow: "Exchange Now",
+                    stake: "Stake & Earn",
+                    stakeDesc: "Earn rewards by staking your cryptocurrencies",
+                    startEarning: "Start Earning",
+                    searchPlaceholder: "Search cryptocurrencies...",
+                    updated: "Updated just now",
+                    all: "All",
+                    gainers: "Gainers",
+                    losers: "Losers"
+                },
+                cn: {
+                    dashboardTitle: "钱包仪表板",
+                    dashboardSubtitle: "欢迎回来！这是您的财务概览",
+                    totalBalance: "总余额",
+                    walletActions: "钱包操作",
+                    walletSubtitle: "发送、接收或管理资金",
+                    marketOverview: "市场概览",
+                    recentActivity: "最近活动",
+                    pendingTransactions: "待处理交易",
+                    viewAll: "查看全部",
+                    totalAssets: "总资产 (美元)",
+                    coinAssets: "货币资产",
+                    usdtBalance: "USDT 余额",
+                    send: "发送",
+                    sendDesc: "发送加密货币到另一个钱包地址",
+                    sendPlaceholder: "在此粘贴钱包地址...",
+                    sendNow: "立即发送",
+                    receive: "接收",
+                    receiveDesc: "生成您的钱包地址以接收资金",
+                    generateAddress: "生成地址",
+                    exchange: "兑换",
+                    exchangeDesc: "即时兑换加密货币",
+                    exchangeNow: "立即兑换",
+                    stake: "质押赚取",
+                    stakeDesc: "通过质押加密货币赚取奖励",
+                    startEarning: "开始赚取",
+                    searchPlaceholder: "搜索加密货币...",
+                    updated: "刚刚更新",
+                    all: "全部",
+                    gainers: "上涨",
+                    losers: "下跌"
+                }
+            };
             
-            // Update main interface text
-            document.querySelector('.page-title h1').textContent = lang === 'cn' ? '钱包仪表板' : 'Wallet Dashboard';
-            document.querySelector('.page-subtitle').textContent = lang === 'cn' ? '欢迎回来！这是您的财务概览' : "Welcome back! Here's your financial overview";
+            const texts = translations[lang] || translations.en;
             
-            const sectionTitles = document.querySelectorAll('.section-title');
-            if (sectionTitles[0]) sectionTitles[0].textContent = lang === 'cn' ? '总余额' : 'Total Balance';
-            if (sectionTitles[1]) sectionTitles[1].textContent = lang === 'cn' ? '钱包操作' : 'Wallet Actions';
-            if (sectionTitles[2]) sectionTitles[2].textContent = lang === 'cn' ? '市场概览' : 'Market Overview';
-            if (sectionTitles[3]) sectionTitles[3].textContent = lang === 'cn' ? '最近活动' : 'Recent Activity';
-            if (sectionTitles[4]) sectionTitles[4].textContent = lang === 'cn' ? '待处理交易' : 'Pending Transactions';
+            document.querySelector('.page-title h1').textContent = texts.dashboardTitle;
+            document.querySelector('.page-subtitle').textContent = texts.dashboardSubtitle;
+            document.querySelectorAll('.section-title')[0].textContent = texts.totalBalance;
+            document.querySelectorAll('.section-title')[1].textContent = texts.walletActions;
+            document.querySelector('.actions-section .section-subtitle').textContent = texts.walletSubtitle;
+            document.querySelectorAll('.section-title')[2].textContent = texts.marketOverview;
+            document.querySelectorAll('.section-title')[3].textContent = texts.recentActivity;
+            document.querySelectorAll('.section-title')[4].textContent = texts.pendingTransactions;
+            document.getElementById('viewAllActivity').innerHTML = `${texts.viewAll} <i class="fas fa-arrow-right"></i>`;
             
-            const actionSectionSubtitle = document.querySelector('.actions-section .section-subtitle');
-            if (actionSectionSubtitle) actionSectionSubtitle.textContent = lang === 'cn' ? '发送、接收或管理资金' : 'Send, receive or manage your funds';
+            document.querySelector('.balance-card.main .balance-label').innerHTML = `<i class="fas fa-coins"></i> ${texts.totalAssets}`;
+            document.querySelector('.balance-card.secondary .balance-label').innerHTML = `<i class="fas fa-wallet"></i> ${texts.coinAssets}`;
+            document.querySelectorAll('.balance-card.secondary .balance-label')[1].innerHTML = `<i class="fas fa-dollar-sign"></i> ${texts.usdtBalance}`;
             
-            const viewAllActivity = document.getElementById('viewAllActivity');
-            if (viewAllActivity) viewAllActivity.innerHTML = `${lang === 'cn' ? '查看全部' : 'View All'} <i class="fas fa-arrow-right"></i>`;
+            document.querySelector('.action-card.send .action-title').textContent = texts.send;
+            document.querySelector('.action-card.send .action-desc').textContent = texts.sendDesc;
+            document.getElementById('sendAddress').placeholder = texts.sendPlaceholder;
+            document.querySelector('.send-btn').innerHTML = `<i class="fas fa-paper-plane"></i> ${texts.sendNow}`;
             
-            // Update balance labels
-            const balanceLabels = document.querySelectorAll('.balance-label');
-            if (balanceLabels[0]) balanceLabels[0].innerHTML = `<i class="fas fa-coins"></i> ${lang === 'cn' ? '总资产 (美元)' : 'Total Assets (USD)'}`;
-            if (balanceLabels[1]) balanceLabels[1].innerHTML = `<i class="fas fa-wallet"></i> ${lang === 'cn' ? '货币资产' : 'Coin Assets'}`;
-            if (balanceLabels[2]) balanceLabels[2].innerHTML = `<i class="fas fa-dollar-sign"></i> ${lang === 'cn' ? 'USDT 余额' : 'USDT Balance'}`;
+            document.querySelector('.action-card.receive .action-title').textContent = texts.receive;
+            document.querySelector('.action-card.receive .action-desc').textContent = texts.receiveDesc;
+            document.getElementById('generateWalletLink').innerHTML = `<i class="fas fa-link"></i> ${texts.generateAddress}`;
             
-            // Update wallet action cards
-            const actionCards = document.querySelectorAll('.action-card');
-            if (actionCards[0]) {
-                actionCards[0].querySelector('.action-title').textContent = lang === 'cn' ? '发送' : 'Send';
-                actionCards[0].querySelector('.action-desc').textContent = lang === 'cn' ? '发送加密货币到另一个钱包地址' : 'Send crypto to another wallet address';
+            document.querySelector('.action-card.exchange .action-title').textContent = texts.exchange;
+            document.querySelector('.action-card.exchange .action-desc').textContent = texts.exchangeDesc;
+            document.getElementById('exchangeBtn').innerHTML = `<i class="fas fa-sync-alt"></i> ${texts.exchangeNow}`;
+            
+            document.querySelector('.action-card.stake .action-title').textContent = texts.stake;
+            document.querySelector('.action-card.stake .action-desc').textContent = texts.stakeDesc;
+            document.getElementById('stakeBtn').innerHTML = `<i class="fas fa-percentage"></i> ${texts.startEarning}`;
+            
+            document.getElementById('marketSearch').placeholder = texts.searchPlaceholder;
+            const updatedText = document.getElementById('lastUpdated').textContent;
+            if (updatedText !== 'Loading...') {
+                document.getElementById('lastUpdated').textContent = texts.updated === "Updated just now" ? texts.updated : `更新于 ${new Date().toLocaleTimeString('zh-CN', {hour: '2-digit', minute: '2-digit'})}`;
             }
-            if (actionCards[1]) {
-                actionCards[1].querySelector('.action-title').textContent = lang === 'cn' ? '接收' : 'Receive';
-                actionCards[1].querySelector('.action-desc').textContent = lang === 'cn' ? '生成您的钱包地址以接收资金' : 'Generate your wallet address for receiving funds';
-            }
-            if (actionCards[2]) {
-                actionCards[2].querySelector('.action-title').textContent = lang === 'cn' ? '兑换' : 'Exchange';
-                actionCards[2].querySelector('.action-desc').textContent = lang === 'cn' ? '即时兑换加密货币' : 'Swap between cryptocurrencies instantly';
-            }
-            if (actionCards[3]) {
-                actionCards[3].querySelector('.action-title').textContent = lang === 'cn' ? '质押赚取' : 'Stake & Earn';
-                actionCards[3].querySelector('.action-desc').textContent = lang === 'cn' ? '通过质押加密货币赚取奖励' : 'Earn rewards by staking your cryptocurrencies';
-            }
             
-            // Update buttons
-            const sendAddress = document.getElementById('sendAddress');
-            if (sendAddress) sendAddress.placeholder = lang === 'cn' ? '在此粘贴钱包地址...' : 'Paste wallet address here...';
-            
-            const sendBtn = document.querySelector('.send-btn');
-            if (sendBtn) sendBtn.innerHTML = `<i class="fas fa-paper-plane"></i> ${lang === 'cn' ? '立即发送' : 'Send Now'}`;
-            
-            const generateWalletLink = document.getElementById('generateWalletLink');
-            if (generateWalletLink) generateWalletLink.innerHTML = `<i class="fas fa-link"></i> ${lang === 'cn' ? '生成地址' : 'Generate Address'}`;
-            
-            const exchangeBtn = document.getElementById('exchangeBtn');
-            if (exchangeBtn) exchangeBtn.innerHTML = `<i class="fas fa-sync-alt"></i> ${lang === 'cn' ? '立即兑换' : 'Exchange Now'}`;
-            
-            const stakeBtn = document.getElementById('stakeBtn');
-            if (stakeBtn) stakeBtn.innerHTML = `<i class="fas fa-percentage"></i> ${lang === 'cn' ? '开始赚取' : 'Start Earning'}`;
-            
-            // Update market section
-            const marketSearch = document.getElementById('marketSearch');
-            if (marketSearch) marketSearch.placeholder = lang === 'cn' ? '搜索加密货币...' : 'Search cryptocurrencies...';
-            
-            const lastUpdated = document.getElementById('lastUpdated');
-            if (lastUpdated && lastUpdated.textContent !== 'Loading...') {
-                const now = new Date();
-                const timeString = now.toLocaleTimeString(lang === 'cn' ? 'zh-CN' : 'en-US', {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                });
-                lastUpdated.textContent = `${lang === 'cn' ? '更新于' : 'Updated at'} ${timeString}`;
-            }
-            
-            // Update filter buttons
             const filterBtns = document.querySelectorAll('.filter-btn');
-            if (filterBtns[0]) filterBtns[0].textContent = lang === 'cn' ? '全部' : 'All';
-            if (filterBtns[1]) filterBtns[1].textContent = lang === 'cn' ? '上涨' : 'Gainers';
-            if (filterBtns[2]) filterBtns[2].textContent = lang === 'cn' ? '下跌' : 'Losers';
+            filterBtns[0].textContent = texts.all;
+            filterBtns[1].textContent = texts.gainers;
+            filterBtns[2].textContent = texts.losers;
             
-            // Update pending list
-            updatePendingListDisplay();
-            updatePendingCount();
-            
-            // Update recent activities
-            loadRecentActivities();
-            
-            // Update cash balance display
-            updateCashBalanceDisplay();
-            
-            // Save language setting
-            localStorage.setItem('cryptowallet_lastLanguage', lang);
-            
-            showToast(getText('languageSwitched'), 'success');
+            showToast(`Language switched to ${lang === 'en' ? 'English' : 'Chinese'}`, 'success');
         }
 
         // ==================== LOGOUT FUNCTION ====================
@@ -4157,8 +3977,8 @@
             const logoutBtn = document.querySelector('.logout-btn');
             if (logoutBtn) {
                 logoutBtn.addEventListener('click', function() {
-                    if (confirm(getText('logoutConfirm'))) {
-                        showToast(getText('loggingOut'), 'info');
+                    if (confirm('Are you sure you want to logout?')) {
+                        showToast('Logging out...', 'info');
                         
                         if (refreshInterval) {
                             clearInterval(refreshInterval);
@@ -4205,29 +4025,12 @@
             const modals = document.querySelectorAll('.modal-overlay');
             modals.forEach(modal => modal.remove());
         }
-
-        // ==================== ADMIN FUNCTIONS (for testing) ====================
-        window.adminApprove = function(transactionId) {
-            return approveTransactionManually(transactionId, true);
-        };
-
-        window.adminReject = function(transactionId) {
-            return approveTransactionManually(transactionId, false);
-        };
-
-        window.showAllPending = function() {
-            console.log('Pending Transactions:');
-            pendingTransactions.forEach(tx => {
-                console.log(`ID: ${tx.id}, Type: ${tx.type}, Details: ${tx.details}`);
-            });
-            return pendingTransactions;
-        };
-
+        
         // Global functions for inline event handlers
         window.viewCoinDetails = function(coinId) {
             const coin = marketData.find(c => c.id === coinId);
             if (coin) {
-                showToast(`${currentLanguage === 'cn' ? '正在打开' : 'Opening details for'} ${coin.name}...`, 'info');
+                showToast(`Opening details for ${coin.name}...`, 'info');
             }
         };
         
