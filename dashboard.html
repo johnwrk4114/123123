@@ -883,7 +883,37 @@
             color: white;
         }
 
-        /* ===== ACTIVITY SECTION ===== */
+        /* Buy Button in Market Table */
+        .buy-btn {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--success);
+            padding: 6px 12px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        .buy-btn:hover {
+            background: var(--success);
+            color: white;
+        }
+
+        /* ===== ACTIVITIES CONTAINER ===== */
+        .activities-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 1200px) {
+            .activities-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
         .activity-section {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
@@ -904,6 +934,7 @@
 
         .activity-list {
             margin-top: 20px;
+            min-height: 200px;
         }
 
         .activity-item {
@@ -937,6 +968,11 @@
             color: var(--danger);
         }
 
+        .activity-icon.pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--secondary);
+        }
+
         .activity-details {
             flex: 1;
         }
@@ -962,6 +998,31 @@
 
         .activity-amount.negative {
             color: var(--danger);
+        }
+
+        .activity-amount.pending-amount {
+            color: var(--secondary);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--gray);
+        }
+
+        .empty-state i {
+            font-size: 40px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .pending-count {
+            background: var(--secondary);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
         }
 
         /* ===== TOAST NOTIFICATION ===== */
@@ -1403,6 +1464,13 @@
             color: var(--gray);
             font-size: 14px;
         }
+
+        /* Cash Balance Display */
+        .cash-balance-display {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--card-border);
+        }
     </style>
 </head>
 <body>
@@ -1531,7 +1599,7 @@
                                 <span class="change-amount positive" id="dailyChange">+$ 0.00</span>
                                 <span class="change-period">(24h change)</span>
                             </div>
-                            <div class="balance-chart" id="balanceChart"></div>
+                            <!-- Cash Balance Display will be added here by JavaScript -->
                         </div>
                         
                         <div class="balance-card secondary">
@@ -1674,7 +1742,6 @@
                                 </tr>
                             </thead>
                             <tbody id="marketTableBody">
-                                <!-- Real-time data will be loaded here -->
                                 <tr>
                                     <td colspan="6" class="loading-spinner">
                                         <i class="fas fa-spinner fa-spin"></i> Loading live market data...
@@ -1695,56 +1762,75 @@
                     </div>
                 </div>
                 
-                <!-- Recent Activity -->
-                <div class="activity-section">
-                    <div class="section-header">
-                        <h2 class="section-title">Recent Activity</h2>
-                        <a href="#" class="view-all" id="viewAllActivity">View All <i class="fas fa-arrow-right"></i></a>
+                <!-- Recent Activity & Pending Transactions -->
+                <div class="activities-container">
+                    <!-- Recent Activity -->
+                    <div class="activity-section">
+                        <div class="section-header">
+                            <h2 class="section-title">Recent Activity</h2>
+                            <a href="#" class="view-all" id="viewAllActivity">View All <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                        
+                        <div class="activity-list" id="recentActivityList">
+                            <div class="activity-item">
+                                <div class="activity-icon success">
+                                    <i class="fas fa-arrow-down"></i>
+                                </div>
+                                <div class="activity-details">
+                                    <div class="activity-title">Received Bitcoin</div>
+                                    <div class="activity-meta">From: 0x1a2b...3c4d • 2 hours ago</div>
+                                </div>
+                                <div class="activity-amount positive">+0.05 BTC</div>
+                            </div>
+                            
+                            <div class="activity-item">
+                                <div class="activity-icon sent">
+                                    <i class="fas fa-arrow-up"></i>
+                                </div>
+                                <div class="activity-details">
+                                    <div class="activity-title">Sent Ethereum</div>
+                                    <div class="activity-meta">To: 0x5e6f...7g8h • 5 hours ago</div>
+                                </div>
+                                <div class="activity-amount negative">-2.1 ETH</div>
+                            </div>
+                            
+                            <div class="activity-item">
+                                <div class="activity-icon success">
+                                    <i class="fas fa-exchange-alt"></i>
+                                </div>
+                                <div class="activity-details">
+                                    <div class="activity-title">Exchange Completed</div>
+                                    <div class="activity-meta">BTC → ETH • Yesterday</div>
+                                </div>
+                                <div class="activity-amount neutral">Exchange</div>
+                            </div>
+                            
+                            <div class="activity-item">
+                                <div class="activity-icon success">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div class="activity-details">
+                                    <div class="activity-title">Staking Rewards</div>
+                                    <div class="activity-meta">ADA Staking • 2 days ago</div>
+                                </div>
+                                <div class="activity-amount positive">+42.5 ADA</div>
+                            </div>
+                        </div>
                     </div>
                     
-                    <div class="activity-list" id="recentActivityList">
-                        <div class="activity-item">
-                            <div class="activity-icon success">
-                                <i class="fas fa-arrow-down"></i>
-                            </div>
-                            <div class="activity-details">
-                                <div class="activity-title">Received Bitcoin</div>
-                                <div class="activity-meta">From: 0x1a2b...3c4d • 2 hours ago</div>
-                            </div>
-                            <div class="activity-amount positive">+0.05 BTC</div>
+                    <!-- Pending List -->
+                    <div class="activity-section">
+                        <div class="section-header">
+                            <h2 class="section-title">Pending Transactions</h2>
+                            <span class="pending-count" id="pendingCount">0 pending</span>
                         </div>
                         
-                        <div class="activity-item">
-                            <div class="activity-icon sent">
-                                <i class="fas fa-arrow-up"></i>
+                        <div class="activity-list" id="pendingList">
+                            <div class="empty-state">
+                                <i class="fas fa-clock"></i>
+                                <p>No pending transactions</p>
+                                <small>Transactions will appear here waiting for approval</small>
                             </div>
-                            <div class="activity-details">
-                                <div class="activity-title">Sent Ethereum</div>
-                                <div class="activity-meta">To: 0x5e6f...7g8h • 5 hours ago</div>
-                            </div>
-                            <div class="activity-amount negative">-2.1 ETH</div>
-                        </div>
-                        
-                        <div class="activity-item">
-                            <div class="activity-icon success">
-                                <i class="fas fa-exchange-alt"></i>
-                            </div>
-                            <div class="activity-details">
-                                <div class="activity-title">Exchange Completed</div>
-                                <div class="activity-meta">BTC → ETH • Yesterday</div>
-                            </div>
-                            <div class="activity-amount neutral">Exchange</div>
-                        </div>
-                        
-                        <div class="activity-item">
-                            <div class="activity-icon success">
-                                <i class="fas fa-chart-line"></i>
-                            </div>
-                            <div class="activity-details">
-                                <div class="activity-title">Staking Rewards</div>
-                                <div class="activity-meta">ADA Staking • 2 days ago</div>
-                            </div>
-                            <div class="activity-amount positive">+42.5 ADA</div>
                         </div>
                     </div>
                 </div>
@@ -1760,13 +1846,14 @@
         let marketData = [];
         let filteredMarketData = [];
         let userAssets = [];
+        let pendingTransactions = [];
+        let cashBalance = 50000.00;
         let refreshInterval;
         let currentPage = 1;
         const coinsPerPage = 10;
         
         // CoinGecko API endpoints
         const COINGECKO_API = {
-            // Public endpoints (no API key needed)
             MARKET_DATA: 'https://api.coingecko.com/api/v3/coins/markets',
             GLOBAL_DATA: 'https://api.coingecko.com/api/v3/global',
             COIN_LIST: 'https://api.coingecko.com/api/v3/coins/list'
@@ -1791,6 +1878,16 @@
             { period: '18 month', apy: 68.4 }
         ];
 
+        // Transaction types
+        const TransactionType = {
+            SEND: 'send',
+            RECEIVE: 'receive',
+            EXCHANGE: 'exchange',
+            STAKE: 'stake',
+            BUY: 'buy',
+            SELL: 'sell'
+        };
+
         // ==================== DASHBOARD INITIALIZATION ====================
         document.addEventListener('DOMContentLoaded', function() {
             console.log('CryptoWallet Dashboard Initialized');
@@ -1808,12 +1905,20 @@
             initLogout();
             initPagination();
             
+            // Initialize new features
+            updateCashBalanceDisplay();
+            updatePendingListDisplay();
+            updatePendingCount();
+            
             // Load initial data
             loadMarketData();
             updateAllBalances();
             
             // Start auto-refresh for market data
             startMarketDataAutoRefresh();
+            
+            // Start simulation of admin approval
+            simulateAdminApproval();
         });
 
         // ==================== API FUNCTIONS ====================
@@ -1821,7 +1926,6 @@
             try {
                 showToast('Loading live market data...', 'info');
                 
-                // Fetch market data from CoinGecko
                 const response = await fetch(
                     `${COINGECKO_API.MARKET_DATA}?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=true&price_change_percentage=24h`
                 );
@@ -1833,13 +1937,8 @@
                 marketData = await response.json();
                 filteredMarketData = [...marketData];
                 
-                // Update user assets with real prices
                 updateUserAssetsWithMarketPrices();
-                
-                // Render market table
                 renderMarketDataPage();
-                
-                // Update all balances
                 updateAllBalances();
                 
                 showToast('Market data loaded successfully!', 'success');
@@ -1848,14 +1947,11 @@
             } catch (error) {
                 console.error('Error loading market data:', error);
                 showToast('Failed to load market data. Using simulated data.', 'error');
-                
-                // Fallback to simulated data
                 loadSimulatedMarketData();
             }
         }
         
         function loadSimulatedMarketData() {
-            // Fallback simulated data with realistic prices
             const simulatedData = [
                 { 
                     id: 'bitcoin', 
@@ -1887,7 +1983,6 @@
                     total_volume: 70000000000,
                     sparkline_in_7d: { price: Array(168).fill(1.00) }
                 },
-                // Add more coins as needed
                 { id: 'binancecoin', symbol: 'bnb', name: 'BNB', current_price: 585.32, price_change_percentage_24h: 2.5, market_cap: 90000000000, total_volume: 2500000000 },
                 { id: 'solana', symbol: 'sol', name: 'Solana', current_price: 185.75, price_change_percentage_24h: -1.2, market_cap: 82000000000, total_volume: 3500000000 },
                 { id: 'ripple', symbol: 'xrp', name: 'XRP', current_price: 0.62, price_change_percentage_24h: 0.8, market_cap: 34000000000, total_volume: 2200000000 },
@@ -1932,13 +2027,11 @@
             const refreshBtn = document.getElementById('refreshBalance');
             const viewAllAssetsBtn = document.getElementById('viewAllAssets');
             
-            // Refresh balance button
             if (refreshBtn) {
                 refreshBtn.addEventListener('click', function() {
                     this.classList.add('refreshing');
                     this.disabled = true;
                     
-                    // Reload market data
                     loadMarketData().finally(() => {
                         this.classList.remove('refreshing');
                         this.disabled = false;
@@ -1947,7 +2040,6 @@
                 });
             }
             
-            // View all assets button
             if (viewAllAssetsBtn) {
                 viewAllAssetsBtn.addEventListener('click', showAllAssetsModal);
             }
@@ -1966,14 +2058,12 @@
             userAssets.forEach(asset => {
                 const price = asset.price || 0;
                 totalUSD += asset.balance * price;
-                // For simulation, use a small random change
                 previousTotalUSD += asset.balance * price * (1 + (Math.random() - 0.5) * 0.01);
             });
             
             const change = totalUSD - previousTotalUSD;
             const changePercent = ((change / previousTotalUSD) * 100).toFixed(2);
             
-            // Update total assets display
             const totalAmount = document.getElementById('totalBalanceAmount');
             if (totalAmount) {
                 totalAmount.textContent = `$ ${totalUSD.toLocaleString('en-US', {
@@ -1981,19 +2071,56 @@
                     maximumFractionDigits: 2
                 })}`;
                 
-                // Update 24h change
                 const changeElement = document.getElementById('dailyChange');
                 if (changeElement) {
                     const isPositive = change >= 0;
                     changeElement.textContent = `${isPositive ? '+' : '-'}$${Math.abs(change).toFixed(2)}`;
                     changeElement.className = `change-amount ${isPositive ? 'positive' : 'negative'}`;
                     
-                    // Update trend indicator
                     const trendIndicator = document.querySelector('.trend-indicator');
                     if (trendIndicator) {
                         trendIndicator.innerHTML = `<i class="fas fa-arrow-${isPositive ? 'up' : 'down'}"></i> ${Math.abs(changePercent)}% today`;
                         trendIndicator.className = `trend-indicator ${isPositive ? 'positive' : 'negative'}`;
                     }
+                }
+            }
+            
+            updateCashBalanceDisplay();
+        }
+        
+        function updateCashBalanceDisplay() {
+            let cashBalanceElement = document.querySelector('.cash-balance-display');
+            
+            if (!cashBalanceElement) {
+                const totalAssetsCard = document.querySelector('.balance-card.main');
+                if (totalAssetsCard) {
+                    const cashBalanceContainer = document.createElement('div');
+                    cashBalanceContainer.className = 'cash-balance-display';
+                    cashBalanceContainer.style.marginTop = '20px';
+                    cashBalanceContainer.style.paddingTop = '20px';
+                    cashBalanceContainer.style.borderTop = '1px solid var(--card-border)';
+                    
+                    cashBalanceContainer.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                            <span style="color: var(--gray); font-size: 14px;">
+                                <i class="fas fa-money-bill-wave"></i> Account Cash Balance (USD)
+                            </span>
+                            <span style="font-weight: 600; color: var(--success);" id="cashBalanceAmount">
+                                $${cashBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+                            </span>
+                        </div>
+                        <small style="color: var(--gray); font-size: 12px;">Available for trading and withdrawals</small>
+                    `;
+                    
+                    const balanceAmount = totalAssetsCard.querySelector('.balance-amount');
+                    if (balanceAmount) {
+                        balanceAmount.parentNode.insertBefore(cashBalanceContainer, balanceAmount.nextElementSibling);
+                    }
+                }
+            } else {
+                const cashBalanceAmount = document.getElementById('cashBalanceAmount');
+                if (cashBalanceAmount) {
+                    cashBalanceAmount.textContent = `$${cashBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
                 }
             }
         }
@@ -2002,10 +2129,8 @@
             const assetList = document.getElementById('coinAssetsList');
             if (!assetList) return;
             
-            // Clear current list
             assetList.innerHTML = '';
             
-            // Show only top 3 assets by value
             const topAssets = [...userAssets]
                 .filter(asset => asset.balance > 0)
                 .map(asset => {
@@ -2061,7 +2186,6 @@
             }
             
             if (usdtChange) {
-                // USDT is stablecoin, minimal changes
                 const change = (Math.random() - 0.5) * 0.02;
                 const isPositive = change >= 0;
                 usdtChange.textContent = `${isPositive ? '+' : '-'}$${Math.abs(change).toFixed(4)}`;
@@ -2096,7 +2220,7 @@
         function showAllAssetsModal() {
             const modalHTML = `
                 <div class="modal-overlay" id="allAssetsModal">
-                    <div class="modal">
+                    <div class="modal" style="max-width: 700px;">
                         <div class="modal-header">
                             <h3 class="modal-title">All Coin Assets</h3>
                             <button class="modal-close" onclick="closeModal()">×</button>
@@ -2107,6 +2231,9 @@
                             </div>
                         </div>
                         <div class="modal-footer">
+                            <button class="modal-btn secondary" onclick="showSellModal()">
+                                <i class="fas fa-money-bill-wave"></i> Sell
+                            </button>
                             <button class="modal-btn secondary" onclick="closeModal()">Close</button>
                         </div>
                     </div>
@@ -2297,7 +2424,7 @@
                         </div>
                         <div class="modal-footer">
                             <button class="modal-btn secondary" onclick="closeModal()">Cancel</button>
-                            <button class="modal-btn primary" id="confirmSendBtn">Confirm Send</button>
+                            <button class="modal-btn primary" id="confirmSendBtn">Submit for Approval</button>
                         </div>
                     </div>
                 </div>
@@ -2318,7 +2445,6 @@
             const confirmBtn = document.getElementById('confirmSendBtn');
             const availableLabel = amountInput.nextElementSibling;
             
-            // Update when coin selection changes
             coinSelect.addEventListener('change', function() {
                 const selectedCoinId = this.value;
                 const selectedAsset = userAssets.find(asset => asset.id === selectedCoinId);
@@ -2331,7 +2457,6 @@
                 }
             });
             
-            // Update when amount changes
             amountInput.addEventListener('input', function() {
                 const selectedCoinId = coinSelect.value;
                 const selectedAsset = userAssets.find(asset => asset.id === selectedCoinId);
@@ -2341,7 +2466,6 @@
                 }
             });
             
-            // Confirm send button
             confirmBtn.addEventListener('click', function() {
                 const address = document.getElementById('modalSendAddress').value;
                 const coinId = coinSelect.value;
@@ -2358,19 +2482,21 @@
                     return;
                 }
                 
-                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-                this.disabled = true;
+                // Create pending transaction
+                const transaction = {
+                    id: 'tx_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                    type: TransactionType.SEND,
+                    coinId: coinId,
+                    amount: amount,
+                    details: `Send ${amount} ${selectedAsset.symbol.toUpperCase()} to ${address.substring(0, 12)}...`,
+                    timestamp: new Date().toISOString()
+                };
                 
-                setTimeout(() => {
-                    selectedAsset.balance -= amount;
-                    updateAllBalances();
-                    addToActivityLog('send', `${amount} ${selectedAsset.symbol.toUpperCase()} to ${address.substring(0, 12)}...`);
-                    closeModal();
-                    showToast(`Successfully sent ${amount} ${selectedAsset.symbol.toUpperCase()}!`, 'success');
-                }, 2000);
+                addToPendingList(transaction);
+                closeModal();
+                showToast(`Send request submitted! Waiting for approval.`, 'info');
             });
             
-            // Initialize with first coin
             const initialAsset = userAssets.find(asset => asset.id === coinSelect.value);
             if (initialAsset) {
                 updateSendPriceDisplay(initialAsset);
@@ -2399,7 +2525,7 @@
             
             const confirmBtn = document.getElementById('confirmSendBtn');
             if (confirmBtn) {
-                confirmBtn.textContent = `Send $${totalValue.toFixed(2)}`;
+                confirmBtn.textContent = `Submit Send for $${totalValue.toFixed(2)}`;
             }
         }
         
@@ -2457,7 +2583,7 @@
                         </div>
                         <div class="modal-footer">
                             <button class="modal-btn secondary" onclick="closeModal()">Cancel</button>
-                            <button class="modal-btn primary" id="confirmExchangeBtn">Confirm Exchange</button>
+                            <button class="modal-btn primary" id="confirmExchangeBtn">Submit for Approval</button>
                         </div>
                     </div>
                 </div>
@@ -2479,7 +2605,39 @@
             const confirmBtn = document.getElementById('confirmExchangeBtn');
             const availableLabel = amountInput.nextElementSibling;
             
-            // Update when "From" selection changes
+            function updateExchangeRate() {
+                const fromCoinId = fromSelect.value;
+                const toCoinId = toSelect.value;
+                const amount = parseFloat(amountInput.value) || 0;
+                
+                if (!fromCoinId || !toCoinId) {
+                    exchangeRateDisplay.textContent = 'Select coins';
+                    estimatedReceiveDisplay.textContent = '0.00';
+                    return;
+                }
+                
+                const fromCoin = marketData.find(coin => coin.id === fromCoinId);
+                const toCoin = marketData.find(coin => coin.id === toCoinId);
+                
+                if (!fromCoin || !toCoin) {
+                    exchangeRateDisplay.textContent = 'Rate unavailable';
+                    estimatedReceiveDisplay.textContent = '0.00';
+                    return;
+                }
+                
+                const exchangeRate = fromCoin.current_price / toCoin.current_price;
+                const receiveAmount = amount * exchangeRate;
+                
+                exchangeRateDisplay.textContent = `1 ${fromCoin.symbol.toUpperCase()} = ${exchangeRate.toFixed(6)} ${toCoin.symbol.toUpperCase()}`;
+                estimatedReceiveDisplay.textContent = `${receiveAmount.toFixed(6)} ${toCoin.symbol.toUpperCase()}`;
+                
+                if (confirmBtn && amount > 0) {
+                    confirmBtn.textContent = `Submit Exchange for ${receiveAmount.toFixed(6)} ${toCoin.symbol.toUpperCase()}`;
+                } else {
+                    confirmBtn.textContent = 'Submit for Approval';
+                }
+            }
+            
             fromSelect.addEventListener('change', function() {
                 const selectedCoinId = this.value;
                 const selectedAsset = userAssets.find(asset => asset.id === selectedCoinId);
@@ -2491,13 +2649,9 @@
                 }
             });
             
-            // Update when "To" selection changes
             toSelect.addEventListener('change', updateExchangeRate);
-            
-            // Update when amount changes
             amountInput.addEventListener('input', updateExchangeRate);
             
-            // Confirm exchange button
             confirmBtn.addEventListener('click', function() {
                 const fromCoinId = fromSelect.value;
                 const toCoinId = toSelect.value;
@@ -2519,86 +2673,34 @@
                     return;
                 }
                 
-                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-                this.disabled = true;
-                
                 const fromCoin = marketData.find(coin => coin.id === fromCoinId);
                 const toCoin = marketData.find(coin => coin.id === toCoinId);
                 
                 if (!fromCoin || !toCoin) {
                     showToast('Error getting exchange rate', 'error');
-                    this.innerHTML = 'Confirm Exchange';
-                    this.disabled = false;
                     return;
                 }
                 
                 const receiveAmount = (amount * fromCoin.current_price) / toCoin.current_price;
                 
-                setTimeout(() => {
-                    fromAsset.balance -= amount;
-                    
-                    let toAsset = userAssets.find(asset => asset.id === toCoinId);
-                    if (toAsset) {
-                        toAsset.balance += receiveAmount;
-                        toAsset.price = toCoin.current_price;
-                    } else {
-                        userAssets.push({
-                            id: toCoinId,
-                            symbol: toCoin.symbol,
-                            name: toCoin.name,
-                            balance: receiveAmount,
-                            price: toCoin.current_price
-                        });
-                    }
-                    
-                    updateAllBalances();
-                    addToActivityLog('exchange', `${amount} ${fromAsset.symbol.toUpperCase()} → ${receiveAmount.toFixed(6)} ${toCoin.symbol.toUpperCase()}`);
-                    closeModal();
-                    showToast(`Exchange successful! Received ${receiveAmount.toFixed(6)} ${toCoin.symbol.toUpperCase()}`, 'success');
-                }, 2000);
+                // Create pending transaction
+                const transaction = {
+                    id: 'tx_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                    type: TransactionType.EXCHANGE,
+                    coinId: fromCoinId,
+                    toCoinId: toCoinId,
+                    amount: amount,
+                    receiveAmount: receiveAmount,
+                    details: `Exchange ${amount} ${fromAsset.symbol.toUpperCase()} → ${receiveAmount.toFixed(6)} ${toCoin.symbol.toUpperCase()}`,
+                    timestamp: new Date().toISOString()
+                };
+                
+                addToPendingList(transaction);
+                closeModal();
+                showToast(`Exchange request submitted! Waiting for approval.`, 'info');
             });
             
             updateExchangeRate();
-        }
-        
-        function updateExchangeRate() {
-            const fromSelect = document.getElementById('exchangeFromSelect');
-            const toSelect = document.getElementById('exchangeToSelect');
-            const amountInput = document.getElementById('exchangeAmount');
-            const exchangeRateDisplay = document.getElementById('exchangeRateDisplay');
-            const estimatedReceiveDisplay = document.getElementById('estimatedReceiveDisplay');
-            
-            const fromCoinId = fromSelect.value;
-            const toCoinId = toSelect.value;
-            const amount = parseFloat(amountInput.value) || 0;
-            
-            if (!fromCoinId || !toCoinId) {
-                exchangeRateDisplay.textContent = 'Select coins';
-                estimatedReceiveDisplay.textContent = '0.00';
-                return;
-            }
-            
-            const fromCoin = marketData.find(coin => coin.id === fromCoinId);
-            const toCoin = marketData.find(coin => coin.id === toCoinId);
-            
-            if (!fromCoin || !toCoin) {
-                exchangeRateDisplay.textContent = 'Rate unavailable';
-                estimatedReceiveDisplay.textContent = '0.00';
-                return;
-            }
-            
-            const exchangeRate = fromCoin.current_price / toCoin.current_price;
-            const receiveAmount = amount * exchangeRate;
-            
-            exchangeRateDisplay.textContent = `1 ${fromCoin.symbol.toUpperCase()} = ${exchangeRate.toFixed(6)} ${toCoin.symbol.toUpperCase()}`;
-            estimatedReceiveDisplay.textContent = `${receiveAmount.toFixed(6)} ${toCoin.symbol.toUpperCase()}`;
-            
-            const confirmBtn = document.getElementById('confirmExchangeBtn');
-            if (confirmBtn && amount > 0) {
-                confirmBtn.textContent = `Exchange for ${receiveAmount.toFixed(6)} ${toCoin.symbol.toUpperCase()}`;
-            } else {
-                confirmBtn.textContent = 'Confirm Exchange';
-            }
         }
         
         function showStakeModal() {
@@ -2663,7 +2765,7 @@
                         </div>
                         <div class="modal-footer">
                             <button class="modal-btn secondary" onclick="closeModal()">Cancel</button>
-                            <button class="modal-btn primary" id="confirmStakeBtn">Start Staking</button>
+                            <button class="modal-btn primary" id="confirmStakeBtn">Submit for Approval</button>
                         </div>
                     </div>
                 </div>
@@ -2728,16 +2830,21 @@
                     return;
                 }
                 
-                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-                this.disabled = true;
+                // Create pending transaction
+                const transaction = {
+                    id: 'tx_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                    type: TransactionType.STAKE,
+                    coinId: coinId,
+                    amount: amount,
+                    period: selectedPeriod,
+                    apy: selectedAPY,
+                    details: `Stake ${amount} ${selectedAsset.symbol.toUpperCase()} for ${selectedPeriod} (APY: ${selectedAPY}%)`,
+                    timestamp: new Date().toISOString()
+                };
                 
-                setTimeout(() => {
-                    selectedAsset.balance -= amount;
-                    updateAllBalances();
-                    addToActivityLog('stake', `${amount} ${selectedAsset.symbol.toUpperCase()} staked for ${selectedPeriod} (APY: ${selectedAPY}%)`);
-                    closeModal();
-                    showToast(`Staking started! ${amount} ${selectedAsset.symbol.toUpperCase()} locked for ${selectedPeriod}`, 'success');
-                }, 2000);
+                addToPendingList(transaction);
+                closeModal();
+                showToast(`Staking request submitted! Waiting for approval.`, 'info');
             });
             
             const initialAsset = userAssets.find(asset => asset.id === coinSelect.value);
@@ -2760,7 +2867,7 @@
                 
                 annualRewardDisplay.textContent = `$${annualReward.toFixed(2)}`;
                 maturityValueDisplay.textContent = `$${totalValueAtMaturity.toFixed(2)}`;
-                confirmBtn.textContent = `Stake for ${selectedPeriod}`;
+                confirmBtn.textContent = `Submit Staking for ${selectedPeriod}`;
             }
             
             function updateStakePriceDisplay(asset) {
@@ -2772,9 +2879,164 @@
             }
         }
 
+        // ==================== SELL FUNCTIONALITY ====================
+        function showSellModal(coinId = null) {
+            const sellableAssets = userAssets.filter(asset => asset.balance > 0);
+            
+            if (sellableAssets.length === 0) {
+                showToast('No assets available to sell', 'error');
+                return;
+            }
+            
+            const modalHTML = `
+                <div class="modal-overlay" id="sellModal">
+                    <div class="modal">
+                        <div class="modal-header">
+                            <h3 class="modal-title">Sell Cryptocurrency</h3>
+                            <button class="modal-close" onclick="closeModal()">×</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="modal-input-group">
+                                <label class="modal-label">Select Coin to Sell</label>
+                                <select class="modal-select" id="sellCoinSelect">
+                                    ${sellableAssets.map(asset => 
+                                        `<option value="${asset.id}" ${coinId === asset.id ? 'selected' : ''}>
+                                            ${asset.name} (${asset.symbol.toUpperCase()}) - Balance: ${formatBalance(asset.balance, asset.symbol)}
+                                        </option>`
+                                    ).join('')}
+                                </select>
+                            </div>
+                            
+                            <div class="modal-input-group">
+                                <label class="modal-label">Amount / Lot Size</label>
+                                <input type="number" class="modal-input" id="sellAmount" placeholder="0.00" step="0.000001" min="0" max="${sellableAssets[0].balance}">
+                                <small style="color: var(--gray); display: block; margin-top: 5px;">
+                                    Available: <span id="sellAvailable">${formatBalance(sellableAssets[0].balance, sellableAssets[0].symbol)}</span>
+                                </small>
+                            </div>
+                            
+                            <div class="modal-info-box" id="sellInfoBox">
+                                <div class="modal-info-row">
+                                    <span class="modal-info-label">Current Price:</span>
+                                    <span class="modal-info-value" id="sellCurrentPrice">Loading...</span>
+                                </div>
+                                <div class="modal-info-row">
+                                    <span class="modal-info-label">Total Value:</span>
+                                    <span class="modal-info-value positive" id="sellTotalValue">$0.00</span>
+                                </div>
+                                <div class="modal-info-row">
+                                    <span class="modal-info-label">You will receive:</span>
+                                    <span class="modal-info-value positive" id="sellReceiveAmount">$0.00 USD</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="modal-btn secondary" onclick="closeModal()">Cancel</button>
+                            <button class="modal-btn primary" id="confirmSellBtn">Submit Sell Order</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            const existingModal = document.getElementById('sellModal');
+            if (existingModal) existingModal.remove();
+            
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            initializeSellModal();
+        }
+        
+        function initializeSellModal() {
+            const coinSelect = document.getElementById('sellCoinSelect');
+            const amountInput = document.getElementById('sellAmount');
+            const availableSpan = document.getElementById('sellAvailable');
+            const currentPriceDisplay = document.getElementById('sellCurrentPrice');
+            const totalValueDisplay = document.getElementById('sellTotalValue');
+            const receiveAmountDisplay = document.getElementById('sellReceiveAmount');
+            const confirmBtn = document.getElementById('confirmSellBtn');
+            
+            function updateSellCalculations() {
+                const selectedCoinId = coinSelect.value;
+                const amount = parseFloat(amountInput.value) || 0;
+                const selectedAsset = userAssets.find(asset => asset.id === selectedCoinId);
+                
+                if (!selectedAsset) return;
+                
+                const price = selectedAsset.price || 0;
+                const totalValue = amount * price;
+                
+                currentPriceDisplay.textContent = `$${price.toLocaleString('en-US', {
+                    minimumFractionDigits: price < 1 ? 6 : 2,
+                    maximumFractionDigits: price < 1 ? 6 : 2
+                })}`;
+                
+                totalValueDisplay.textContent = `$${totalValue.toLocaleString('en-US', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })}`;
+                
+                receiveAmountDisplay.textContent = `$${totalValue.toLocaleString('en-US', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })} USD`;
+                
+                confirmBtn.textContent = `Submit Sell for $${totalValue.toFixed(2)}`;
+            }
+            
+            coinSelect.addEventListener('change', function() {
+                const selectedCoinId = this.value;
+                const selectedAsset = userAssets.find(asset => asset.id === selectedCoinId);
+                
+                if (selectedAsset) {
+                    availableSpan.textContent = formatBalance(selectedAsset.balance, selectedAsset.symbol);
+                    amountInput.max = selectedAsset.balance;
+                    updateSellCalculations();
+                }
+            });
+            
+            amountInput.addEventListener('input', updateSellCalculations);
+            
+            confirmBtn.addEventListener('click', function() {
+                const coinId = coinSelect.value;
+                const amount = parseFloat(amountInput.value);
+                
+                if (!amount || amount <= 0) {
+                    showToast('Please enter a valid amount', 'error');
+                    return;
+                }
+                
+                const selectedAsset = userAssets.find(asset => asset.id === coinId);
+                if (amount > selectedAsset.balance) {
+                    showToast('Insufficient balance', 'error');
+                    return;
+                }
+                
+                const price = selectedAsset.price || 0;
+                const totalValue = amount * price;
+                
+                // Create pending transaction
+                const transaction = {
+                    id: 'tx_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                    type: TransactionType.SELL,
+                    coinId: coinId,
+                    amount: amount,
+                    totalValue: totalValue,
+                    details: `Sell ${amount} ${selectedAsset.symbol.toUpperCase()} for $${totalValue.toFixed(2)}`,
+                    timestamp: new Date().toISOString()
+                };
+                
+                addToPendingList(transaction);
+                closeModal();
+                showToast(`Sell order submitted! Waiting for approval.`, 'info');
+            });
+            
+            const initialAsset = userAssets.find(asset => asset.id === coinSelect.value);
+            if (initialAsset) {
+                updateSellCalculations();
+            }
+        }
+
         // ==================== MARKET DATA FUNCTIONS ====================
         function initMarketData() {
-            // Setup search functionality
             const searchInput = document.getElementById('marketSearch');
             if (searchInput) {
                 searchInput.addEventListener('input', function(e) {
@@ -2782,7 +3044,6 @@
                 });
             }
             
-            // Setup filter buttons
             const filterBtns = document.querySelectorAll('.filter-btn');
             filterBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
@@ -2793,7 +3054,6 @@
                 });
             });
             
-            // Setup sort functionality
             const sortHeaders = document.querySelectorAll('.sortable');
             sortHeaders.forEach(header => {
                 header.addEventListener('click', function() {
@@ -2901,16 +3161,20 @@
                     <td>$${formattedMarketCap}</td>
                     <td>$${formattedVolume}</td>
                     <td>
-                        <button class="view-btn" onclick="viewCoinDetails('${coin.id}')">
-                            <i class="fas fa-chart-line"></i> View
-                        </button>
+                        <div class="action-buttons">
+                            <button class="view-btn" onclick="viewCoinDetails('${coin.id}')">
+                                <i class="fas fa-chart-line"></i> View
+                            </button>
+                            <button class="buy-btn" onclick="showBuyModal('${coin.id}')">
+                                <i class="fas fa-shopping-cart"></i> Buy
+                            </button>
+                        </div>
                     </td>
                 `;
                 
                 tbody.appendChild(row);
             });
             
-            // Update pagination controls
             const totalPages = Math.ceil(filteredMarketData.length / coinsPerPage);
             
             if (prevBtn) {
@@ -2927,7 +3191,7 @@
         }
         
         function filterMarketData(searchTerm) {
-            currentPage = 1; // Reset to first page when filtering
+            currentPage = 1;
             
             if (!searchTerm) {
                 filteredMarketData = [...marketData];
@@ -2942,7 +3206,7 @@
         }
         
         function applyMarketFilter(filter) {
-            currentPage = 1; // Reset to first page when filtering
+            currentPage = 1;
             
             switch(filter) {
                 case 'gainers':
@@ -2990,7 +3254,6 @@
         }
         
         function startMarketDataAutoRefresh() {
-            // Refresh market data every 60 seconds
             refreshInterval = setInterval(async () => {
                 try {
                     const response = await fetch(
@@ -3000,7 +3263,6 @@
                     if (response.ok) {
                         const newData = await response.json();
                         
-                        // Update prices in marketData
                         newData.forEach(newCoin => {
                             const existingCoin = marketData.find(c => c.id === newCoin.id);
                             if (existingCoin) {
@@ -3012,13 +3274,11 @@
                                 existingCoin.market_cap = newCoin.market_cap;
                                 existingCoin.total_volume = newCoin.total_volume;
                                 
-                                // Update user assets with new prices
                                 const userAsset = userAssets.find(a => a.id === newCoin.id);
                                 if (userAsset) {
                                     userAsset.price = newPrice;
                                 }
                                 
-                                // Update price cell with animation
                                 const priceCell = document.getElementById(`price-${newCoin.id}`);
                                 if (priceCell) {
                                     const formattedPrice = newPrice.toLocaleString('en-US', {
@@ -3028,7 +3288,6 @@
                                         maximumFractionDigits: newPrice < 1 ? 4 : 2
                                     });
                                     
-                                    // Add animation class based on price change
                                     if (newPrice > oldPrice) {
                                         priceCell.classList.add('price-up');
                                         setTimeout(() => priceCell.classList.remove('price-up'), 2000);
@@ -3042,14 +3301,13 @@
                             }
                         });
                         
-                        // Update all balances with new prices
                         updateAllBalances();
                         updateLastUpdated();
                     }
                 } catch (error) {
                     console.error('Error refreshing market data:', error);
                 }
-            }, 60000); // 60 seconds
+            }, 60000);
         }
         
         function formatLargeNumber(num) {
@@ -3059,6 +3317,461 @@
             if (num >= 1e6) return (num / 1e6).toFixed(2) + 'M';
             if (num >= 1e3) return (num / 1e3).toFixed(2) + 'K';
             return num.toFixed(2);
+        }
+
+        // ==================== BUY FUNCTIONALITY ====================
+        function showBuyModal(coinId) {
+            const coin = marketData.find(c => c.id === coinId);
+            if (!coin) {
+                showToast('Coin not found', 'error');
+                return;
+            }
+            
+            const modalHTML = `
+                <div class="modal-overlay" id="buyModal">
+                    <div class="modal">
+                        <div class="modal-header">
+                            <h3 class="modal-title">Buy ${coin.name}</h3>
+                            <button class="modal-close" onclick="closeModal()">×</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="coin-info-header" style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--card-border);">
+                                <div class="coin-icon" style="${getCoinGradient(coin.symbol)} width: 40px; height: 40px; font-size: 16px;">
+                                    ${coin.symbol.toUpperCase().charAt(0)}
+                                </div>
+                                <div>
+                                    <div style="font-weight: 600; font-size: 18px;">${coin.name}</div>
+                                    <div style="color: var(--gray); font-size: 14px;">${coin.symbol.toUpperCase()}</div>
+                                </div>
+                                <div style="margin-left: auto; text-align: right;">
+                                    <div style="font-weight: 600; font-size: 18px;">$${coin.current_price.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+                                    <div style="color: ${coin.price_change_percentage_24h >= 0 ? 'var(--success)' : 'var(--danger)'}; font-size: 14px;">
+                                        ${coin.price_change_percentage_24h >= 0 ? '▲' : '▼'} ${Math.abs(coin.price_change_percentage_24h || 0).toFixed(2)}%
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="modal-input-group">
+                                <label class="modal-label">Amount / Lot Size</label>
+                                <input type="number" class="modal-input" id="buyAmount" placeholder="0.00" step="0.000001" min="0">
+                                <small style="color: var(--gray); display: block; margin-top: 5px;">
+                                    Enter the amount of ${coin.symbol.toUpperCase()} you want to buy
+                                </small>
+                            </div>
+                            
+                            <div class="modal-info-box" id="buyInfoBox">
+                                <div class="modal-info-row">
+                                    <span class="modal-info-label">Current Price:</span>
+                                    <span class="modal-info-value">$${coin.current_price.toLocaleString('en-US', {
+                                        minimumFractionDigits: coin.current_price < 1 ? 6 : 2,
+                                        maximumFractionDigits: coin.current_price < 1 ? 6 : 2
+                                    })}</span>
+                                </div>
+                                <div class="modal-info-row">
+                                    <span class="modal-info-label">Total Cost:</span>
+                                    <span class="modal-info-value" id="buyTotalCost">$0.00</span>
+                                </div>
+                                <div class="modal-info-row">
+                                    <span class="modal-info-label">Available Cash:</span>
+                                    <span class="modal-info-value ${cashBalance >= 0 ? 'positive' : 'negative'}">$${cashBalance.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="modal-btn secondary" onclick="closeModal()">Cancel</button>
+                            <button class="modal-btn primary" id="confirmBuyBtn">Submit Buy Order</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            const existingModal = document.getElementById('buyModal');
+            if (existingModal) existingModal.remove();
+            
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            initializeBuyModal(coin);
+        }
+        
+        function initializeBuyModal(coin) {
+            const amountInput = document.getElementById('buyAmount');
+            const totalCostDisplay = document.getElementById('buyTotalCost');
+            const confirmBtn = document.getElementById('confirmBuyBtn');
+            
+            function updateBuyCalculations() {
+                const amount = parseFloat(amountInput.value) || 0;
+                const totalCost = amount * coin.current_price;
+                
+                totalCostDisplay.textContent = `$${totalCost.toLocaleString('en-US', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })}`;
+                
+                if (totalCost > cashBalance) {
+                    totalCostDisplay.style.color = 'var(--danger)';
+                    confirmBtn.disabled = true;
+                    confirmBtn.style.opacity = '0.5';
+                } else {
+                    totalCostDisplay.style.color = 'var(--success)';
+                    confirmBtn.disabled = false;
+                    confirmBtn.style.opacity = '1';
+                }
+                
+                confirmBtn.textContent = `Submit Buy for $${totalCost.toFixed(2)}`;
+            }
+            
+            amountInput.addEventListener('input', updateBuyCalculations);
+            
+            confirmBtn.addEventListener('click', function() {
+                const amount = parseFloat(amountInput.value);
+                
+                if (!amount || amount <= 0) {
+                    showToast('Please enter a valid amount', 'error');
+                    return;
+                }
+                
+                const totalCost = amount * coin.current_price;
+                
+                if (totalCost > cashBalance) {
+                    showToast('Insufficient cash balance', 'error');
+                    return;
+                }
+                
+                // Create pending transaction
+                const transaction = {
+                    id: 'tx_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                    type: TransactionType.BUY,
+                    coinId: coin.id,
+                    amount: amount,
+                    totalCost: totalCost,
+                    details: `Buy ${amount} ${coin.symbol.toUpperCase()} for $${totalCost.toFixed(2)}`,
+                    timestamp: new Date().toISOString()
+                };
+                
+                addToPendingList(transaction);
+                closeModal();
+                showToast(`Buy order submitted! Waiting for approval.`, 'info');
+            });
+            
+            updateBuyCalculations();
+        }
+
+        // ==================== PENDING LIST FUNCTIONS ====================
+        function addToPendingList(transaction) {
+            pendingTransactions.push(transaction);
+            updatePendingListDisplay();
+            updatePendingCount();
+            showToast(`Transaction added to pending list (ID: ${transaction.id.substring(0, 8)})`, 'info');
+        }
+        
+        function updatePendingListDisplay() {
+            const pendingList = document.getElementById('pendingList');
+            if (!pendingList) return;
+            
+            if (pendingTransactions.length === 0) {
+                pendingList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-clock"></i>
+                        <p>No pending transactions</p>
+                        <small>Transactions will appear here waiting for approval</small>
+                    </div>
+                `;
+                return;
+            }
+            
+            pendingList.innerHTML = '';
+            
+            const recentPending = [...pendingTransactions]
+                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+                .slice(0, 5);
+            
+            recentPending.forEach(transaction => {
+                const transactionItem = document.createElement('div');
+                transactionItem.className = 'activity-item pending-item';
+                transactionItem.setAttribute('data-id', transaction.id);
+                
+                const icons = {
+                    [TransactionType.SEND]: { icon: 'arrow-up', color: 'sent', title: 'Send' },
+                    [TransactionType.RECEIVE]: { icon: 'arrow-down', color: 'success', title: 'Receive' },
+                    [TransactionType.EXCHANGE]: { icon: 'exchange-alt', color: 'success', title: 'Exchange' },
+                    [TransactionType.STAKE]: { icon: 'chart-line', color: 'success', title: 'Stake' },
+                    [TransactionType.BUY]: { icon: 'shopping-cart', color: 'success', title: 'Buy' },
+                    [TransactionType.SELL]: { icon: 'money-bill-wave', color: 'sent', title: 'Sell' }
+                };
+                
+                const typeInfo = icons[transaction.type] || icons.send;
+                const timestamp = new Date(transaction.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                transactionItem.innerHTML = `
+                    <div class="activity-icon pending">
+                        <i class="fas fa-${typeInfo.icon}"></i>
+                    </div>
+                    <div class="activity-details">
+                        <div class="activity-title">${typeInfo.title}: ${transaction.details}</div>
+                        <div class="activity-meta">ID: ${transaction.id.substring(0, 12)}... • ${timestamp}</div>
+                        <div class="activity-status" style="font-size: 12px; color: var(--secondary); margin-top: 2px;">
+                            <i class="fas fa-clock"></i> Waiting for approval
+                        </div>
+                    </div>
+                    <div class="activity-amount pending-amount">
+                        ${transaction.type === TransactionType.SEND || transaction.type === TransactionType.SELL ? '-' : '+'}${transaction.amount}
+                    </div>
+                `;
+                
+                pendingList.appendChild(transactionItem);
+            });
+            
+            if (pendingTransactions.length > 5) {
+                const viewAllBtn = document.createElement('div');
+                viewAllBtn.className = 'view-all-pending';
+                viewAllBtn.style.textAlign = 'center';
+                viewAllBtn.style.padding = '15px';
+                viewAllBtn.style.borderTop = '1px solid rgba(255, 255, 255, 0.05)';
+                viewAllBtn.innerHTML = `
+                    <a href="#" style="color: var(--primary); text-decoration: none; font-size: 14px;">
+                        View all ${pendingTransactions.length} pending transactions <i class="fas fa-chevron-right"></i>
+                    </a>
+                `;
+                
+                viewAllBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    showAllPendingModal();
+                });
+                
+                pendingList.appendChild(viewAllBtn);
+            }
+        }
+        
+        function updatePendingCount() {
+            const pendingCount = document.getElementById('pendingCount');
+            if (pendingCount) {
+                pendingCount.textContent = `${pendingTransactions.length} pending`;
+            }
+        }
+        
+        function showAllPendingModal() {
+            const modalHTML = `
+                <div class="modal-overlay" id="allPendingModal">
+                    <div class="modal" style="max-width: 800px;">
+                        <div class="modal-header">
+                            <h3 class="modal-title">All Pending Transactions</h3>
+                            <button class="modal-close" onclick="closeModal()">×</button>
+                        </div>
+                        <div class="modal-body">
+                            <div style="margin-bottom: 20px; color: var(--gray); font-size: 14px;">
+                                <i class="fas fa-info-circle"></i> These transactions are waiting for admin approval.
+                            </div>
+                            <div class="pending-table-container" style="max-height: 400px; overflow-y: auto;">
+                                <table style="width: 100%; border-collapse: collapse;">
+                                    <thead>
+                                        <tr style="background: rgba(30, 41, 59, 0.8);">
+                                            <th style="padding: 12px; text-align: left; color: var(--gray);">ID</th>
+                                            <th style="padding: 12px; text-align: left; color: var(--gray);">Type</th>
+                                            <th style="padding: 12px; text-align: left; color: var(--gray);">Details</th>
+                                            <th style="padding: 12px; text-align: left; color: var(--gray);">Amount</th>
+                                            <th style="padding: 12px; text-align: left; color: var(--gray);">Time</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="allPendingTable">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="modal-btn secondary" onclick="closeModal()">Close</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            const existingModal = document.getElementById('allPendingModal');
+            if (existingModal) existingModal.remove();
+            
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            populateAllPendingTable();
+        }
+        
+        function populateAllPendingTable() {
+            const tableBody = document.getElementById('allPendingTable');
+            if (!tableBody) return;
+            
+            if (pendingTransactions.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px; color: var(--gray);">
+                            <i class="fas fa-clock"></i> No pending transactions
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tableBody.innerHTML = '';
+            
+            pendingTransactions.forEach(transaction => {
+                const typeNames = {
+                    [TransactionType.SEND]: 'Send',
+                    [TransactionType.RECEIVE]: 'Receive',
+                    [TransactionType.EXCHANGE]: 'Exchange',
+                    [TransactionType.STAKE]: 'Stake',
+                    [TransactionType.BUY]: 'Buy',
+                    [TransactionType.SELL]: 'Sell'
+                };
+                
+                const time = new Date(transaction.timestamp).toLocaleString();
+                
+                const row = document.createElement('tr');
+                row.style.borderBottom = '1px solid rgba(255, 255, 255, 0.05)';
+                row.innerHTML = `
+                    <td style="padding: 12px; font-family: monospace; font-size: 12px;">${transaction.id.substring(0, 16)}...</td>
+                    <td style="padding: 12px;"><span style="padding: 4px 8px; background: rgba(245, 158, 11, 0.1); color: var(--secondary); border-radius: 4px; font-size: 12px;">${typeNames[transaction.type]}</span></td>
+                    <td style="padding: 12px; font-size: 14px;">${transaction.details}</td>
+                    <td style="padding: 12px; font-weight: 600;">${transaction.amount}</td>
+                    <td style="padding: 12px; font-size: 13px; color: var(--gray);">${time}</td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+
+        // ==================== TRANSACTION APPROVAL SIMULATION ====================
+        function simulateAdminApproval() {
+            setInterval(() => {
+                if (pendingTransactions.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * pendingTransactions.length);
+                    const transaction = pendingTransactions[randomIndex];
+                    
+                    if (Math.random() < 0.8) {
+                        approveTransaction(transaction.id);
+                    } else {
+                        rejectTransaction(transaction.id);
+                    }
+                }
+            }, 30000);
+        }
+        
+        function approveTransaction(transactionId) {
+            const transactionIndex = pendingTransactions.findIndex(t => t.id === transactionId);
+            if (transactionIndex === -1) return;
+            
+            const transaction = pendingTransactions[transactionIndex];
+            
+            pendingTransactions.splice(transactionIndex, 1);
+            
+            try {
+                executeTransaction(transaction);
+                
+                addToActivityLog(transaction.type, `${transaction.details} (Approved)`);
+                
+                showToast(`Transaction ${transactionId.substring(0, 8)} approved!`, 'success');
+            } catch (error) {
+                addToActivityLog(transaction.type, `${transaction.details} (Rejected: ${error.message})`, 'failed');
+                
+                showToast(`Transaction ${transactionId.substring(0, 8)} rejected!`, 'error');
+            }
+            
+            updatePendingListDisplay();
+            updatePendingCount();
+            updateAllBalances();
+        }
+        
+        function rejectTransaction(transactionId) {
+            const transactionIndex = pendingTransactions.findIndex(t => t.id === transactionId);
+            if (transactionIndex === -1) return;
+            
+            const transaction = pendingTransactions[transactionIndex];
+            pendingTransactions.splice(transactionIndex, 1);
+            
+            updatePendingListDisplay();
+            updatePendingCount();
+            
+            addToActivityLog(transaction.type, `${transaction.details} (Rejected by admin)`, 'failed');
+            
+            showToast(`Transaction ${transaction.id.substring(0, 8)} rejected by admin!`, 'error');
+        }
+        
+        function executeTransaction(transaction) {
+            switch(transaction.type) {
+                case TransactionType.BUY:
+                    const buyCoin = marketData.find(coin => coin.id === transaction.coinId);
+                    if (!buyCoin) throw new Error('Coin not found');
+                    
+                    if (cashBalance < transaction.totalCost) {
+                        throw new Error('Insufficient cash balance');
+                    }
+                    
+                    cashBalance -= transaction.totalCost;
+                    
+                    const existingAsset = userAssets.find(asset => asset.id === transaction.coinId);
+                    if (existingAsset) {
+                        existingAsset.balance += transaction.amount;
+                        existingAsset.price = buyCoin.current_price;
+                    } else {
+                        userAssets.push({
+                            id: transaction.coinId,
+                            symbol: buyCoin.symbol,
+                            name: buyCoin.name,
+                            balance: transaction.amount,
+                            price: buyCoin.current_price
+                        });
+                    }
+                    break;
+                    
+                case TransactionType.SELL:
+                    const sellAsset = userAssets.find(asset => asset.id === transaction.coinId);
+                    if (!sellAsset) throw new Error('Asset not found');
+                    
+                    if (sellAsset.balance < transaction.amount) {
+                        throw new Error('Insufficient asset balance');
+                    }
+                    
+                    sellAsset.balance -= transaction.amount;
+                    cashBalance += transaction.totalValue;
+                    
+                    if (sellAsset.balance <= 0) {
+                        const index = userAssets.indexOf(sellAsset);
+                        if (index > -1) {
+                            userAssets.splice(index, 1);
+                        }
+                    }
+                    break;
+                    
+                case TransactionType.SEND:
+                    const sendAsset = userAssets.find(asset => asset.id === transaction.coinId);
+                    if (sendAsset) {
+                        sendAsset.balance -= transaction.amount;
+                    }
+                    break;
+                    
+                case TransactionType.EXCHANGE:
+                    const fromAsset = userAssets.find(asset => asset.id === transaction.coinId);
+                    if (fromAsset) {
+                        fromAsset.balance -= transaction.amount;
+                    }
+                    
+                    const toCoin = marketData.find(coin => coin.id === transaction.toCoinId);
+                    if (toCoin) {
+                        const toAsset = userAssets.find(asset => asset.id === transaction.toCoinId);
+                        if (toAsset) {
+                            toAsset.balance += transaction.receiveAmount;
+                        } else {
+                            userAssets.push({
+                                id: transaction.toCoinId,
+                                symbol: toCoin.symbol,
+                                name: toCoin.name,
+                                balance: transaction.receiveAmount,
+                                price: toCoin.current_price
+                            });
+                        }
+                    }
+                    break;
+                    
+                case TransactionType.STAKE:
+                    const stakeAsset = userAssets.find(asset => asset.id === transaction.coinId);
+                    if (stakeAsset) {
+                        stakeAsset.balance -= transaction.amount;
+                    }
+                    break;
+            }
         }
 
         // ==================== ACTIVITY SECTION FUNCTIONS ====================
@@ -3072,35 +3785,54 @@
             }
         }
         
-        function addToActivityLog(type, details) {
+        function addToActivityLog(type, details, status = 'success') {
             const activityList = document.getElementById('recentActivityList');
             if (!activityList) return;
             
             const now = new Date();
             const timeAgo = 'just now';
             const types = {
-                'send': { title: 'Sent Crypto', icon: 'arrow-up', class: 'sent', amount: '' },
-                'receive': { title: 'Received Crypto', icon: 'arrow-down', class: 'success', amount: '' },
-                'exchange': { title: 'Exchange Completed', icon: 'exchange-alt', class: 'success', amount: '' },
-                'stake': { title: 'Staking Started', icon: 'chart-line', class: 'success', amount: '' }
+                'send': { icon: 'arrow-up', class: 'sent', title: 'Send' },
+                'receive': { icon: 'arrow-down', class: 'success', title: 'Receive' },
+                'exchange': { icon: 'exchange-alt', class: 'success', title: 'Exchange' },
+                'stake': { icon: 'chart-line', class: 'success', title: 'Stake' },
+                'buy': { icon: 'shopping-cart', class: 'success', title: 'Buy' },
+                'sell': { icon: 'money-bill-wave', class: 'sent', title: 'Sell' }
             };
             
             const activity = types[type] || types.send;
+            const isFailed = status === 'failed';
             
             const activityItem = document.createElement('div');
             activityItem.className = 'activity-item';
-            activityItem.innerHTML = `
-                <div class="activity-icon ${activity.class}">
-                    <i class="fas fa-${activity.icon}"></i>
-                </div>
-                <div class="activity-details">
-                    <div class="activity-title">${activity.title}</div>
-                    <div class="activity-meta">${details} • ${timeAgo}</div>
-                </div>
-                <div class="activity-amount ${activity.class === 'sent' ? 'negative' : 'positive'}">
-                    ${type === 'send' ? '-' : type === 'receive' ? '+' : ''}${details.split(' ')[0]}
-                </div>
-            `;
+            
+            if (isFailed) {
+                activityItem.innerHTML = `
+                    <div class="activity-icon" style="background: rgba(239, 68, 68, 0.1); color: var(--danger);">
+                        <i class="fas fa-times"></i>
+                    </div>
+                    <div class="activity-details">
+                        <div class="activity-title" style="color: var(--danger);">${activity.title} Failed</div>
+                        <div class="activity-meta">${details} • ${timeAgo}</div>
+                    </div>
+                    <div class="activity-amount" style="color: var(--danger);">
+                        Failed
+                    </div>
+                `;
+            } else {
+                activityItem.innerHTML = `
+                    <div class="activity-icon ${activity.class}">
+                        <i class="fas fa-${activity.icon}"></i>
+                    </div>
+                    <div class="activity-details">
+                        <div class="activity-title">${activity.title}</div>
+                        <div class="activity-meta">${details} • ${timeAgo}</div>
+                    </div>
+                    <div class="activity-amount ${activity.class === 'sent' ? 'negative' : 'positive'}">
+                        ${type === 'send' || type === 'sell' ? '-' : '+'}${details.split(' ')[0]}
+                    </div>
+                `;
+            }
             
             activityList.insertBefore(activityItem, activityList.firstChild);
             
@@ -3135,6 +3867,7 @@
                     walletSubtitle: "Send, receive or manage your funds",
                     marketOverview: "Market Overview",
                     recentActivity: "Recent Activity",
+                    pendingTransactions: "Pending Transactions",
                     viewAll: "View All",
                     totalAssets: "Total Assets (USD)",
                     coinAssets: "Coin Assets",
@@ -3166,6 +3899,7 @@
                     walletSubtitle: "发送、接收或管理资金",
                     marketOverview: "市场概览",
                     recentActivity: "最近活动",
+                    pendingTransactions: "待处理交易",
                     viewAll: "查看全部",
                     totalAssets: "总资产 (美元)",
                     coinAssets: "货币资产",
@@ -3193,7 +3927,6 @@
             
             const texts = translations[lang] || translations.en;
             
-            // Update all text elements
             document.querySelector('.page-title h1').textContent = texts.dashboardTitle;
             document.querySelector('.page-subtitle').textContent = texts.dashboardSubtitle;
             document.querySelectorAll('.section-title')[0].textContent = texts.totalBalance;
@@ -3201,14 +3934,13 @@
             document.querySelector('.actions-section .section-subtitle').textContent = texts.walletSubtitle;
             document.querySelectorAll('.section-title')[2].textContent = texts.marketOverview;
             document.querySelectorAll('.section-title')[3].textContent = texts.recentActivity;
+            document.querySelectorAll('.section-title')[4].textContent = texts.pendingTransactions;
             document.getElementById('viewAllActivity').innerHTML = `${texts.viewAll} <i class="fas fa-arrow-right"></i>`;
             
-            // Balance labels
             document.querySelector('.balance-card.main .balance-label').innerHTML = `<i class="fas fa-coins"></i> ${texts.totalAssets}`;
             document.querySelector('.balance-card.secondary .balance-label').innerHTML = `<i class="fas fa-wallet"></i> ${texts.coinAssets}`;
             document.querySelectorAll('.balance-card.secondary .balance-label')[1].innerHTML = `<i class="fas fa-dollar-sign"></i> ${texts.usdtBalance}`;
             
-            // Wallet actions
             document.querySelector('.action-card.send .action-title').textContent = texts.send;
             document.querySelector('.action-card.send .action-desc').textContent = texts.sendDesc;
             document.getElementById('sendAddress').placeholder = texts.sendPlaceholder;
@@ -3226,14 +3958,12 @@
             document.querySelector('.action-card.stake .action-desc').textContent = texts.stakeDesc;
             document.getElementById('stakeBtn').innerHTML = `<i class="fas fa-percentage"></i> ${texts.startEarning}`;
             
-            // Market section
             document.getElementById('marketSearch').placeholder = texts.searchPlaceholder;
             const updatedText = document.getElementById('lastUpdated').textContent;
             if (updatedText !== 'Loading...') {
                 document.getElementById('lastUpdated').textContent = texts.updated === "Updated just now" ? texts.updated : `更新于 ${new Date().toLocaleTimeString('zh-CN', {hour: '2-digit', minute: '2-digit'})}`;
             }
             
-            // Filter buttons
             const filterBtns = document.querySelectorAll('.filter-btn');
             filterBtns[0].textContent = texts.all;
             filterBtns[1].textContent = texts.gainers;
@@ -3305,6 +4035,9 @@
         };
         
         window.closeModal = closeModal;
+        window.showSellModal = showSellModal;
+        window.showBuyModal = showBuyModal;
+        window.showAllPendingModal = showAllPendingModal;
     </script>
 </body>
 </html>
