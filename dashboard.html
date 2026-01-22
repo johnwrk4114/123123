@@ -763,6 +763,8 @@
             margin: 20px 0;
             border-radius: var(--radius-md);
             border: 1px solid var(--card-border);
+            max-height: 500px;
+            overflow-y: auto;
         }
 
         .market-table {
@@ -779,6 +781,9 @@
             border-bottom: 1px solid var(--card-border);
             white-space: nowrap;
             background: rgba(30, 41, 59, 0.8);
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
         .market-table td {
@@ -1230,7 +1235,6 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-bottom: 10px;
         }
 
         .all-asset-icon {
@@ -1339,6 +1343,65 @@
             0% { opacity: 1; }
             50% { opacity: 0.5; }
             100% { opacity: 1; }
+        }
+        
+        /* Real-time price indicators */
+        .price-up {
+            color: var(--success);
+            animation: pulseGreen 2s ease-in-out;
+        }
+        
+        .price-down {
+            color: var(--danger);
+            animation: pulseRed 2s ease-in-out;
+        }
+        
+        @keyframes pulseGreen {
+            0% { background-color: rgba(16, 185, 129, 0.1); }
+            50% { background-color: rgba(16, 185, 129, 0.3); }
+            100% { background-color: rgba(16, 185, 129, 0.1); }
+        }
+        
+        @keyframes pulseRed {
+            0% { background-color: rgba(239, 68, 68, 0.1); }
+            50% { background-color: rgba(239, 68, 68, 0.3); }
+            100% { background-color: rgba(239, 68, 68, 0.1); }
+        }
+        
+        /* Pagination */
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--card-border);
+        }
+        
+        .page-btn {
+            padding: 8px 16px;
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid var(--card-border);
+            color: var(--light);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .page-btn:hover:not(:disabled) {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .page-info {
+            color: var(--gray);
+            font-size: 14px;
         }
     </style>
 </head>
@@ -1463,9 +1526,9 @@
                                     <i class="fas fa-arrow-up"></i> 12.5% today
                                 </div>
                             </div>
-                            <div class="balance-amount">$ 42,689.50</div>
+                            <div class="balance-amount" id="totalBalanceAmount">$ 0.00</div>
                             <div class="balance-change">
-                                <span class="change-amount positive">+$ 4,235.60</span>
+                                <span class="change-amount positive" id="dailyChange">+$ 0.00</span>
                                 <span class="change-period">(24h change)</span>
                             </div>
                             <div class="balance-chart" id="balanceChart"></div>
@@ -1481,44 +1544,8 @@
                                 </div>
                             </div>
                             <div class="asset-list" id="coinAssetsList">
-                                <div class="asset-item">
-                                    <div class="asset-info">
-                                        <div class="asset-icon" style="background: linear-gradient(135deg, #F7931A, #F2A900);">B</div>
-                                        <div class="asset-details">
-                                            <div class="asset-name">Bitcoin</div>
-                                            <div class="asset-symbol">BTC</div>
-                                        </div>
-                                    </div>
-                                    <div class="asset-amounts">
-                                        <div class="asset-amount">0.8245 BTC</div>
-                                        <div class="asset-value">$24,320.18</div>
-                                    </div>
-                                </div>
-                                <div class="asset-item">
-                                    <div class="asset-info">
-                                        <div class="asset-icon" style="background: linear-gradient(135deg, #627EEA, #8C8C8C);">E</div>
-                                        <div class="asset-details">
-                                            <div class="asset-name">Ethereum</div>
-                                            <div class="asset-symbol">ETH</div>
-                                        </div>
-                                    </div>
-                                    <div class="asset-amounts">
-                                        <div class="asset-amount">4.28 ETH</div>
-                                        <div class="asset-value">$12,450.75</div>
-                                    </div>
-                                </div>
-                                <div class="asset-item">
-                                    <div class="asset-info">
-                                        <div class="asset-icon" style="background: linear-gradient(135deg, #26A17B, #26A17B);">U</div>
-                                        <div class="asset-details">
-                                            <div class="asset-name">Tether</div>
-                                            <div class="asset-symbol">USDT</div>
-                                        </div>
-                                    </div>
-                                    <div class="asset-amounts">
-                                        <div class="asset-amount">5,820.40 USDT</div>
-                                        <div class="asset-value">$5,820.40</div>
-                                    </div>
+                                <div class="loading-spinner">
+                                    <i class="fas fa-spinner fa-spin"></i> Loading assets...
                                 </div>
                             </div>
                         </div>
@@ -1530,10 +1557,10 @@
                                 </span>
                                 <i class="fab fa-usd"></i>
                             </div>
-                            <div class="balance-amount">5,820.40 USDT</div>
-                            <div class="balance-value">≈ $ 5,820.40</div>
+                            <div class="balance-amount" id="usdtBalance">0.00 USDT</div>
+                            <div class="balance-value" id="usdtValue">≈ $ 0.00</div>
                             <div class="balance-change">
-                                <span class="change-amount positive">+$ 120.40</span>
+                                <span class="change-amount positive" id="usdtChange">+$ 0.00</span>
                                 <span class="change-period">(24h change)</span>
                             </div>
                         </div>
@@ -1623,7 +1650,7 @@
                             </div>
                             <div class="refresh-info">
                                 <i class="fas fa-clock"></i>
-                                <span id="lastUpdated">Updated just now</span>
+                                <span id="lastUpdated">Loading...</span>
                             </div>
                         </div>
                     </div>
@@ -1632,30 +1659,39 @@
                         <table class="market-table">
                             <thead>
                                 <tr>
-                                    <th class="sortable" data-sort="asset">
+                                    <th class="sortable" data-sort="market_cap">
                                         Asset <i class="fas fa-sort"></i>
                                     </th>
-                                    <th class="sortable" data-sort="price">
+                                    <th class="sortable" data-sort="current_price">
                                         Price (USD) <i class="fas fa-sort"></i>
                                     </th>
-                                    <th class="sortable" data-sort="change">
+                                    <th class="sortable" data-sort="price_change_percentage_24h">
                                         24h Change <i class="fas fa-sort"></i>
                                     </th>
                                     <th>Market Cap</th>
                                     <th>24h Volume</th>
-                                    <th>Trend (7D)</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody id="marketTableBody">
                                 <!-- Real-time data will be loaded here -->
                                 <tr>
-                                    <td colspan="7" class="loading-spinner">
-                                        <i class="fas fa-spinner fa-spin"></i> Loading market data...
+                                    <td colspan="6" class="loading-spinner">
+                                        <i class="fas fa-spinner fa-spin"></i> Loading live market data...
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
+                    </div>
+                    
+                    <div class="pagination" id="marketPagination">
+                        <button class="page-btn" id="prevPage" disabled>
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <span class="page-info" id="pageInfo">Page 1</span>
+                        <button class="page-btn" id="nextPage">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
                     </div>
                 </div>
                 
@@ -1722,10 +1758,21 @@
     <script>
         // ==================== GLOBAL STATE ====================
         let marketData = [];
+        let filteredMarketData = [];
         let userAssets = [];
         let refreshInterval;
+        let currentPage = 1;
+        const coinsPerPage = 10;
         
-        // Real-time user assets (simulated)
+        // CoinGecko API endpoints
+        const COINGECKO_API = {
+            // Public endpoints (no API key needed)
+            MARKET_DATA: 'https://api.coingecko.com/api/v3/coins/markets',
+            GLOBAL_DATA: 'https://api.coingecko.com/api/v3/global',
+            COIN_LIST: 'https://api.coingecko.com/api/v3/coins/list'
+        };
+        
+        // Real-time user assets (initial state)
         const initialUserAssets = [
             { id: 'bitcoin', symbol: 'btc', name: 'Bitcoin', balance: 0.8245, price: 0 },
             { id: 'ethereum', symbol: 'eth', name: 'Ethereum', balance: 4.28, price: 0 },
@@ -1759,10 +1806,112 @@
             initActivitySection();
             initLanguageSwitcher();
             initLogout();
+            initPagination();
+            
+            // Load initial data
+            loadMarketData();
+            updateAllBalances();
             
             // Start auto-refresh for market data
             startMarketDataAutoRefresh();
         });
+
+        // ==================== API FUNCTIONS ====================
+        async function loadMarketData() {
+            try {
+                showToast('Loading live market data...', 'info');
+                
+                // Fetch market data from CoinGecko
+                const response = await fetch(
+                    `${COINGECKO_API.MARKET_DATA}?vs_currency=usd&order=market_cap_desc&per_page=100&page=1&sparkline=true&price_change_percentage=24h`
+                );
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch market data');
+                }
+                
+                marketData = await response.json();
+                filteredMarketData = [...marketData];
+                
+                // Update user assets with real prices
+                updateUserAssetsWithMarketPrices();
+                
+                // Render market table
+                renderMarketDataPage();
+                
+                // Update all balances
+                updateAllBalances();
+                
+                showToast('Market data loaded successfully!', 'success');
+                updateLastUpdated();
+                
+            } catch (error) {
+                console.error('Error loading market data:', error);
+                showToast('Failed to load market data. Using simulated data.', 'error');
+                
+                // Fallback to simulated data
+                loadSimulatedMarketData();
+            }
+        }
+        
+        function loadSimulatedMarketData() {
+            // Fallback simulated data with realistic prices
+            const simulatedData = [
+                { 
+                    id: 'bitcoin', 
+                    symbol: 'btc', 
+                    name: 'Bitcoin', 
+                    current_price: 89464.16 + (Math.random() - 0.5) * 1000,
+                    price_change_percentage_24h: (Math.random() - 0.5) * 5,
+                    market_cap: 1760000000000,
+                    total_volume: 35000000000,
+                    sparkline_in_7d: { price: Array(168).fill().map(() => 89464.16 + (Math.random() - 0.5) * 5000) }
+                },
+                { 
+                    id: 'ethereum', 
+                    symbol: 'eth', 
+                    name: 'Ethereum', 
+                    current_price: 3250.45 + (Math.random() - 0.5) * 50,
+                    price_change_percentage_24h: (Math.random() - 0.5) * 6,
+                    market_cap: 390000000000,
+                    total_volume: 18000000000,
+                    sparkline_in_7d: { price: Array(168).fill().map(() => 3250.45 + (Math.random() - 0.5) * 200) }
+                },
+                { 
+                    id: 'tether', 
+                    symbol: 'usdt', 
+                    name: 'Tether', 
+                    current_price: 1.00,
+                    price_change_percentage_24h: (Math.random() - 0.1) * 0.2,
+                    market_cap: 110000000000,
+                    total_volume: 70000000000,
+                    sparkline_in_7d: { price: Array(168).fill(1.00) }
+                },
+                // Add more coins as needed
+                { id: 'binancecoin', symbol: 'bnb', name: 'BNB', current_price: 585.32, price_change_percentage_24h: 2.5, market_cap: 90000000000, total_volume: 2500000000 },
+                { id: 'solana', symbol: 'sol', name: 'Solana', current_price: 185.75, price_change_percentage_24h: -1.2, market_cap: 82000000000, total_volume: 3500000000 },
+                { id: 'ripple', symbol: 'xrp', name: 'XRP', current_price: 0.62, price_change_percentage_24h: 0.8, market_cap: 34000000000, total_volume: 2200000000 },
+                { id: 'cardano', symbol: 'ada', name: 'Cardano', current_price: 0.68, price_change_percentage_24h: -0.5, market_cap: 24000000000, total_volume: 800000000 },
+                { id: 'dogecoin', symbol: 'doge', name: 'Dogecoin', current_price: 0.18, price_change_percentage_24h: 3.2, market_cap: 26000000000, total_volume: 1900000000 },
+                { id: 'polkadot', symbol: 'dot', name: 'Polkadot', current_price: 9.25, price_change_percentage_24h: 1.1, market_cap: 13000000000, total_volume: 400000000 },
+                { id: 'chainlink', symbol: 'link', name: 'Chainlink', current_price: 18.45, price_change_percentage_24h: -0.3, market_cap: 11000000000, total_volume: 500000000 }
+            ];
+            
+            marketData = simulatedData;
+            filteredMarketData = [...marketData];
+            updateUserAssetsWithMarketPrices();
+            renderMarketDataPage();
+            updateAllBalances();
+        }
+        
+        function updateUserAssetsWithMarketPrices() {
+            userAssets.forEach(asset => {
+                const marketAsset = marketData.find(m => m.id === asset.id);
+                if (marketAsset) {
+                    asset.price = marketAsset.current_price;
+                }
+            });
+        }
 
         // ==================== SIDEBAR FUNCTIONS ====================
         function initSidebar() {
@@ -1770,12 +1919,8 @@
             
             navItems.forEach(item => {
                 item.addEventListener('click', function(e) {
-                    // Remove active class from all items
                     navItems.forEach(i => i.classList.remove('active'));
-                    
-                    // Add active class to clicked item
                     this.classList.add('active');
-                    
                     const navText = this.querySelector('.nav-text').textContent;
                     showToast(`Navigating to ${navText}...`, 'info');
                 });
@@ -1790,21 +1935,15 @@
             // Refresh balance button
             if (refreshBtn) {
                 refreshBtn.addEventListener('click', function() {
-                    // Show refreshing state
                     this.classList.add('refreshing');
                     this.disabled = true;
                     
-                    // Simulate API call to refresh balance
-                    setTimeout(() => {
-                        // Update balances with new values
-                        updateAllBalances();
-                        
-                        // Reset button state
+                    // Reload market data
+                    loadMarketData().finally(() => {
                         this.classList.remove('refreshing');
                         this.disabled = false;
-                        
-                        showToast('Balance updated successfully!', 'success');
-                    }, 1500);
+                        showToast('Balance updated with latest prices!', 'success');
+                    });
                 });
             }
             
@@ -1812,58 +1951,46 @@
             if (viewAllAssetsBtn) {
                 viewAllAssetsBtn.addEventListener('click', showAllAssetsModal);
             }
-            
-            // Update balance display
-            updateAllBalances();
         }
         
         function updateAllBalances() {
-            // Update total assets
             updateTotalAssets();
-            
-            // Update coin assets list
             updateCoinAssetsList();
-            
-            // Update USDT balance
             updateUSDTBalance();
         }
         
         function updateTotalAssets() {
-            // Calculate total assets from userAssets
             let totalUSD = 0;
+            let previousTotalUSD = 0;
             
             userAssets.forEach(asset => {
-                // Find current price from marketData
-                const marketAsset = marketData.find(m => m.id === asset.id);
-                const price = marketAsset ? marketAsset.current_price : (asset.price || 0);
+                const price = asset.price || 0;
                 totalUSD += asset.balance * price;
-                
-                // Update asset price if found in marketData
-                if (marketAsset) {
-                    asset.price = marketAsset.current_price;
-                }
+                // For simulation, use a small random change
+                previousTotalUSD += asset.balance * price * (1 + (Math.random() - 0.5) * 0.01);
             });
             
+            const change = totalUSD - previousTotalUSD;
+            const changePercent = ((change / previousTotalUSD) * 100).toFixed(2);
+            
             // Update total assets display
-            const totalAmount = document.querySelector('.balance-amount');
+            const totalAmount = document.getElementById('totalBalanceAmount');
             if (totalAmount) {
-                // Add random small fluctuation
-                const fluctuation = (Math.random() - 0.5) * 200;
-                const displayedTotal = totalUSD + fluctuation;
-                
-                totalAmount.textContent = `$ ${displayedTotal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
+                totalAmount.textContent = `$ ${totalUSD.toLocaleString('en-US', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })}`;
                 
                 // Update 24h change
-                const changeElement = document.querySelector('.change-amount');
+                const changeElement = document.getElementById('dailyChange');
                 if (changeElement) {
-                    const isPositive = fluctuation >= 0;
-                    changeElement.textContent = `${isPositive ? '+' : '-'}$${Math.abs(fluctuation).toFixed(2)}`;
+                    const isPositive = change >= 0;
+                    changeElement.textContent = `${isPositive ? '+' : '-'}$${Math.abs(change).toFixed(2)}`;
                     changeElement.className = `change-amount ${isPositive ? 'positive' : 'negative'}`;
                     
                     // Update trend indicator
                     const trendIndicator = document.querySelector('.trend-indicator');
                     if (trendIndicator) {
-                        const changePercent = (fluctuation / (displayedTotal - fluctuation) * 100).toFixed(2);
                         trendIndicator.innerHTML = `<i class="fas fa-arrow-${isPositive ? 'up' : 'down'}"></i> ${Math.abs(changePercent)}% today`;
                         trendIndicator.className = `trend-indicator ${isPositive ? 'positive' : 'negative'}`;
                     }
@@ -1878,15 +2005,25 @@
             // Clear current list
             assetList.innerHTML = '';
             
-            // Show only top 3 assets
+            // Show only top 3 assets by value
             const topAssets = [...userAssets]
                 .filter(asset => asset.balance > 0)
-                .sort((a, b) => (b.balance * (b.price || 0)) - (a.balance * (a.price || 0)))
+                .map(asset => {
+                    const price = asset.price || 0;
+                    return {
+                        ...asset,
+                        value: asset.balance * price
+                    };
+                })
+                .sort((a, b) => b.value - a.value)
                 .slice(0, 3);
             
+            if (topAssets.length === 0) {
+                assetList.innerHTML = '<div style="color: var(--gray); text-align: center; padding: 20px;">No assets found</div>';
+                return;
+            }
+            
             topAssets.forEach(asset => {
-                const assetValue = asset.balance * (asset.price || 0);
-                
                 const assetItem = document.createElement('div');
                 assetItem.className = 'asset-item';
                 assetItem.innerHTML = `
@@ -1899,7 +2036,7 @@
                     </div>
                     <div class="asset-amounts">
                         <div class="asset-amount">${formatBalance(asset.balance, asset.symbol)}</div>
-                        <div class="asset-value">$${assetValue.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}</div>
+                        <div class="asset-value">$${(asset.balance * (asset.price || 0)).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                     </div>
                 `;
                 
@@ -1911,26 +2048,24 @@
             const usdtAsset = userAssets.find(asset => asset.symbol === 'usdt');
             if (!usdtAsset) return;
             
-            // Update USDT balance
-            const usdtBalance = document.querySelectorAll('.balance-card.secondary .balance-amount')[1];
+            const usdtBalance = document.getElementById('usdtBalance');
+            const usdtValue = document.getElementById('usdtValue');
+            const usdtChange = document.getElementById('usdtChange');
+            
             if (usdtBalance) {
                 usdtBalance.textContent = `${usdtAsset.balance.toFixed(2)} USDT`;
-                
-                // Update USDT value
-                const usdtValue = usdtBalance.nextElementSibling;
-                if (usdtValue && usdtValue.classList.contains('balance-value')) {
-                    usdtValue.textContent = `≈ $ ${usdtAsset.balance.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
-                }
-                
-                // Update USDT change
-                const usdtChangeElement = document.querySelectorAll('.balance-card.secondary .change-amount')[1];
-                if (usdtChangeElement) {
-                    // USDT is stablecoin, minimal changes
-                    const change = (Math.random() - 0.5) * 2;
-                    const isPositive = change >= 0;
-                    usdtChangeElement.textContent = `${isPositive ? '+' : '-'}$${Math.abs(change).toFixed(2)}`;
-                    usdtChangeElement.className = `change-amount ${isPositive ? 'positive' : 'negative'}`;
-                }
+            }
+            
+            if (usdtValue) {
+                usdtValue.textContent = `≈ $ ${usdtAsset.balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            }
+            
+            if (usdtChange) {
+                // USDT is stablecoin, minimal changes
+                const change = (Math.random() - 0.5) * 0.02;
+                const isPositive = change >= 0;
+                usdtChange.textContent = `${isPositive ? '+' : '-'}$${Math.abs(change).toFixed(4)}`;
+                usdtChange.className = `change-amount ${isPositive ? 'positive' : 'negative'}`;
             }
         }
         
@@ -1948,14 +2083,17 @@
                 'usdt': 'background: linear-gradient(135deg, #26A17B, #26A17B);',
                 'ada': 'background: linear-gradient(135deg, #0033AD, #0033AD);',
                 'sol': 'background: linear-gradient(135deg, #00FFA3, #DC1FFF);',
-                'xrp': 'background: linear-gradient(135deg, #23292F, #23292F);'
+                'xrp': 'background: linear-gradient(135deg, #23292F, #23292F);',
+                'bnb': 'background: linear-gradient(135deg, #F0B90B, #F0B90B);',
+                'doge': 'background: linear-gradient(135deg, #C2A633, #C2A633);',
+                'dot': 'background: linear-gradient(135deg, #E6007A, #E6007A);',
+                'link': 'background: linear-gradient(135deg, #2A5ADA, #2A5ADA);'
             };
             
             return gradients[symbol] || 'background: linear-gradient(135deg, #0ea5e9, #3b82f6);';
         }
         
         function showAllAssetsModal() {
-            // Create modal
             const modalHTML = `
                 <div class="modal-overlay" id="allAssetsModal">
                     <div class="modal">
@@ -1975,14 +2113,10 @@
                 </div>
             `;
             
-            // Remove any existing modal
             const existingModal = document.getElementById('allAssetsModal');
             if (existingModal) existingModal.remove();
             
-            // Add new modal
             document.body.insertAdjacentHTML('beforeend', modalHTML);
-            
-            // Populate assets
             populateAllAssetsGrid();
         }
         
@@ -1992,10 +2126,13 @@
             
             grid.innerHTML = '';
             
-            // Sort assets by value
             const sortedAssets = [...userAssets]
                 .filter(asset => asset.balance > 0)
-                .sort((a, b) => (b.balance * (b.price || 0)) - (a.balance * (a.price || 0)));
+                .map(asset => ({
+                    ...asset,
+                    value: asset.balance * (asset.price || 0)
+                }))
+                .sort((a, b) => b.value - a.value);
             
             if (sortedAssets.length === 0) {
                 grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--gray);">No assets found</div>';
@@ -2018,7 +2155,7 @@
                         </div>
                     </div>
                     <div class="all-asset-balance">${formatBalance(asset.balance, asset.symbol)}</div>
-                    <div class="all-asset-value">$${assetValue.toFixed(2)}</div>
+                    <div class="all-asset-value">$${assetValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                 `;
                 
                 grid.appendChild(assetItem);
@@ -2039,7 +2176,6 @@
                         return;
                     }
                     
-                    // Show send modal
                     showSendModal(address);
                 });
             }
@@ -2050,15 +2186,11 @@
             
             if (generateBtn) {
                 generateBtn.addEventListener('click', function() {
-                    // Generate random wallet address
                     const newAddress = generateWalletAddress();
-                    
-                    // Display the address
                     const display = document.getElementById('walletLinkDisplay');
                     display.textContent = newAddress;
                     display.style.color = '#10b981';
                     
-                    // Enable copy button
                     if (copyBtn) {
                         copyBtn.disabled = false;
                     }
@@ -2076,7 +2208,6 @@
                         return;
                     }
                     
-                    // Copy to clipboard
                     navigator.clipboard.writeText(address)
                         .then(() => {
                             this.classList.add('copied');
@@ -2109,7 +2240,6 @@
         }
         
         function generateWalletAddress() {
-            // Generate a random Ethereum-style address
             const chars = '0123456789abcdef';
             let address = '0x';
             for (let i = 0; i < 40; i++) {
@@ -2119,7 +2249,6 @@
         }
         
         function showSendModal(address) {
-            // Get user's assets with balance > 0
             const userAssetsWithBalance = userAssets.filter(asset => asset.balance > 0);
             
             if (userAssetsWithBalance.length === 0) {
@@ -2127,7 +2256,6 @@
                 return;
             }
             
-            // Create modal HTML
             const modalHTML = `
                 <div class="modal-overlay" id="sendModal">
                     <div class="modal">
@@ -2175,14 +2303,10 @@
                 </div>
             `;
             
-            // Remove any existing modal
             const existingModal = document.getElementById('sendModal');
             if (existingModal) existingModal.remove();
             
-            // Add new modal
             document.body.insertAdjacentHTML('beforeend', modalHTML);
-            
-            // Initialize modal functionality
             initializeSendModal();
         }
         
@@ -2200,16 +2324,9 @@
                 const selectedAsset = userAssets.find(asset => asset.id === selectedCoinId);
                 
                 if (selectedAsset) {
-                    // Update available balance
                     availableLabel.textContent = `Available: ${formatBalance(selectedAsset.balance, selectedAsset.symbol)}`;
-                    
-                    // Update amount input max value
                     amountInput.max = selectedAsset.balance;
-                    
-                    // Update current price display
                     updateSendPriceDisplay(selectedAsset);
-                    
-                    // Recalculate total value
                     calculateSendTotalValue(selectedAsset, parseFloat(amountInput.value) || 0);
                 }
             });
@@ -2241,25 +2358,14 @@
                     return;
                 }
                 
-                // Disable button and show loading
                 this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
                 this.disabled = true;
                 
-                // Simulate sending
                 setTimeout(() => {
-                    // Update user's balance
                     selectedAsset.balance -= amount;
-                    
-                    // Update display
                     updateAllBalances();
-                    
-                    // Add to activity log
                     addToActivityLog('send', `${amount} ${selectedAsset.symbol.toUpperCase()} to ${address.substring(0, 12)}...`);
-                    
-                    // Close modal
                     closeModal();
-                    
-                    // Show success message
                     showToast(`Successfully sent ${amount} ${selectedAsset.symbol.toUpperCase()}!`, 'success');
                 }, 2000);
             });
@@ -2291,7 +2397,6 @@
                 maximumFractionDigits: 2
             })}`;
             
-            // Update confirm button text with value
             const confirmBtn = document.getElementById('confirmSendBtn');
             if (confirmBtn) {
                 confirmBtn.textContent = `Send $${totalValue.toFixed(2)}`;
@@ -2299,7 +2404,6 @@
         }
         
         function showExchangeModal() {
-            // Get user's assets with balance > 0
             const userAssetsWithBalance = userAssets.filter(asset => asset.balance > 0);
             
             if (userAssetsWithBalance.length === 0) {
@@ -2307,7 +2411,6 @@
                 return;
             }
             
-            // Create modal HTML
             const modalHTML = `
                 <div class="modal-overlay" id="exchangeModal">
                     <div class="modal">
@@ -2328,8 +2431,10 @@
                             <div class="modal-input-group">
                                 <label class="modal-label">To (Market Assets)</label>
                                 <select class="modal-select" id="exchangeToSelect">
-                                    <!-- Will be populated with top 100 coins -->
-                                    <option value="">Loading market coins...</option>
+                                    <option value="">Select coin...</option>
+                                    ${marketData.slice(0, 50).map(coin => 
+                                        `<option value="${coin.id}">${coin.name} (${coin.symbol.toUpperCase()})</option>`
+                                    ).join('')}
                                 </select>
                             </div>
                             
@@ -2342,7 +2447,7 @@
                             <div class="modal-info-box" id="exchangeInfoBox">
                                 <div class="modal-info-row">
                                     <span class="modal-info-label">Exchange Rate:</span>
-                                    <span class="modal-info-value" id="exchangeRateDisplay">Loading...</span>
+                                    <span class="modal-info-value" id="exchangeRateDisplay">Select coins to see rate</span>
                                 </div>
                                 <div class="modal-info-row">
                                     <span class="modal-info-label">Estimated Receive:</span>
@@ -2358,14 +2463,10 @@
                 </div>
             `;
             
-            // Remove any existing modal
             const existingModal = document.getElementById('exchangeModal');
             if (existingModal) existingModal.remove();
             
-            // Add new modal
             document.body.insertAdjacentHTML('beforeend', modalHTML);
-            
-            // Initialize modal functionality
             initializeExchangeModal();
         }
         
@@ -2378,27 +2479,14 @@
             const confirmBtn = document.getElementById('confirmExchangeBtn');
             const availableLabel = amountInput.nextElementSibling;
             
-            // Populate "To" dropdown with top 10 market coins (excluding user's own assets)
-            const userAssetIds = userAssets.map(asset => asset.id);
-            const topMarketCoins = marketData
-                .filter(coin => !userAssetIds.includes(coin.id))
-                .slice(0, 10);
-            
-            toSelect.innerHTML = topMarketCoins.map(coin => 
-                `<option value="${coin.id}">${coin.name} (${coin.symbol.toUpperCase()})</option>`
-            ).join('');
-            
             // Update when "From" selection changes
             fromSelect.addEventListener('change', function() {
                 const selectedCoinId = this.value;
                 const selectedAsset = userAssets.find(asset => asset.id === selectedCoinId);
                 
                 if (selectedAsset) {
-                    // Update available balance
                     availableLabel.textContent = `Available: ${formatBalance(selectedAsset.balance, selectedAsset.symbol)}`;
                     amountInput.max = selectedAsset.balance;
-                    
-                    // Update exchange rate
                     updateExchangeRate();
                 }
             });
@@ -2407,9 +2495,7 @@
             toSelect.addEventListener('change', updateExchangeRate);
             
             // Update when amount changes
-            amountInput.addEventListener('input', function() {
-                updateExchangeRate();
-            });
+            amountInput.addEventListener('input', updateExchangeRate);
             
             // Confirm exchange button
             confirmBtn.addEventListener('click', function() {
@@ -2433,11 +2519,9 @@
                     return;
                 }
                 
-                // Disable button and show loading
                 this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
                 this.disabled = true;
                 
-                // Calculate receive amount based on current prices
                 const fromCoin = marketData.find(coin => coin.id === fromCoinId);
                 const toCoin = marketData.find(coin => coin.id === toCoinId);
                 
@@ -2450,15 +2534,13 @@
                 
                 const receiveAmount = (amount * fromCoin.current_price) / toCoin.current_price;
                 
-                // Simulate exchange
                 setTimeout(() => {
-                    // Update user's balances
                     fromAsset.balance -= amount;
                     
-                    // Add or update toAsset
                     let toAsset = userAssets.find(asset => asset.id === toCoinId);
                     if (toAsset) {
                         toAsset.balance += receiveAmount;
+                        toAsset.price = toCoin.current_price;
                     } else {
                         userAssets.push({
                             id: toCoinId,
@@ -2469,21 +2551,13 @@
                         });
                     }
                     
-                    // Update display
                     updateAllBalances();
-                    
-                    // Add to activity log
                     addToActivityLog('exchange', `${amount} ${fromAsset.symbol.toUpperCase()} → ${receiveAmount.toFixed(6)} ${toCoin.symbol.toUpperCase()}`);
-                    
-                    // Close modal
                     closeModal();
-                    
-                    // Show success message
                     showToast(`Exchange successful! Received ${receiveAmount.toFixed(6)} ${toCoin.symbol.toUpperCase()}`, 'success');
                 }, 2000);
             });
             
-            // Initialize exchange rate
             updateExchangeRate();
         }
         
@@ -2513,15 +2587,12 @@
                 return;
             }
             
-            // Calculate exchange rate
             const exchangeRate = fromCoin.current_price / toCoin.current_price;
             const receiveAmount = amount * exchangeRate;
             
-            // Update displays
             exchangeRateDisplay.textContent = `1 ${fromCoin.symbol.toUpperCase()} = ${exchangeRate.toFixed(6)} ${toCoin.symbol.toUpperCase()}`;
             estimatedReceiveDisplay.textContent = `${receiveAmount.toFixed(6)} ${toCoin.symbol.toUpperCase()}`;
             
-            // Update confirm button
             const confirmBtn = document.getElementById('confirmExchangeBtn');
             if (confirmBtn && amount > 0) {
                 confirmBtn.textContent = `Exchange for ${receiveAmount.toFixed(6)} ${toCoin.symbol.toUpperCase()}`;
@@ -2531,7 +2602,6 @@
         }
         
         function showStakeModal() {
-            // Get user's stakeable assets (exclude USDT)
             const stakeableAssets = userAssets.filter(asset => 
                 asset.balance > 0 && asset.symbol !== 'usdt'
             );
@@ -2541,7 +2611,6 @@
                 return;
             }
             
-            // Create modal HTML
             const modalHTML = `
                 <div class="modal-overlay" id="stakeModal">
                     <div class="modal">
@@ -2584,7 +2653,7 @@
                                 </div>
                                 <div class="modal-info-row">
                                     <span class="modal-info-label">Estimated Annual Reward:</span>
-                                    <span class="modal-info-value positive" id="estimatedAnnualReward">0.00</span>
+                                    <span class="modal-info-value positive" id="estimatedAnnualReward">$0.00</span>
                                 </div>
                                 <div class="modal-info-row">
                                     <span class="modal-info-label">Total Value at Maturity:</span>
@@ -2600,14 +2669,10 @@
                 </div>
             `;
             
-            // Remove any existing modal
             const existingModal = document.getElementById('stakeModal');
             if (existingModal) existingModal.remove();
             
-            // Add new modal
             document.body.insertAdjacentHTML('beforeend', modalHTML);
-            
-            // Initialize modal functionality
             initializeStakeModal();
         }
         
@@ -2624,46 +2689,30 @@
             let selectedPeriod = '3 month';
             let selectedAPY = 3.8;
             
-            // Staking option selection
             stakingOptions.forEach(option => {
                 option.addEventListener('click', function() {
-                    // Remove selected class from all options
                     stakingOptions.forEach(opt => opt.classList.remove('selected'));
-                    
-                    // Add selected class to clicked option
                     this.classList.add('selected');
-                    
-                    // Update selected period and APY
                     selectedPeriod = this.dataset.period;
                     selectedAPY = parseFloat(this.dataset.apy);
-                    
-                    // Update calculations
                     updateStakeCalculations();
                 });
             });
             
-            // Update when coin selection changes
             coinSelect.addEventListener('change', function() {
                 const selectedCoinId = this.value;
                 const selectedAsset = userAssets.find(asset => asset.id === selectedCoinId);
                 
                 if (selectedAsset) {
-                    // Update available balance
                     availableLabel.textContent = `Available: ${formatBalance(selectedAsset.balance, selectedAsset.symbol)}`;
                     amountInput.max = selectedAsset.balance;
-                    
-                    // Update current price display
                     updateStakePriceDisplay(selectedAsset);
-                    
-                    // Update calculations
                     updateStakeCalculations();
                 }
             });
             
-            // Update when amount changes
             amountInput.addEventListener('input', updateStakeCalculations);
             
-            // Confirm stake button
             confirmBtn.addEventListener('click', function() {
                 const coinId = coinSelect.value;
                 const amount = parseFloat(amountInput.value);
@@ -2679,30 +2728,18 @@
                     return;
                 }
                 
-                // Disable button and show loading
                 this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
                 this.disabled = true;
                 
-                // Simulate staking
                 setTimeout(() => {
-                    // Update user's balance (staked amount is locked)
                     selectedAsset.balance -= amount;
-                    
-                    // Update display
                     updateAllBalances();
-                    
-                    // Add to activity log
                     addToActivityLog('stake', `${amount} ${selectedAsset.symbol.toUpperCase()} staked for ${selectedPeriod} (APY: ${selectedAPY}%)`);
-                    
-                    // Close modal
                     closeModal();
-                    
-                    // Show success message
                     showToast(`Staking started! ${amount} ${selectedAsset.symbol.toUpperCase()} locked for ${selectedPeriod}`, 'success');
                 }, 2000);
             });
             
-            // Initialize displays
             const initialAsset = userAssets.find(asset => asset.id === coinSelect.value);
             if (initialAsset) {
                 updateStakePriceDisplay(initialAsset);
@@ -2721,11 +2758,8 @@
                 const annualReward = currentValue * (selectedAPY / 100);
                 const totalValueAtMaturity = currentValue + annualReward;
                 
-                // Update displays
                 annualRewardDisplay.textContent = `$${annualReward.toFixed(2)}`;
                 maturityValueDisplay.textContent = `$${totalValueAtMaturity.toFixed(2)}`;
-                
-                // Update button text
                 confirmBtn.textContent = `Stake for ${selectedPeriod}`;
             }
             
@@ -2740,9 +2774,6 @@
 
         // ==================== MARKET DATA FUNCTIONS ====================
         function initMarketData() {
-            // Load initial market data
-            fetchMarketData();
-            
             // Setup search functionality
             const searchInput = document.getElementById('marketSearch');
             if (searchInput) {
@@ -2755,12 +2786,8 @@
             const filterBtns = document.querySelectorAll('.filter-btn');
             filterBtns.forEach(btn => {
                 btn.addEventListener('click', function() {
-                    // Remove active class from all buttons
                     filterBtns.forEach(b => b.classList.remove('active'));
-                    
-                    // Add active class to clicked button
                     this.classList.add('active');
-                    
                     const filter = this.dataset.filter;
                     applyMarketFilter(filter);
                 });
@@ -2773,7 +2800,6 @@
                     const sortBy = this.dataset.sort;
                     sortMarketData(sortBy);
                     
-                    // Update sort indicator
                     sortHeaders.forEach(h => {
                         const icon = h.querySelector('i');
                         if (icon) icon.className = 'fas fa-sort';
@@ -2785,44 +2811,49 @@
             });
         }
         
-        function fetchMarketData() {
-            // Simulate real-time market data
-            const coins = [
-                { id: 'bitcoin', symbol: 'btc', name: 'Bitcoin', current_price: 45000 + Math.random() * 2000, price_change_percentage_24h: (Math.random() - 0.5) * 10, market_cap: 880000000000, total_volume: 30000000000, sparkline_in_7d: { price: Array(7).fill().map(() => 45000 + Math.random() * 2000) } },
-                { id: 'ethereum', symbol: 'eth', name: 'Ethereum', current_price: 2400 + Math.random() * 200, price_change_percentage_24h: (Math.random() - 0.5) * 8, market_cap: 290000000000, total_volume: 18000000000, sparkline_in_7d: { price: Array(7).fill().map(() => 2400 + Math.random() * 200) } },
-                { id: 'tether', symbol: 'usdt', name: 'Tether', current_price: 1.00, price_change_percentage_24h: (Math.random() - 0.1) * 0.2, market_cap: 83000000000, total_volume: 50000000000, sparkline_in_7d: { price: Array(7).fill().map(() => 1.00) } },
-                { id: 'bnb', symbol: 'bnb', name: 'BNB', current_price: 310 + Math.random() * 20, price_change_percentage_24h: (Math.random() - 0.5) * 6, market_cap: 48000000000, total_volume: 1200000000, sparkline_in_7d: { price: Array(7).fill().map(() => 310 + Math.random() * 20) } },
-                { id: 'solana', symbol: 'sol', name: 'Solana', current_price: 100 + Math.random() * 30, price_change_percentage_24h: (Math.random() - 0.5) * 12, market_cap: 42000000000, total_volume: 3200000000, sparkline_in_7d: { price: Array(7).fill().map(() => 100 + Math.random() * 30) } },
-                { id: 'ripple', symbol: 'xrp', name: 'XRP', current_price: 0.52 + Math.random() * 0.1, price_change_percentage_24h: (Math.random() - 0.5) * 5, market_cap: 28000000000, total_volume: 1200000000, sparkline_in_7d: { price: Array(7).fill().map(() => 0.52 + Math.random() * 0.1) } },
-                { id: 'cardano', symbol: 'ada', name: 'Cardano', current_price: 0.48 + Math.random() * 0.1, price_change_percentage_24h: (Math.random() - 0.5) * 7, market_cap: 17000000000, total_volume: 800000000, sparkline_in_7d: { price: Array(7).fill().map(() => 0.48 + Math.random() * 0.1) } },
-                { id: 'dogecoin', symbol: 'doge', name: 'Dogecoin', current_price: 0.078 + Math.random() * 0.02, price_change_percentage_24h: (Math.random() - 0.5) * 15, market_cap: 11000000000, total_volume: 900000000, sparkline_in_7d: { price: Array(7).fill().map(() => 0.078 + Math.random() * 0.02) } },
-                { id: 'polkadot', symbol: 'dot', name: 'Polkadot', current_price: 6.75 + Math.random() * 0.5, price_change_percentage_24h: (Math.random() - 0.5) * 6, market_cap: 8700000000, total_volume: 400000000, sparkline_in_7d: { price: Array(7).fill().map(() => 6.75 + Math.random() * 0.5) } },
-                { id: 'chainlink', symbol: 'link', name: 'Chainlink', current_price: 14.20 + Math.random() * 2, price_change_percentage_24h: (Math.random() - 0.5) * 8, market_cap: 8300000000, total_volume: 500000000, sparkline_in_7d: { price: Array(7).fill().map(() => 14.20 + Math.random() * 2) } }
-            ];
+        function initPagination() {
+            const prevBtn = document.getElementById('prevPage');
+            const nextBtn = document.getElementById('nextPage');
+            const pageInfo = document.getElementById('pageInfo');
             
-            marketData = coins;
-            renderMarketData(marketData);
-            updateLastUpdated();
+            if (prevBtn) {
+                prevBtn.addEventListener('click', () => {
+                    if (currentPage > 1) {
+                        currentPage--;
+                        renderMarketDataPage();
+                    }
+                });
+            }
             
-            // Update user assets with current prices
-            userAssets.forEach(asset => {
-                const marketAsset = marketData.find(m => m.id === asset.id);
-                if (marketAsset) {
-                    asset.price = marketAsset.current_price;
-                }
-            });
+            if (nextBtn) {
+                nextBtn.addEventListener('click', () => {
+                    const totalPages = Math.ceil(filteredMarketData.length / coinsPerPage);
+                    if (currentPage < totalPages) {
+                        currentPage++;
+                        renderMarketDataPage();
+                    }
+                });
+            }
         }
         
-        function renderMarketData(data) {
+        function renderMarketDataPage() {
             const tbody = document.getElementById('marketTableBody');
+            const prevBtn = document.getElementById('prevPage');
+            const nextBtn = document.getElementById('nextPage');
+            const pageInfo = document.getElementById('pageInfo');
+            
             if (!tbody) return;
             
             tbody.innerHTML = '';
             
-            if (data.length === 0) {
+            const startIndex = (currentPage - 1) * coinsPerPage;
+            const endIndex = startIndex + coinsPerPage;
+            const pageData = filteredMarketData.slice(startIndex, endIndex);
+            
+            if (pageData.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="7" class="loading-spinner">
+                        <td colspan="6" class="loading-spinner">
                             <i class="fas fa-search"></i> No cryptocurrencies found
                         </td>
                     </tr>
@@ -2830,11 +2861,10 @@
                 return;
             }
             
-            data.forEach(coin => {
+            pageData.forEach(coin => {
                 const changeClass = coin.price_change_percentage_24h >= 0 ? 'positive' : 'negative';
                 const changeIcon = coin.price_change_percentage_24h >= 0 ? '▲' : '▼';
                 
-                // Format numbers
                 const formattedPrice = coin.current_price.toLocaleString('en-US', {
                     style: 'currency',
                     currency: 'USD',
@@ -2865,14 +2895,11 @@
                     </td>
                     <td>
                         <span class="price-change ${changeClass}">
-                            ${changeIcon} ${Math.abs(coin.price_change_percentage_24h).toFixed(2)}%
+                            ${changeIcon} ${Math.abs(coin.price_change_percentage_24h || 0).toFixed(2)}%
                         </span>
                     </td>
                     <td>$${formattedMarketCap}</td>
                     <td>$${formattedVolume}</td>
-                    <td>
-                        <div class="trend-chart" id="trend-${coin.id}"></div>
-                    </td>
                     <td>
                         <button class="view-btn" onclick="viewCoinDetails('${coin.id}')">
                             <i class="fas fa-chart-line"></i> View
@@ -2881,102 +2908,72 @@
                 `;
                 
                 tbody.appendChild(row);
-                
-                // Render trend chart
-                if (coin.sparkline_in_7d && coin.sparkline_in_7d.price) {
-                    renderTrendChart(`trend-${coin.id}`, coin.sparkline_in_7d.price, changeClass);
-                }
             });
-        }
-        
-        function renderTrendChart(containerId, dataPoints, trendClass) {
-            const container = document.getElementById(containerId);
-            if (!container || !dataPoints || dataPoints.length < 2) return;
             
-            // Create SVG element
-            const svgNS = "http://www.w3.org/2000/svg";
-            const svg = document.createElementNS(svgNS, "svg");
-            svg.setAttribute("width", "80");
-            svg.setAttribute("height", "30");
-            svg.setAttribute("viewBox", "0 0 80 30");
+            // Update pagination controls
+            const totalPages = Math.ceil(filteredMarketData.length / coinsPerPage);
             
-            // Create polyline for the trend
-            const polyline = document.createElementNS(svgNS, "polyline");
+            if (prevBtn) {
+                prevBtn.disabled = currentPage === 1;
+            }
             
-            // Normalize data points to fit in 30px height
-            const min = Math.min(...dataPoints);
-            const max = Math.max(...dataPoints);
-            const range = max - min || 1;
+            if (nextBtn) {
+                nextBtn.disabled = currentPage === totalPages;
+            }
             
-            const points = dataPoints.map((value, index) => {
-                const x = (index / (dataPoints.length - 1)) * 75 + 2.5;
-                const y = 27.5 - ((value - min) / range) * 25;
-                return `${x},${y}`;
-            }).join(" ");
-            
-            polyline.setAttribute("points", points);
-            polyline.setAttribute("fill", "none");
-            polyline.setAttribute("stroke", trendClass === 'positive' ? '#10b981' : '#ef4444');
-            polyline.setAttribute("stroke-width", "2");
-            polyline.setAttribute("stroke-linecap", "round");
-            polyline.setAttribute("stroke-linejoin", "round");
-            
-            svg.appendChild(polyline);
-            container.innerHTML = '';
-            container.appendChild(svg);
+            if (pageInfo) {
+                pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+            }
         }
         
         function filterMarketData(searchTerm) {
+            currentPage = 1; // Reset to first page when filtering
+            
             if (!searchTerm) {
-                renderMarketData(marketData);
-                return;
+                filteredMarketData = [...marketData];
+            } else {
+                filteredMarketData = marketData.filter(coin => 
+                    coin.name.toLowerCase().includes(searchTerm) || 
+                    coin.symbol.toLowerCase().includes(searchTerm)
+                );
             }
             
-            const filtered = marketData.filter(coin => 
-                coin.name.toLowerCase().includes(searchTerm) || 
-                coin.symbol.toLowerCase().includes(searchTerm)
-            );
-            
-            renderMarketData(filtered);
+            renderMarketDataPage();
         }
         
         function applyMarketFilter(filter) {
-            let filteredData = [...marketData];
+            currentPage = 1; // Reset to first page when filtering
             
             switch(filter) {
                 case 'gainers':
-                    filteredData = marketData.filter(coin => coin.price_change_percentage_24h > 0);
+                    filteredMarketData = marketData.filter(coin => coin.price_change_percentage_24h > 0);
                     break;
                 case 'losers':
-                    filteredData = marketData.filter(coin => coin.price_change_percentage_24h < 0);
+                    filteredMarketData = marketData.filter(coin => coin.price_change_percentage_24h < 0);
                     break;
                 default:
-                    // 'all' - show all data
+                    filteredMarketData = [...marketData];
                     break;
             }
             
-            renderMarketData(filteredData);
+            renderMarketDataPage();
         }
         
         function sortMarketData(sortBy) {
-            const sortedData = [...marketData];
+            filteredMarketData.sort((a, b) => {
+                switch(sortBy) {
+                    case 'current_price':
+                        return b.current_price - a.current_price;
+                    case 'price_change_percentage_24h':
+                        return b.price_change_percentage_24h - a.price_change_percentage_24h;
+                    case 'market_cap':
+                        return b.market_cap - a.market_cap;
+                    default:
+                        return b.market_cap - a.market_cap;
+                }
+            });
             
-            switch(sortBy) {
-                case 'price':
-                    sortedData.sort((a, b) => b.current_price - a.current_price);
-                    break;
-                case 'change':
-                    sortedData.sort((a, b) => b.price_change_percentage_24h - a.price_change_percentage_24h);
-                    break;
-                case 'asset':
-                    sortedData.sort((a, b) => a.name.localeCompare(b.name));
-                    break;
-                default:
-                    // Default sort by market cap
-                    sortedData.sort((a, b) => b.market_cap - a.market_cap);
-            }
-            
-            renderMarketData(sortedData);
+            renderMarketDataPage();
         }
         
         function updateLastUpdated() {
@@ -2993,64 +2990,75 @@
         }
         
         function startMarketDataAutoRefresh() {
-            // Refresh market data every 5 seconds for real-time updates
-            refreshInterval = setInterval(() => {
-                // Simulate price changes
-                marketData.forEach(coin => {
-                    if (coin.symbol !== 'usdt') {
-                        const change = (Math.random() - 0.5) * 0.02; // ±1% change
-                        coin.current_price *= (1 + change);
-                        coin.price_change_percentage_24h = change * 100;
+            // Refresh market data every 60 seconds
+            refreshInterval = setInterval(async () => {
+                try {
+                    const response = await fetch(
+                        `${COINGECKO_API.MARKET_DATA}?vs_currency=usd&order=market_cap_desc&per_page=10&page=1&sparkline=false&price_change_percentage=24h`
+                    );
+                    
+                    if (response.ok) {
+                        const newData = await response.json();
                         
-                        // Update sparkline data
-                        if (coin.sparkline_in_7d && coin.sparkline_in_7d.price) {
-                            coin.sparkline_in_7d.price.shift();
-                            coin.sparkline_in_7d.price.push(coin.current_price);
-                        }
+                        // Update prices in marketData
+                        newData.forEach(newCoin => {
+                            const existingCoin = marketData.find(c => c.id === newCoin.id);
+                            if (existingCoin) {
+                                const oldPrice = existingCoin.current_price;
+                                const newPrice = newCoin.current_price;
+                                
+                                existingCoin.current_price = newPrice;
+                                existingCoin.price_change_percentage_24h = newCoin.price_change_percentage_24h;
+                                existingCoin.market_cap = newCoin.market_cap;
+                                existingCoin.total_volume = newCoin.total_volume;
+                                
+                                // Update user assets with new prices
+                                const userAsset = userAssets.find(a => a.id === newCoin.id);
+                                if (userAsset) {
+                                    userAsset.price = newPrice;
+                                }
+                                
+                                // Update price cell with animation
+                                const priceCell = document.getElementById(`price-${newCoin.id}`);
+                                if (priceCell) {
+                                    const formattedPrice = newPrice.toLocaleString('en-US', {
+                                        style: 'currency',
+                                        currency: 'USD',
+                                        minimumFractionDigits: newPrice < 1 ? 4 : 2,
+                                        maximumFractionDigits: newPrice < 1 ? 4 : 2
+                                    });
+                                    
+                                    // Add animation class based on price change
+                                    if (newPrice > oldPrice) {
+                                        priceCell.classList.add('price-up');
+                                        setTimeout(() => priceCell.classList.remove('price-up'), 2000);
+                                    } else if (newPrice < oldPrice) {
+                                        priceCell.classList.add('price-down');
+                                        setTimeout(() => priceCell.classList.remove('price-down'), 2000);
+                                    }
+                                    
+                                    priceCell.textContent = formattedPrice;
+                                }
+                            }
+                        });
                         
-                        // Update price cell with animation
-                        const priceCell = document.getElementById(`price-${coin.id}`);
-                        if (priceCell) {
-                            const formattedPrice = coin.current_price.toLocaleString('en-US', {
-                                style: 'currency',
-                                currency: 'USD',
-                                minimumFractionDigits: coin.current_price < 1 ? 4 : 2,
-                                maximumFractionDigits: coin.current_price < 1 ? 4 : 2
-                            });
-                            
-                            // Add flash animation
-                            priceCell.classList.add('flashing');
-                            priceCell.textContent = formattedPrice;
-                            
-                            setTimeout(() => {
-                                priceCell.classList.remove('flashing');
-                            }, 1000);
-                        }
+                        // Update all balances with new prices
+                        updateAllBalances();
+                        updateLastUpdated();
                     }
-                });
-                
-                // Update trend charts
-                marketData.forEach(coin => {
-                    if (coin.sparkline_in_7d && coin.sparkline_in_7d.price) {
-                        const changeClass = coin.price_change_percentage_24h >= 0 ? 'positive' : 'negative';
-                        renderTrendChart(`trend-${coin.id}`, coin.sparkline_in_7d.price, changeClass);
-                    }
-                });
-                
-                updateLastUpdated();
-                
-                // Update all balances with new prices
-                updateAllBalances();
-                
-            }, 5000); // 5 seconds for real-time feel
+                } catch (error) {
+                    console.error('Error refreshing market data:', error);
+                }
+            }, 60000); // 60 seconds
         }
         
         function formatLargeNumber(num) {
+            if (!num) return '0';
             if (num >= 1e12) return (num / 1e12).toFixed(2) + 'T';
             if (num >= 1e9) return (num / 1e9).toFixed(2) + 'B';
             if (num >= 1e6) return (num / 1e6).toFixed(2) + 'M';
             if (num >= 1e3) return (num / 1e3).toFixed(2) + 'K';
-            return num.toString();
+            return num.toFixed(2);
         }
 
         // ==================== ACTIVITY SECTION FUNCTIONS ====================
@@ -3094,10 +3102,8 @@
                 </div>
             `;
             
-            // Add to the top of the list
             activityList.insertBefore(activityItem, activityList.firstChild);
             
-            // Limit to 4 items
             if (activityList.children.length > 4) {
                 activityList.removeChild(activityList.lastChild);
             }
@@ -3111,11 +3117,9 @@
                 btn.addEventListener('click', function() {
                     const lang = this.dataset.lang;
                     
-                    // Update active button
                     langBtns.forEach(b => b.classList.remove('active'));
                     this.classList.add('active');
                     
-                    // Switch language
                     switchLanguage(lang);
                 });
             });
@@ -3224,7 +3228,10 @@
             
             // Market section
             document.getElementById('marketSearch').placeholder = texts.searchPlaceholder;
-            document.getElementById('lastUpdated').textContent = texts.updated === "Updated just now" ? texts.updated : `更新于 ${new Date().toLocaleTimeString('zh-CN', {hour: '2-digit', minute: '2-digit'})}`;
+            const updatedText = document.getElementById('lastUpdated').textContent;
+            if (updatedText !== 'Loading...') {
+                document.getElementById('lastUpdated').textContent = texts.updated === "Updated just now" ? texts.updated : `更新于 ${new Date().toLocaleTimeString('zh-CN', {hour: '2-digit', minute: '2-digit'})}`;
+            }
             
             // Filter buttons
             const filterBtns = document.querySelectorAll('.filter-btn');
@@ -3243,12 +3250,10 @@
                     if (confirm('Are you sure you want to logout?')) {
                         showToast('Logging out...', 'info');
                         
-                        // Clear any intervals
                         if (refreshInterval) {
                             clearInterval(refreshInterval);
                         }
                         
-                        // Simulate logout process
                         setTimeout(() => {
                             window.location.href = 'index.html';
                         }, 1000);
@@ -3279,7 +3284,6 @@
             
             container.appendChild(toast);
             
-            // Auto-remove after 4 seconds
             setTimeout(() => {
                 toast.style.opacity = '0';
                 toast.style.transform = 'translateX(100%)';
@@ -3297,7 +3301,6 @@
             const coin = marketData.find(c => c.id === coinId);
             if (coin) {
                 showToast(`Opening details for ${coin.name}...`, 'info');
-                // In real app, would navigate to coin details page
             }
         };
         
