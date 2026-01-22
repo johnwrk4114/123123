@@ -128,28 +128,51 @@
             padding: 20px 0;
         }
 
+        .sidebar-nav ul {
+            list-style: none;
+            padding: 0 16px;
+        }
+
         .nav-item {
-            padding: 12px 24px;
-            margin: 4px 0;
+            margin-bottom: 4px;
+            border-radius: var(--radius-md);
+            transition: all 0.3s ease;
         }
 
         .nav-item.active {
             background: rgba(14, 165, 233, 0.1);
-            border-left: 4px solid var(--primary);
+        }
+
+        .nav-item:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.05);
         }
 
         .nav-link {
             display: flex;
             align-items: center;
-            gap: 12px;
+            padding: 12px 16px;
             color: var(--light);
             text-decoration: none;
             font-size: 15px;
+            gap: 12px;
         }
 
         .nav-link i {
             width: 20px;
             text-align: center;
+        }
+
+        .nav-text {
+            flex: 1;
+        }
+
+        .nav-badge {
+            background: var(--success);
+            color: white;
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 600;
         }
 
         /* ===== MAIN CONTENT ===== */
@@ -214,28 +237,6 @@
             color: white;
         }
 
-        .notification-bell {
-            position: relative;
-            font-size: 20px;
-            color: var(--gray);
-            cursor: pointer;
-        }
-
-        .notification-count {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: var(--danger);
-            color: white;
-            font-size: 12px;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
         .user-menu {
             display: flex;
             align-items: center;
@@ -294,16 +295,18 @@
             margin-bottom: 40px;
         }
 
+        @media (max-width: 1200px) {
+            .balance-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+
         .balance-card {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
             border-radius: var(--radius-lg);
             padding: 24px;
             box-shadow: var(--shadow-md);
-        }
-
-        .balance-card.main {
-            grid-column: span 1;
         }
 
         .balance-header {
@@ -318,6 +321,10 @@
             font-size: 14px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+        }
+
+        .balance-label i {
+            margin-right: 8px;
         }
 
         .trend-indicator {
@@ -337,6 +344,11 @@
             color: var(--success);
         }
 
+        .trend-indicator.negative {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
         .balance-amount {
             font-size: 40px;
             font-weight: 800;
@@ -346,10 +358,17 @@
             -webkit-text-fill-color: transparent;
         }
 
+        .balance-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--gray);
+        }
+
         .balance-change {
             display: flex;
             gap: 8px;
             align-items: center;
+            margin-top: 8px;
         }
 
         .change-amount {
@@ -358,6 +377,108 @@
 
         .change-amount.positive {
             color: var(--success);
+        }
+
+        .change-amount.negative {
+            color: var(--danger);
+        }
+
+        .change-period {
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        .balance-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .refresh-btn {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid var(--card-border);
+            color: var(--light);
+            padding: 8px 16px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .refresh-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .refresh-btn.refreshing i {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Asset List in Coin Asset Card */
+        .asset-list {
+            margin-top: 20px;
+        }
+
+        .asset-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .asset-item:last-child {
+            border-bottom: none;
+        }
+
+        .asset-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .asset-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
+
+        .asset-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .asset-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .asset-symbol {
+            color: var(--gray);
+            font-size: 12px;
+        }
+
+        .asset-amount {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .asset-value {
+            color: var(--gray);
+            font-size: 12px;
+            text-align: right;
         }
 
         /* ===== ACTIONS SECTION ===== */
@@ -369,6 +490,18 @@
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 20px;
+        }
+
+        @media (max-width: 1200px) {
+            .actions-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .actions-cards {
+                grid-template-columns: 1fr;
+            }
         }
 
         .action-card {
@@ -413,6 +546,7 @@
             color: var(--gray);
             font-size: 14px;
             margin-bottom: 20px;
+            min-height: 40px;
         }
 
         .action-btn {
@@ -425,11 +559,48 @@
             cursor: pointer;
             transition: all 0.3s;
             width: 100%;
+            margin-bottom: 15px;
         }
 
         .action-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(14, 165, 233, 0.3);
+        }
+
+        .send-input-group {
+            margin-top: 15px;
+        }
+
+        .send-input {
+            width: 100%;
+            padding: 12px;
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            color: var(--light);
+            font-size: 14px;
+            margin-bottom: 10px;
+            font-family: monospace;
+        }
+
+        .send-input::placeholder {
+            color: var(--gray);
+        }
+
+        .send-btn {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
         .wallet-link-container {
@@ -447,6 +618,9 @@
             font-size: 12px;
             word-break: break-all;
             border: 1px dashed var(--card-border);
+            min-height: 44px;
+            display: flex;
+            align-items: center;
         }
 
         .copy-btn {
@@ -457,10 +631,19 @@
             border-radius: var(--radius-md);
             cursor: pointer;
             transition: all 0.3s;
+            min-width: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .copy-btn:hover {
             background: var(--primary);
+            color: white;
+        }
+
+        .copy-btn.copied {
+            background: var(--success);
             color: white;
         }
 
@@ -480,9 +663,25 @@
             gap: 20px;
         }
 
+        @media (max-width: 768px) {
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .header-left, .header-right {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+                width: 100%;
+            }
+        }
+
         .market-filters {
             display: flex;
             gap: 10px;
+            flex-wrap: wrap;
         }
 
         .filter-btn {
@@ -522,6 +721,12 @@
             width: 250px;
         }
 
+        @media (max-width: 768px) {
+            .search-box input {
+                width: 100%;
+            }
+        }
+
         .refresh-info {
             display: flex;
             align-items: center;
@@ -533,11 +738,14 @@
         .market-table-container {
             overflow-x: auto;
             margin: 20px 0;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--card-border);
         }
 
         .market-table {
             width: 100%;
             border-collapse: collapse;
+            min-width: 800px;
         }
 
         .market-table th {
@@ -547,6 +755,7 @@
             font-weight: 600;
             border-bottom: 1px solid var(--card-border);
             white-space: nowrap;
+            background: rgba(30, 41, 59, 0.8);
         }
 
         .market-table td {
@@ -558,6 +767,10 @@
             background: rgba(255, 255, 255, 0.03);
         }
 
+        .market-table tr:last-child td {
+            border-bottom: none;
+        }
+
         .sortable {
             cursor: pointer;
             user-select: none;
@@ -565,6 +778,77 @@
 
         .sortable:hover {
             color: var(--light);
+        }
+
+        .coin-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .coin-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #0ea5e9, #3b82f6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .coin-name {
+            font-weight: 600;
+        }
+
+        .coin-symbol {
+            color: var(--gray);
+            font-size: 13px;
+        }
+
+        .price-change {
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .price-change.positive {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .price-change.negative {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .trend-chart {
+            width: 80px;
+            height: 30px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .view-btn {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid var(--card-border);
+            color: var(--light);
+            padding: 6px 12px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        .view-btn:hover {
+            background: var(--primary);
+            color: white;
         }
 
         /* ===== ACTIVITY SECTION ===== */
@@ -648,72 +932,6 @@
             color: var(--danger);
         }
 
-        /* ===== RESPONSIVE DESIGN ===== */
-        @media (max-width: 1200px) {
-            .balance-cards {
-                grid-template-columns: 1fr;
-            }
-            
-            .actions-cards {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .main-content {
-                margin-left: 0;
-            }
-            
-            .sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-            }
-            
-            .sidebar.active {
-                transform: translateX(0);
-            }
-            
-            .sidebar-toggle {
-                display: block;
-                position: fixed;
-                top: 20px;
-                left: 20px;
-                z-index: 1000;
-                background: var(--primary);
-                color: white;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .dashboard-content {
-                padding: 20px 15px;
-            }
-            
-            .top-bar {
-                padding: 15px;
-                flex-direction: column;
-                gap: 15px;
-                align-items: flex-start;
-            }
-            
-            .top-bar-right {
-                width: 100%;
-                justify-content: space-between;
-            }
-            
-            .actions-cards {
-                grid-template-columns: 1fr;
-            }
-            
-            .header-left, .header-right {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
-            
-            .search-box input {
-                width: 100%;
-            }
-        }
-
         /* ===== TOAST NOTIFICATION ===== */
         .toast-container {
             position: fixed;
@@ -733,6 +951,19 @@
             gap: 12px;
             box-shadow: var(--shadow-lg);
             animation: slideIn 0.3s ease;
+            max-width: 350px;
+        }
+
+        .toast.success {
+            border-left: 4px solid var(--success);
+        }
+
+        .toast.error {
+            border-left: 4px solid var(--danger);
+        }
+
+        .toast.info {
+            border-left: 4px solid var(--primary);
         }
 
         @keyframes slideIn {
@@ -765,57 +996,44 @@
             100% { transform: rotate(360deg); }
         }
 
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 1200px) {
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-content {
+                padding: 20px 15px;
+            }
+            
+            .top-bar {
+                padding: 15px;
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+            
+            .top-bar-right {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+
         /* ===== UTILITY CLASSES ===== */
         .positive { color: var(--success); }
         .negative { color: var(--danger); }
         .neutral { color: var(--gray); }
-
-        .btn-icon {
-            background: rgba(30, 41, 59, 0.6);
-            border: 1px solid var(--card-border);
-            color: var(--light);
-            padding: 8px 16px;
-            border-radius: var(--radius-md);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s;
-        }
-
-        .btn-icon:hover {
-            background: var(--primary);
-            color: white;
-        }
-
-        /* Chart placeholder */
-        .balance-chart {
-            height: 80px;
-            margin-top: 20px;
-            background: linear-gradient(90deg, 
-                rgba(14, 165, 233, 0.3) 0%, 
-                rgba(59, 130, 246, 0.2) 20%, 
-                rgba(245, 158, 11, 0.1) 40%, 
-                transparent 100%);
-            border-radius: var(--radius-md);
-            position: relative;
-        }
-
-        .balance-chart::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: repeating-linear-gradient(
-                90deg,
-                transparent,
-                transparent 2px,
-                rgba(255, 255, 255, 0.03) 2px,
-                rgba(255, 255, 255, 0.03) 4px
-            );
-        }
     </style>
 </head>
 <body>
@@ -829,9 +1047,6 @@
                     </div>
                     <div class="logo-text">CryptoWallet Pro</div>
                 </div>
-                <button class="sidebar-toggle" id="sidebarToggle">
-                    <i class="fas fa-bars"></i>
-                </button>
             </div>
 
             <div class="user-profile">
@@ -841,9 +1056,6 @@
                 <div class="user-info">
                     <div class="user-name">Alex Johnson</div>
                     <div class="user-email">alex@cryptowallet.com</div>
-                </div>
-                <div class="user-status">
-                    <div class="status-dot active"></div>
                 </div>
             </div>
 
@@ -857,48 +1069,36 @@
                     </li>
                     <li class="nav-item">
                         <a href="#" class="nav-link">
-                            <i class="fas fa-chart-line"></i>
-                            <span class="nav-text">Portfolio</span>
-                            <span class="nav-badge">New</span>
+                            <i class="fas fa-user-circle"></i>
+                            <span class="nav-text">My Account</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-id-card"></i>
+                            <span class="nav-text">Profile</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-inbox"></i>
+                            <span class="nav-text">Inbox</span>
+                            <span class="nav-badge">3</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="#" class="nav-link">
                             <i class="fas fa-exchange-alt"></i>
+                            <span class="nav-text">Deposit & Withdraw</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-history"></i>
                             <span class="nav-text">Transactions</span>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="fas fa-coins"></i>
-                            <span class="nav-text">Assets</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="fas fa-chart-pie"></i>
-                            <span class="nav-text">Analytics</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="fas fa-cog"></i>
-                            <span class="nav-text">Settings</span>
-                        </a>
-                    </li>
                 </ul>
-
-                <div class="sidebar-footer">
-                    <div class="wallet-status">
-                        <div class="status-label">Wallet Status</div>
-                        <div class="status-value connected">
-                            <i class="fas fa-circle"></i> Connected
-                        </div>
-                    </div>
-                    <button class="sidebar-help">
-                        <i class="fas fa-question-circle"></i> Help & Support
-                    </button>
-                </div>
             </nav>
         </aside>
 
@@ -917,11 +1117,6 @@
                     <div class="language-switcher">
                         <button class="lang-btn active" data-lang="en">EN</button>
                         <button class="lang-btn" data-lang="cn">中文</button>
-                    </div>
-                    
-                    <div class="notification-bell">
-                        <i class="fas fa-bell"></i>
-                        <span class="notification-count">3</span>
                     </div>
                     
                     <div class="user-menu">
@@ -947,11 +1142,8 @@
                     <div class="section-header">
                         <h2 class="section-title">Total Balance</h2>
                         <div class="balance-actions">
-                            <button class="btn-icon">
-                                <i class="fas fa-sync-alt"></i> Update
-                            </button>
-                            <button class="btn-icon">
-                                <i class="fas fa-download"></i> Export
+                            <button class="refresh-btn" id="refreshBalance">
+                                <i class="fas fa-sync-alt"></i> Refresh
                             </button>
                         </div>
                     </div>
@@ -959,7 +1151,9 @@
                     <div class="balance-cards">
                         <div class="balance-card main">
                             <div class="balance-header">
-                                <span class="balance-label">Total Assets (USD)</span>
+                                <span class="balance-label">
+                                    <i class="fas fa-coins"></i> Total Assets (USD)
+                                </span>
                                 <div class="trend-indicator positive">
                                     <i class="fas fa-arrow-up"></i> 12.5% today
                                 </div>
@@ -974,20 +1168,67 @@
                         
                         <div class="balance-card secondary">
                             <div class="balance-header">
-                                <span class="balance-label">BTC Balance</span>
+                                <span class="balance-label">
+                                    <i class="fas fa-wallet"></i> Coin Assets
+                                </span>
                                 <i class="fab fa-bitcoin"></i>
                             </div>
-                            <div class="balance-amount">0.8245 BTC</div>
-                            <div class="balance-value">≈ $ 24,320.18</div>
+                            <div class="asset-list" id="coinAssetsList">
+                                <div class="asset-item">
+                                    <div class="asset-info">
+                                        <div class="asset-icon" style="background: linear-gradient(135deg, #F7931A, #F2A900);">B</div>
+                                        <div class="asset-details">
+                                            <div class="asset-name">Bitcoin</div>
+                                            <div class="asset-symbol">BTC</div>
+                                        </div>
+                                    </div>
+                                    <div class="asset-amounts">
+                                        <div class="asset-amount">0.8245 BTC</div>
+                                        <div class="asset-value">$24,320.18</div>
+                                    </div>
+                                </div>
+                                <div class="asset-item">
+                                    <div class="asset-info">
+                                        <div class="asset-icon" style="background: linear-gradient(135deg, #627EEA, #8C8C8C);">E</div>
+                                        <div class="asset-details">
+                                            <div class="asset-name">Ethereum</div>
+                                            <div class="asset-symbol">ETH</div>
+                                        </div>
+                                    </div>
+                                    <div class="asset-amounts">
+                                        <div class="asset-amount">4.28 ETH</div>
+                                        <div class="asset-value">$12,450.75</div>
+                                    </div>
+                                </div>
+                                <div class="asset-item">
+                                    <div class="asset-info">
+                                        <div class="asset-icon" style="background: linear-gradient(135deg, #26A17B, #26A17B);">U</div>
+                                        <div class="asset-details">
+                                            <div class="asset-name">Tether</div>
+                                            <div class="asset-symbol">USDT</div>
+                                        </div>
+                                    </div>
+                                    <div class="asset-amounts">
+                                        <div class="asset-amount">5,820.40 USDT</div>
+                                        <div class="asset-value">$5,820.40</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         
                         <div class="balance-card secondary">
                             <div class="balance-header">
-                                <span class="balance-label">ETH Balance</span>
-                                <i class="fab fa-ethereum"></i>
+                                <span class="balance-label">
+                                    <i class="fas fa-dollar-sign"></i> USDT Balance
+                                </span>
+                                <i class="fab fa-usd"></i>
                             </div>
-                            <div class="balance-amount">4.28 ETH</div>
-                            <div class="balance-value">≈ $ 12,450.75</div>
+                            <div class="balance-amount">5,820.40 USDT</div>
+                            <div class="balance-value">≈ $ 5,820.40</div>
+                            <div class="balance-change">
+                                <span class="change-amount positive">+$ 120.40</span>
+                                <span class="change-period">(24h change)</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1005,10 +1246,13 @@
                                 <i class="fas fa-paper-plane"></i>
                             </div>
                             <h3 class="action-title">Send</h3>
-                            <p class="action-desc">Transfer crypto to another wallet</p>
-                            <button class="action-btn">
-                                <i class="fas fa-arrow-right"></i> Send Funds
-                            </button>
+                            <p class="action-desc">Send crypto to another wallet address</p>
+                            <div class="send-input-group">
+                                <input type="text" class="send-input" id="sendAddress" placeholder="Paste wallet address here...">
+                                <button class="send-btn" id="sendCrypto">
+                                    <i class="fas fa-paper-plane"></i> Send Now
+                                </button>
+                            </div>
                         </div>
                         
                         <div class="action-card receive">
@@ -1016,190 +1260,9 @@
                                 <i class="fas fa-qrcode"></i>
                             </div>
                             <h3 class="action-title">Receive</h3>
-                            <p class="action-desc">Generate address or QR code</p>
+                            <p class="action-desc">Generate your wallet address for receiving funds</p>
                             <button class="action-btn" id="generateWalletLink">
-                                <i class="fas fa-link"></i> Generate Link
+                                <i class="fas fa-link"></i> Generate Address
                             </button>
                             <div class="wallet-link-container">
-                                <div class="wallet-link-display" id="walletLinkDisplay">
-                                    Click "Generate Link" to create address
-                                </div>
-                                <button class="copy-btn" id="copyWalletLink">
-                                    <i class="fas fa-copy"></i>
-                                </button>
-                            </div>
-                            <div class="qr-code-container" id="qrCodeContainer">
-                                <!-- QR Code will be generated here -->
-                            </div>
-                        </div>
-                        
-                        <div class="action-card exchange">
-                            <div class="action-icon">
-                                <i class="fas fa-exchange-alt"></i>
-                            </div>
-                            <h3 class="action-title">Exchange</h3>
-                            <p class="action-desc">Swap between cryptocurrencies</p>
-                            <button class="action-btn">
-                                <i class="fas fa-sync-alt"></i> Swap Now
-                            </button>
-                        </div>
-                        
-                        <div class="action-card stake">
-                            <div class="action-icon">
-                                <i class="fas fa-chart-line"></i>
-                            </div>
-                            <h3 class="action-title">Stake & Earn</h3>
-                            <p class="action-desc">Earn rewards on your holdings</p>
-                            <button class="action-btn">
-                                <i class="fas fa-percentage"></i> Start Earning
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Market Overview -->
-                <div class="market-section">
-                    <div class="section-header">
-                        <div class="header-left">
-                            <h2 class="section-title">Market Overview</h2>
-                            <div class="market-filters">
-                                <button class="filter-btn active">All</button>
-                                <button class="filter-btn">Gainers</button>
-                                <button class="filter-btn">Losers</button>
-                                <button class="filter-btn">Watchlist</button>
-                            </div>
-                        </div>
-                        <div class="header-right">
-                            <div class="search-box">
-                                <i class="fas fa-search"></i>
-                                <input type="text" id="marketSearch" placeholder="Search cryptocurrencies...">
-                            </div>
-                            <div class="refresh-info">
-                                <i class="fas fa-clock"></i>
-                                <span id="lastUpdated">Updated just now</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="market-table-container">
-                        <table class="market-table">
-                            <thead>
-                                <tr>
-                                    <th class="sortable" data-sort="asset">
-                                        Asset <i class="fas fa-sort"></i>
-                                    </th>
-                                    <th class="sortable" data-sort="price">
-                                        Price (USD) <i class="fas fa-sort"></i>
-                                    </th>
-                                    <th class="sortable" data-sort="change">
-                                        24h Change <i class="fas fa-sort"></i>
-                                    </th>
-                                    <th>Market Cap</th>
-                                    <th>24h Volume</th>
-                                    <th>Trend (7D)</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="marketTableBody">
-                                <!-- Market data will be populated here -->
-                                <tr class="loading-row">
-                                    <td colspan="7">
-                                        <div class="loading-spinner">
-                                            <i class="fas fa-spinner fa-spin"></i> Loading market data...
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    <div class="market-footer">
-                        <div class="pagination">
-                            <button class="page-btn disabled">
-                                <i class="fas fa-chevron-left"></i>
-                            </button>
-                            <span class="page-info">1-10 of 100</span>
-                            <button class="page-btn">
-                                <i class="fas fa-chevron-right"></i>
-                            </button>
-                        </div>
-                        <div class="view-options">
-                            <span>Show:</span>
-                            <select id="rowsPerPage">
-                                <option value="10">10</option>
-                                <option value="25">25</option>
-                                <option value="50">50</option>
-                            </select>
-                            <span>rows</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Recent Activity -->
-                <div class="activity-section">
-                    <div class="section-header">
-                        <h2 class="section-title">Recent Activity</h2>
-                        <a href="#" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
-                    </div>
-                    
-                    <div class="activity-list">
-                        <div class="activity-item">
-                            <div class="activity-icon success">
-                                <i class="fas fa-arrow-down"></i>
-                            </div>
-                            <div class="activity-details">
-                                <div class="activity-title">Received Bitcoin</div>
-                                <div class="activity-meta">From: 0x1a2b...3c4d • 2 hours ago</div>
-                            </div>
-                            <div class="activity-amount positive">+0.05 BTC</div>
-                        </div>
-                        
-                        <div class="activity-item">
-                            <div class="activity-icon sent">
-                                <i class="fas fa-arrow-up"></i>
-                            </div>
-                            <div class="activity-details">
-                                <div class="activity-title">Sent Ethereum</div>
-                                <div class="activity-meta">To: 0x5e6f...7g8h • 5 hours ago</div>
-                            </div>
-                            <div class="activity-amount negative">-2.1 ETH</div>
-                        </div>
-                        
-                        <div class="activity-item">
-                            <div class="activity-icon exchange">
-                                <i class="fas fa-exchange-alt"></i>
-                            </div>
-                            <div class="activity-details">
-                                <div class="activity-title">Swap Completed</div>
-                                <div class="activity-meta">BTC → ETH • Yesterday</div>
-                            </div>
-                            <div class="activity-amount neutral">Swap</div>
-                        </div>
-                        
-                        <div class="activity-item">
-                            <div class="activity-icon stake">
-                                <i class="fas fa-chart-line"></i>
-                            </div>
-                            <div class="activity-details">
-                                <div class="activity-title">Staking Rewards</div>
-                                <div class="activity-meta">ADA Staking • 2 days ago</div>
-                            </div>
-                            <div class="activity-amount positive">+42.5 ADA</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- Toast Notification -->
-    <div class="toast-container" id="toastContainer"></div>
-
-    <script>
-        // Dashboard JavaScript - All in one file
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('Dashboard initialized');
-            
-            // Initialize wallet actions
-            const generateBtn = document.getElementById('generateWalletLink');
-           
+                                <div class="wallet
