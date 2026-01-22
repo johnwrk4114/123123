@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoWallet Pro | Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-wallet"></i>
+                    </div>
+                    <div class="logo-text">CryptoWallet Pro</div>
+                </div>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+
+            <div class="user-profile">
+                <div class="avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-info">
+                    <div class="user-name">Alex Johnson</div>
+                    <div class="user-email">alex@cryptowallet.com</div>
+                </div>
+                <div class="user-status">
+                    <div class="status-dot active"></div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="nav-item active">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-home"></i>
+                            <span class="nav-text">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-chart-line"></i>
+                            <span class="nav-text">Portfolio</span>
+                            <span class="nav-badge">New</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-exchange-alt"></i>
+                            <span class="nav-text">Transactions</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-coins"></i>
+                            <span class="nav-text">Assets</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-chart-pie"></i>
+                            <span class="nav-text">Analytics</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-cog"></i>
+                            <span class="nav-text">Settings</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="sidebar-footer">
+                    <div class="wallet-status">
+                        <div class="status-label">Wallet Status</div>
+                        <div class="status-value connected">
+                            <i class="fas fa-circle"></i> Connected
+                        </div>
+                    </div>
+                    <button class="sidebar-help">
+                        <i class="fas fa-question-circle"></i> Help & Support
+                    </button>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <header class="top-bar">
+                <div class="top-bar-left">
+                    <div class="page-title">
+                        <h1>Wallet Dashboard</h1>
+                        <p class="page-subtitle">Welcome back! Here's your financial overview</p>
+                    </div>
+                </div>
+                
+                <div class="top-bar-right">
+                    <div class="language-switcher">
+                        <button class="lang-btn active" data-lang="en">EN</button>
+                        <button class="lang-btn" data-lang="cn">中文</button>
+                    </div>
+                    
+                    <div class="notification-bell">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-count">3</span>
+                    </div>
+                    
+                    <div class="user-menu">
+                        <div class="user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="user-dropdown">
+                            <span class="user-email">alex@cryptowallet.com</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    
+                    <button class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Main Dashboard Content -->
+            <div class="dashboard-content">
+                <!-- Balance Section -->
+                <div class="balance-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Total Balance</h2>
+                        <div class="balance-actions">
+                            <button class="btn-icon">
+                                <i class="fas fa-sync-alt"></i> Update
+                            </button>
+                            <button class="btn-icon">
+                                <i class="fas fa-download"></i> Export
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="balance-cards">
+                        <div class="balance-card main">
+                            <div class="balance-header">
+                                <span class="balance-label">Total Assets (USD)</span>
+                                <div class="trend-indicator positive">
+                                    <i class="fas fa-arrow-up"></i> 12.5% today
+                                </div>
+                            </div>
+                            <div class="balance-amount">$ 42,689.50</div>
+                            <div class="balance-change">
+                                <span class="change-amount positive">+$ 4,235.60</span>
+                                <span class="change-period">(24h change)</span>
+                            </div>
+                            <div class="balance-chart" id="balanceChart"></div>
+                        </div>
+                        
+                        <div class="balance-card secondary">
+                            <div class="balance-header">
+                                <span class="balance-label">BTC Balance</span>
+                                <i class="fab fa-bitcoin"></i>
+                            </div>
+                            <div class="balance-amount">0.8245 BTC</div>
+                            <div class="balance-value">≈ $ 24,320.18</div>
+                        </div>
+                        
+                        <div class="balance-card secondary">
+                            <div class="balance-header">
+                                <span class="balance-label">ETH Balance</span>
+                                <i class="fab fa-ethereum"></i>
+                            </div>
+                            <div class="balance-amount">4.28 ETH</div>
+                            <div class="balance-value">≈ $ 12,450.75</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wallet Actions -->
+                <div class="actions-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Wallet Actions</h2>
+                        <p class="section-subtitle">Send, receive or manage your funds</p>
+                    </div>
+                    
+                    <div class="actions-cards">
+                        <div class="action-card send">
+                            <div class="action-icon">
+                                <i class="fas fa-paper-plane"></i>
+                            </div>
+                            <h3 class="action-title">Send</h3>
+                            <p class="action-desc">Transfer crypto to another wallet</p>
+                            <button class="action-btn">
+                                <i class="fas fa-arrow-right"></i> Send Funds
+                            </button>
+                        </div>
+                        
+                        <div class="action-card receive">
+                            <div class="action-icon">
+                                <i class="fas fa-qrcode"></i>
+                            </div>
+                            <h3 class="action-title">Receive</h3>
+                            <p class="action-desc">Generate address or QR code</p>
+                            <button class="action-btn" id="generateWalletLink">
+                                <i class="fas fa-link"></i> Generate Link
+                            </button>
+                            <div class="wallet-link-container">
+                                <div class="wallet-link-display" id="walletLinkDisplay">
+                                    Click "Generate Link" to create address
+                                </div>
+                                <button class="copy-btn" id="copyWalletLink">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                            <div class="qr-code-container" id="qrCodeContainer">
+                                <!-- QR Code will be generated here -->
+                            </div>
+                        </div>
+                        
+                        <div class="action-card exchange">
+                            <div class="action-icon">
+                                <i class="fas fa-exchange-alt"></i>
+                            </div>
+                            <h3 class="action-title">Exchange</h3>
+                            <p class="action-desc">Swap between cryptocurrencies</p>
+                            <button class="action-btn">
+                                <i class="fas fa-sync-alt"></i> Swap Now
+                            </button>
+                        </div>
+                        
+                        <div class="action-card stake">
+                            <div class="action-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <h3 class="action-title">Stake & Earn</h3>
+                            <p class="action-desc">Earn rewards on your holdings</p>
+                            <button class="action-btn">
+                                <i class="fas fa-percentage"></i> Start Earning
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Market Overview -->
+                <div class="market-section">
+                    <div class="section-header">
+                        <div class="header-left">
+                            <h2 class="section-title">Market Overview</h2>
+                            <div class="market-filters">
+                                <button class="filter-btn active">All</button>
+                                <button class="filter-btn">Gainers</button>
+                                <button class="filter-btn">Losers</button>
+                                <button class="filter-btn">Watchlist</button>
+                            </div>
+                        </div>
+                        <div class="header-right">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="marketSearch" placeholder="Search cryptocurrencies...">
+                            </div>
+                            <div class="refresh-info">
+                                <i class="fas fa-clock"></i>
+                                <span id="lastUpdated">Updated just now</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="market-table-container">
+                        <table class="market-table">
+                            <thead>
+                                <tr>
+                                    <th class="sortable" data-sort="asset">
+                                        Asset <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th class="sortable" data-sort="price">
+                                        Price (USD) <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th class="sortable" data-sort="change">
+                                        24h Change <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th>Market Cap</th>
+                                    <th>24h Volume</th>
+                                    <th>Trend (7D)</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="marketTableBody">
+                                <!-- Market data will be populated here -->
+                                <tr class="loading-row">
+                                    <td colspan="7">
+                                        <div class="loading-spinner">
+                                            <i class="fas fa-spinner fa-spin"></i> Loading market data...
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="market-footer">
+                        <div class="pagination">
+                            <button class="page-btn disabled">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <span class="page-info">1-10 of 100</span>
+                            <button class="page-btn">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                        <div class="view-options">
+                            <span>Show:</span>
+                            <select id="rowsPerPage">
+                                <option value="10">10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                            </select>
+                            <span>rows</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Activity -->
+                <div class="activity-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Recent Activity</h2>
+                        <a href="#" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <div class="activity-icon success">
+                                <i class="fas fa-arrow-down"></i>
+                            </div>
+                            <div class="activity-details">
+                                <div class="activity-title">Received Bitcoin</div>
+                                <div class="activity-meta">From: 0x1a2b...3c4d • 2 hours ago</div>
+                            </div>
+                            <div class="activity-amount positive">+0.05 BTC</div>
+                        </div>
+                        
+                        <div class="activity-item">
+                            <div class="activity-icon sent">
+                                <i class="fas fa-arrow-up"></i>
+                            </div>
+                            <div class="activity-details">
+                                <div class="activity-title">Sent Ethereum</div>
+                                <div class="activity-meta">To: 0x5e6f...7g8h • 5 hours ago</div>
+                            </div>
+                            <div class="activity-amount negative">-2.1 ETH</div>
+                        </div>
+                        
+                        <div class="activity-item">
+                            <div class="activity-icon exchange">
+                                <i class="fas fa-exchange-alt"></i>
+                            </div>
+                            <div class="activity-details">
+                                <div class="activity-title">Swap Completed</div>
+                                <div class="activity-meta">BTC → ETH • Yesterday</div>
+                            </div>
+                            <div class="activity-amount neutral">Swap</div>
+                        </div>
+                        
+                        <div class="activity-item">
+                            <div class="activity-icon stake">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="activity-details">
+                                <div class="activity-title">Staking Rewards</div>
+                                <div class="activity-meta">ADA Staking • 2 days ago</div>
+                            </div>
+                            <div class="activity-amount positive">+42.5 ADA</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>
