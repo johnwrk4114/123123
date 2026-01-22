@@ -1265,4 +1265,1067 @@
                                 <i class="fas fa-link"></i> Generate Address
                             </button>
                             <div class="wallet-link-container">
-                                <div class="wallet
+                                <div class="wallet-link-display" id="walletLinkDisplay">
+                                    Click "Generate Address" above
+                                </div>
+                                <button class="copy-btn" id="copyWalletLink" title="Copy to clipboard">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="action-card exchange">
+                            <div class="action-icon">
+                                <i class="fas fa-exchange-alt"></i>
+                            </div>
+                            <h3 class="action-title">Exchange</h3>
+                            <p class="action-desc">Swap between cryptocurrencies instantly</p>
+                            <button class="action-btn" id="exchangeBtn">
+                                <i class="fas fa-sync-alt"></i> Exchange Now
+                            </button>
+                        </div>
+                        
+                        <div class="action-card stake">
+                            <div class="action-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <h3 class="action-title">Stake & Earn</h3>
+                            <p class="action-desc">Earn rewards by staking your cryptocurrencies</p>
+                            <button class="action-btn" id="stakeBtn">
+                                <i class="fas fa-percentage"></i> Start Earning
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Market Overview -->
+                <div class="market-section">
+                    <div class="section-header">
+                        <div class="header-left">
+                            <h2 class="section-title">Market Overview</h2>
+                            <div class="market-filters">
+                                <button class="filter-btn active" data-filter="all">All</button>
+                                <button class="filter-btn" data-filter="gainers">Gainers</button>
+                                <button class="filter-btn" data-filter="losers">Losers</button>
+                                <button class="filter-btn" data-filter="watchlist">Watchlist</button>
+                            </div>
+                        </div>
+                        <div class="header-right">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="marketSearch" placeholder="Search cryptocurrencies...">
+                            </div>
+                            <div class="refresh-info">
+                                <i class="fas fa-clock"></i>
+                                <span id="lastUpdated">Updated just now</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="market-table-container">
+                        <table class="market-table">
+                            <thead>
+                                <tr>
+                                    <th class="sortable" data-sort="asset">
+                                        Asset <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th class="sortable" data-sort="price">
+                                        Price (USD) <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th class="sortable" data-sort="change">
+                                        24h Change <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th>Market Cap</th>
+                                    <th>24h Volume</th>
+                                    <th>Trend (7D)</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="marketTableBody">
+                                <!-- Real-time data will be loaded here -->
+                                <tr>
+                                    <td colspan="7" class="loading-spinner">
+                                        <i class="fas fa-spinner fa-spin"></i> Loading market data...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Recent Activity -->
+                <div class="activity-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Recent Activity</h2>
+                        <a href="#" class="view-all" id="viewAllActivity">View All <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    
+                    <div class="activity-list" id="recentActivityList">
+                        <div class="activity-item">
+                            <div class="activity-icon success">
+                                <i class="fas fa-arrow-down"></i>
+                            </div>
+                            <div class="activity-details">
+                                <div class="activity-title">Received Bitcoin</div>
+                                <div class="activity-meta">From: 0x1a2b...3c4d • 2 hours ago</div>
+                            </div>
+                            <div class="activity-amount positive">+0.05 BTC</div>
+                        </div>
+                        
+                        <div class="activity-item">
+                            <div class="activity-icon sent">
+                                <i class="fas fa-arrow-up"></i>
+                            </div>
+                            <div class="activity-details">
+                                <div class="activity-title">Sent Ethereum</div>
+                                <div class="activity-meta">To: 0x5e6f...7g8h • 5 hours ago</div>
+                            </div>
+                            <div class="activity-amount negative">-2.1 ETH</div>
+                        </div>
+                        
+                        <div class="activity-item">
+                            <div class="activity-icon success">
+                                <i class="fas fa-exchange-alt"></i>
+                            </div>
+                            <div class="activity-details">
+                                <div class="activity-title">Exchange Completed</div>
+                                <div class="activity-meta">BTC → ETH • Yesterday</div>
+                            </div>
+                            <div class="activity-amount neutral">Exchange</div>
+                        </div>
+                        
+                        <div class="activity-item">
+                            <div class="activity-icon success">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="activity-details">
+                                <div class="activity-title">Staking Rewards</div>
+                                <div class="activity-meta">ADA Staking • 2 days ago</div>
+                            </div>
+                            <div class="activity-amount positive">+42.5 ADA</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // ==================== DASHBOARD INITIALIZATION ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('CryptoWallet Dashboard Initialized');
+            
+            // Initialize all modules
+            initSidebar();
+            initBalanceSection();
+            initWalletActions();
+            initMarketData();
+            initActivitySection();
+            initLanguageSwitcher();
+            initLogout();
+            
+            // Start auto-refresh for market data
+            startMarketDataAutoRefresh();
+        });
+
+        // ==================== SIDEBAR FUNCTIONS ====================
+        function initSidebar() {
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    // Remove active class from all items
+                    navItems.forEach(i => i.classList.remove('active'));
+                    
+                    // Add active class to clicked item
+                    this.classList.add('active');
+                    
+                    const navText = this.querySelector('.nav-text').textContent;
+                    showToast(`Navigating to ${navText}...`, 'info');
+                    
+                    // In a real app, this would load the corresponding page
+                    // For now, we'll just show a toast
+                });
+            });
+        }
+
+        // ==================== BALANCE SECTION FUNCTIONS ====================
+        function initBalanceSection() {
+            const refreshBtn = document.getElementById('refreshBalance');
+            
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', function() {
+                    // Show refreshing state
+                    this.classList.add('refreshing');
+                    this.disabled = true;
+                    
+                    // Simulate API call to refresh balance
+                    setTimeout(() => {
+                        // Update balances with new values
+                        updateBalances();
+                        
+                        // Reset button state
+                        this.classList.remove('refreshing');
+                        this.disabled = false;
+                        
+                        showToast('Balance updated successfully!', 'success');
+                    }, 1500);
+                });
+            }
+            
+            // Update balance display
+            updateBalances();
+        }
+        
+        function updateBalances() {
+            // In a real app, this would fetch from an API
+            // For now, we'll simulate some data changes
+            
+            // Update total assets (random small change)
+            const totalAmount = document.querySelector('.balance-amount');
+            if (totalAmount) {
+                const currentTotal = 42689.50;
+                const change = (Math.random() - 0.5) * 1000; // Random change between -500 and +500
+                const newTotal = currentTotal + change;
+                totalAmount.textContent = `$ ${newTotal.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
+                
+                // Update 24h change
+                const changeElement = document.querySelector('.change-amount');
+                if (changeElement) {
+                    const isPositive = change >= 0;
+                    changeElement.textContent = `${isPositive ? '+' : '-'}$${Math.abs(change).toFixed(2)}`;
+                    changeElement.className = `change-amount ${isPositive ? 'positive' : 'negative'}`;
+                    
+                    // Update trend indicator
+                    const trendIndicator = document.querySelector('.trend-indicator');
+                    if (trendIndicator) {
+                        const changePercent = (change / currentTotal * 100).toFixed(2);
+                        trendIndicator.innerHTML = `<i class="fas fa-arrow-${isPositive ? 'up' : 'down'}"></i> ${Math.abs(changePercent)}% today`;
+                        trendIndicator.className = `trend-indicator ${isPositive ? 'positive' : 'negative'}`;
+                    }
+                }
+            }
+            
+            // Update USDT balance
+            const usdtBalance = document.querySelectorAll('.balance-card.secondary .balance-amount')[1];
+            if (usdtBalance) {
+                const currentUSDT = 5820.40;
+                const usdtChange = (Math.random() - 0.5) * 100;
+                const newUSDT = currentUSDT + usdtChange;
+                usdtBalance.textContent = `${newUSDT.toFixed(2)} USDT`;
+                
+                // Update USDT value
+                const usdtValue = usdtBalance.nextElementSibling;
+                if (usdtValue && usdtValue.classList.contains('balance-value')) {
+                    usdtValue.textContent = `≈ $ ${newUSDT.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')}`;
+                }
+                
+                // Update USDT change
+                const usdtChangeElement = document.querySelectorAll('.balance-card.secondary .change-amount')[1];
+                if (usdtChangeElement) {
+                    const isPositive = usdtChange >= 0;
+                    usdtChangeElement.textContent = `${isPositive ? '+' : '-'}$${Math.abs(usdtChange).toFixed(2)}`;
+                    usdtChangeElement.className = `change-amount ${isPositive ? 'positive' : 'negative'}`;
+                }
+            }
+        }
+
+        // ==================== WALLET ACTIONS FUNCTIONS ====================
+        function initWalletActions() {
+            // Send Functionality
+            const sendBtn = document.getElementById('sendCrypto');
+            const sendAddressInput = document.getElementById('sendAddress');
+            
+            if (sendBtn && sendAddressInput) {
+                sendBtn.addEventListener('click', function() {
+                    const address = sendAddressInput.value.trim();
+                    
+                    if (!address) {
+                        showToast('Please enter a wallet address', 'error');
+                        sendAddressInput.focus();
+                        return;
+                    }
+                    
+                    if (!isValidWalletAddress(address)) {
+                        showToast('Invalid wallet address format', 'error');
+                        return;
+                    }
+                    
+                    // Disable button and show loading
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+                    this.disabled = true;
+                    
+                    // Simulate sending process
+                    setTimeout(() => {
+                        // Reset button
+                        this.innerHTML = '<i class="fas fa-paper-plane"></i> Send Now';
+                        this.disabled = false;
+                        
+                        // Clear input
+                        sendAddressInput.value = '';
+                        
+                        // Add to activity log
+                        addToActivityLog('send', address);
+                        
+                        // Show success message
+                        showToast(`Successfully sent crypto to ${address.substring(0, 8)}...`, 'success');
+                    }, 2000);
+                });
+                
+                // Allow paste from clipboard
+                sendAddressInput.addEventListener('paste', function(e) {
+                    setTimeout(() => {
+                        if (this.value.trim()) {
+                            showToast('Address pasted successfully', 'info');
+                        }
+                    }, 100);
+                });
+            }
+            
+            // Receive Functionality
+            const generateBtn = document.getElementById('generateWalletLink');
+            const walletLinkDisplay = document.getElementById('walletLinkDisplay');
+            const copyBtn = document.getElementById('copyWalletLink');
+            
+            if (generateBtn && walletLinkDisplay) {
+                generateBtn.addEventListener('click', function() {
+                    // Generate random wallet address
+                    const newAddress = generateWalletAddress();
+                    
+                    // Display the address
+                    walletLinkDisplay.textContent = newAddress;
+                    walletLinkDisplay.style.color = '#10b981';
+                    
+                    // Enable copy button
+                    if (copyBtn) {
+                        copyBtn.disabled = false;
+                    }
+                    
+                    // Show success message
+                    showToast('New wallet address generated!', 'success');
+                });
+            }
+            
+            if (copyBtn && walletLinkDisplay) {
+                copyBtn.addEventListener('click', function() {
+                    const address = walletLinkDisplay.textContent;
+                    
+                    if (!address || address.includes('Click')) {
+                        showToast('Please generate an address first', 'error');
+                        return;
+                    }
+                    
+                    // Copy to clipboard
+                    navigator.clipboard.writeText(address)
+                        .then(() => {
+                            // Visual feedback
+                            this.classList.add('copied');
+                            this.innerHTML = '<i class="fas fa-check"></i>';
+                            
+                            showToast('Address copied to clipboard!', 'success');
+                            
+                            // Reset button after 2 seconds
+                            setTimeout(() => {
+                                this.classList.remove('copied');
+                                this.innerHTML = '<i class="fas fa-copy"></i>';
+                            }, 2000);
+                        })
+                        .catch(err => {
+                            console.error('Failed to copy: ', err);
+                            showToast('Failed to copy address', 'error');
+                        });
+                });
+            }
+            
+            // Exchange Functionality
+            const exchangeBtn = document.getElementById('exchangeBtn');
+            if (exchangeBtn) {
+                exchangeBtn.addEventListener('click', function() {
+                    showModal('exchange');
+                });
+            }
+            
+            // Stake Functionality
+            const stakeBtn = document.getElementById('stakeBtn');
+            if (stakeBtn) {
+                stakeBtn.addEventListener('click', function() {
+                    showModal('stake');
+                });
+            }
+        }
+        
+        function generateWalletAddress() {
+            // Generate a random Ethereum-style address
+            const chars = '0123456789abcdef';
+            let address = '0x';
+            for (let i = 0; i < 40; i++) {
+                address += chars[Math.floor(Math.random() * chars.length)];
+            }
+            return address;
+        }
+        
+        function isValidWalletAddress(address) {
+            // Simple validation for demo purposes
+            // In real app, would validate based on cryptocurrency type
+            return address && address.length >= 26 && address.length <= 42;
+        }
+
+        // ==================== MARKET DATA FUNCTIONS ====================
+        let marketData = [];
+        let refreshInterval;
+        
+        function initMarketData() {
+            // Load initial market data
+            fetchMarketData();
+            
+            // Setup search functionality
+            const searchInput = document.getElementById('marketSearch');
+            if (searchInput) {
+                searchInput.addEventListener('input', function(e) {
+                    filterMarketData(e.target.value.toLowerCase());
+                });
+            }
+            
+            // Setup filter buttons
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    const filter = this.dataset.filter;
+                    applyMarketFilter(filter);
+                });
+            });
+            
+            // Setup sort functionality
+            const sortHeaders = document.querySelectorAll('.sortable');
+            sortHeaders.forEach(header => {
+                header.addEventListener('click', function() {
+                    const sortBy = this.dataset.sort;
+                    sortMarketData(sortBy);
+                    
+                    // Update sort indicator
+                    sortHeaders.forEach(h => {
+                        const icon = h.querySelector('i');
+                        if (icon) icon.className = 'fas fa-sort';
+                    });
+                    
+                    const icon = this.querySelector('i');
+                    if (icon) icon.className = 'fas fa-sort-up';
+                });
+            });
+        }
+        
+        function fetchMarketData() {
+            // Simulate fetching real data (would use CoinGecko API in production)
+            // For now, we'll use mock data that updates in real-time
+            
+            const coins = [
+                { id: 'bitcoin', symbol: 'btc', name: 'Bitcoin', current_price: 45000 + Math.random() * 2000, price_change_percentage_24h: (Math.random() - 0.5) * 10, market_cap: 880000000000, total_volume: 30000000000 },
+                { id: 'ethereum', symbol: 'eth', name: 'Ethereum', current_price: 2400 + Math.random() * 200, price_change_percentage_24h: (Math.random() - 0.5) * 8, market_cap: 290000000000, total_volume: 18000000000 },
+                { id: 'tether', symbol: 'usdt', name: 'Tether', current_price: 1.00, price_change_percentage_24h: (Math.random() - 0.1) * 0.2, market_cap: 83000000000, total_volume: 50000000000 },
+                { id: 'bnb', symbol: 'bnb', name: 'BNB', current_price: 310 + Math.random() * 20, price_change_percentage_24h: (Math.random() - 0.5) * 6, market_cap: 48000000000, total_volume: 1200000000 },
+                { id: 'solana', symbol: 'sol', name: 'Solana', current_price: 100 + Math.random() * 30, price_change_percentage_24h: (Math.random() - 0.5) * 12, market_cap: 42000000000, total_volume: 3200000000 },
+                { id: 'ripple', symbol: 'xrp', name: 'XRP', current_price: 0.52 + Math.random() * 0.1, price_change_percentage_24h: (Math.random() - 0.5) * 5, market_cap: 28000000000, total_volume: 1200000000 },
+                { id: 'cardano', symbol: 'ada', name: 'Cardano', current_price: 0.48 + Math.random() * 0.1, price_change_percentage_24h: (Math.random() - 0.5) * 7, market_cap: 17000000000, total_volume: 800000000 },
+                { id: 'dogecoin', symbol: 'doge', name: 'Dogecoin', current_price: 0.078 + Math.random() * 0.02, price_change_percentage_24h: (Math.random() - 0.5) * 15, market_cap: 11000000000, total_volume: 900000000 },
+                { id: 'polkadot', symbol: 'dot', name: 'Polkadot', current_price: 6.75 + Math.random() * 0.5, price_change_percentage_24h: (Math.random() - 0.5) * 6, market_cap: 8700000000, total_volume: 400000000 },
+                { id: 'chainlink', symbol: 'link', name: 'Chainlink', current_price: 14.20 + Math.random() * 2, price_change_percentage_24h: (Math.random() - 0.5) * 8, market_cap: 8300000000, total_volume: 500000000 }
+            ];
+            
+            marketData = coins;
+            renderMarketData(marketData);
+            updateLastUpdated();
+        }
+        
+        function renderMarketData(data) {
+            const tbody = document.getElementById('marketTableBody');
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            if (data.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="loading-spinner">
+                            <i class="fas fa-search"></i> No cryptocurrencies found
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            data.forEach(coin => {
+                const changeClass = coin.price_change_percentage_24h >= 0 ? 'positive' : 'negative';
+                const changeIcon = coin.price_change_percentage_24h >= 0 ? '▲' : '▼';
+                
+                // Generate random trend data
+                const trendPoints = Array.from({length: 7}, (_, i) => {
+                    const base = coin.current_price;
+                    const variance = base * 0.05;
+                    return base + (Math.random() - 0.5) * variance;
+                });
+                
+                // Format numbers
+                const formattedPrice = coin.current_price.toLocaleString('en-US', {
+                    style: 'currency',
+                    currency: 'USD',
+                    minimumFractionDigits: coin.current_price < 1 ? 4 : 2,
+                    maximumFractionDigits: coin.current_price < 1 ? 4 : 2
+                });
+                
+                const formattedMarketCap = formatLargeNumber(coin.market_cap);
+                const formattedVolume = formatLargeNumber(coin.total_volume);
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <div class="coin-cell">
+                            <div class="coin-icon">${coin.symbol.toUpperCase().charAt(0)}</div>
+                            <div>
+                                <div class="coin-name">${coin.name}</div>
+                                <div class="coin-symbol">${coin.symbol.toUpperCase()}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="font-weight: 600;">${formattedPrice}</td>
+                    <td>
+                        <span class="price-change ${changeClass}">
+                            ${changeIcon} ${Math.abs(coin.price_change_percentage_24h).toFixed(2)}%
+                        </span>
+                    </td>
+                    <td>$${formattedMarketCap}</td>
+                    <td>$${formattedVolume}</td>
+                    <td>
+                        <div class="trend-chart" id="trend-${coin.id}"></div>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="view-btn" onclick="viewCoinDetails('${coin.id}')">
+                                <i class="fas fa-chart-line"></i> View
+                            </button>
+                            <button class="view-btn" onclick="addToWatchlist('${coin.id}')">
+                                <i class="fas fa-star"></i> Watch
+                            </button>
+                        </div>
+                    </td>
+                `;
+                
+                tbody.appendChild(row);
+                
+                // Render trend chart
+                renderTrendChart(`trend-${coin.id}`, trendPoints, changeClass);
+            });
+        }
+        
+        function renderTrendChart(containerId, dataPoints, trendClass) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            // Create SVG element
+            const svgNS = "http://www.w3.org/2000/svg";
+            const svg = document.createElementNS(svgNS, "svg");
+            svg.setAttribute("width", "80");
+            svg.setAttribute("height", "30");
+            svg.setAttribute("viewBox", "0 0 80 30");
+            
+            // Create polyline for the trend
+            const polyline = document.createElementNS(svgNS, "polyline");
+            
+            // Normalize data points to fit in 30px height
+            const min = Math.min(...dataPoints);
+            const max = Math.max(...dataPoints);
+            const range = max - min || 1;
+            
+            const points = dataPoints.map((value, index) => {
+                const x = (index / (dataPoints.length - 1)) * 75 + 2.5;
+                const y = 27.5 - ((value - min) / range) * 25;
+                return `${x},${y}`;
+            }).join(" ");
+            
+            polyline.setAttribute("points", points);
+            polyline.setAttribute("fill", "none");
+            polyline.setAttribute("stroke", trendClass === 'positive' ? '#10b981' : '#ef4444');
+            polyline.setAttribute("stroke-width", "2");
+            polyline.setAttribute("stroke-linecap", "round");
+            polyline.setAttribute("stroke-linejoin", "round");
+            
+            svg.appendChild(polyline);
+            container.innerHTML = '';
+            container.appendChild(svg);
+        }
+        
+        function filterMarketData(searchTerm) {
+            if (!searchTerm) {
+                renderMarketData(marketData);
+                return;
+            }
+            
+            const filtered = marketData.filter(coin => 
+                coin.name.toLowerCase().includes(searchTerm) || 
+                coin.symbol.toLowerCase().includes(searchTerm)
+            );
+            
+            renderMarketData(filtered);
+        }
+        
+        function applyMarketFilter(filter) {
+            let filteredData = [...marketData];
+            
+            switch(filter) {
+                case 'gainers':
+                    filteredData = marketData.filter(coin => coin.price_change_percentage_24h > 0);
+                    break;
+                case 'losers':
+                    filteredData = marketData.filter(coin => coin.price_change_percentage_24h < 0);
+                    break;
+                case 'watchlist':
+                    // In real app, would fetch from user's watchlist
+                    filteredData = marketData.slice(0, 5); // Demo: first 5 coins
+                    break;
+                default:
+                    // 'all' - show all data
+                    break;
+            }
+            
+            renderMarketData(filteredData);
+        }
+        
+        function sortMarketData(sortBy) {
+            const sortedData = [...marketData];
+            
+            switch(sortBy) {
+                case 'price':
+                    sortedData.sort((a, b) => b.current_price - a.current_price);
+                    break;
+                case 'change':
+                    sortedData.sort((a, b) => b.price_change_percentage_24h - a.price_change_percentage_24h);
+                    break;
+                case 'asset':
+                    sortedData.sort((a, b) => a.name.localeCompare(b.name));
+                    break;
+                default:
+                    // Default sort by market cap
+                    sortedData.sort((a, b) => b.market_cap - a.market_cap);
+            }
+            
+            renderMarketData(sortedData);
+        }
+        
+        function updateLastUpdated() {
+            const element = document.getElementById('lastUpdated');
+            if (element) {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                });
+                element.textContent = `Updated at ${timeString}`;
+            }
+        }
+        
+        function startMarketDataAutoRefresh() {
+            // Refresh market data every 30 seconds
+            refreshInterval = setInterval(() => {
+                // Simulate price changes
+                marketData.forEach(coin => {
+                    if (coin.symbol !== 'usdt') {
+                        const change = (Math.random() - 0.5) * 0.02; // ±1% change
+                        coin.current_price *= (1 + change);
+                        coin.price_change_percentage_24h = change * 100;
+                    }
+                });
+                
+                renderMarketData(marketData);
+                updateLastUpdated();
+                
+                // Update balance if it depends on crypto prices
+                updateBalances();
+                
+            }, 30000); // 30 seconds
+        }
+        
+        function formatLargeNumber(num) {
+            if (num >= 1e12) return (num / 1e12).toFixed(2) + 'T';
+            if (num >= 1e9) return (num / 1e9).toFixed(2) + 'B';
+            if (num >= 1e6) return (num / 1e6).toFixed(2) + 'M';
+            if (num >= 1e3) return (num / 1e3).toFixed(2) + 'K';
+            return num.toString();
+        }
+
+        // ==================== ACTIVITY SECTION FUNCTIONS ====================
+        function initActivitySection() {
+            const viewAllBtn = document.getElementById('viewAllActivity');
+            if (viewAllBtn) {
+                viewAllBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    showToast('Opening full activity history...', 'info');
+                    // In real app, would navigate to transactions page
+                });
+            }
+        }
+        
+        function addToActivityLog(type, details) {
+            const activityList = document.getElementById('recentActivityList');
+            if (!activityList) return;
+            
+            const now = new Date();
+            const timeAgo = 'just now';
+            const types = {
+                'send': { title: 'Sent Crypto', icon: 'arrow-up', class: 'sent', amount: '-0.1 ETH' },
+                'receive': { title: 'Received Crypto', icon: 'arrow-down', class: 'success', amount: '+0.05 BTC' },
+                'exchange': { title: 'Exchange Completed', icon: 'exchange-alt', class: 'success', amount: 'Exchange' },
+                'stake': { title: 'Staking Rewards', icon: 'chart-line', class: 'success', amount: '+5.2 ADA' }
+            };
+            
+            const activity = types[type] || types.send;
+            
+            const activityItem = document.createElement('div');
+            activityItem.className = 'activity-item';
+            activityItem.innerHTML = `
+                <div class="activity-icon ${activity.class}">
+                    <i class="fas fa-${activity.icon}"></i>
+                </div>
+                <div class="activity-details">
+                    <div class="activity-title">${activity.title}</div>
+                    <div class="activity-meta">${details} • ${timeAgo}</div>
+                </div>
+                <div class="activity-amount ${activity.class === 'sent' ? 'negative' : 'positive'}">
+                    ${activity.amount}
+                </div>
+            `;
+            
+            // Add to the top of the list
+            activityList.insertBefore(activityItem, activityList.firstChild);
+            
+            // Limit to 4 items
+            if (activityList.children.length > 4) {
+                activityList.removeChild(activityList.lastChild);
+            }
+        }
+
+        // ==================== LANGUAGE SWITCHER ====================
+        function initLanguageSwitcher() {
+            const langBtns = document.querySelectorAll('.lang-btn');
+            
+            langBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const lang = this.dataset.lang;
+                    
+                    // Update active button
+                    langBtns.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Switch language
+                    switchLanguage(lang);
+                });
+            });
+        }
+        
+        function switchLanguage(lang) {
+            const translations = {
+                en: {
+                    dashboardTitle: "Wallet Dashboard",
+                    dashboardSubtitle: "Welcome back! Here's your financial overview",
+                    totalBalance: "Total Balance",
+                    walletActions: "Wallet Actions",
+                    walletSubtitle: "Send, receive or manage your funds",
+                    marketOverview: "Market Overview",
+                    recentActivity: "Recent Activity",
+                    viewAll: "View All",
+                    totalAssets: "Total Assets (USD)",
+                    coinAssets: "Coin Assets",
+                    usdtBalance: "USDT Balance",
+                    send: "Send",
+                    sendDesc: "Send crypto to another wallet address",
+                    sendPlaceholder: "Paste wallet address here...",
+                    sendNow: "Send Now",
+                    receive: "Receive",
+                    receiveDesc: "Generate your wallet address for receiving funds",
+                    generateAddress: "Generate Address",
+                    exchange: "Exchange",
+                    exchangeDesc: "Swap between cryptocurrencies instantly",
+                    exchangeNow: "Exchange Now",
+                    stake: "Stake & Earn",
+                    stakeDesc: "Earn rewards by staking your cryptocurrencies",
+                    startEarning: "Start Earning",
+                    searchPlaceholder: "Search cryptocurrencies...",
+                    updated: "Updated just now",
+                    all: "All",
+                    gainers: "Gainers",
+                    losers: "Losers",
+                    watchlist: "Watchlist"
+                },
+                cn: {
+                    dashboardTitle: "钱包仪表板",
+                    dashboardSubtitle: "欢迎回来！这是您的财务概览",
+                    totalBalance: "总余额",
+                    walletActions: "钱包操作",
+                    walletSubtitle: "发送、接收或管理资金",
+                    marketOverview: "市场概览",
+                    recentActivity: "最近活动",
+                    viewAll: "查看全部",
+                    totalAssets: "总资产 (美元)",
+                    coinAssets: "货币资产",
+                    usdtBalance: "USDT 余额",
+                    send: "发送",
+                    sendDesc: "发送加密货币到另一个钱包地址",
+                    sendPlaceholder: "在此粘贴钱包地址...",
+                    sendNow: "立即发送",
+                    receive: "接收",
+                    receiveDesc: "生成您的钱包地址以接收资金",
+                    generateAddress: "生成地址",
+                    exchange: "兑换",
+                    exchangeDesc: "即时兑换加密货币",
+                    exchangeNow: "立即兑换",
+                    stake: "质押赚取",
+                    stakeDesc: "通过质押加密货币赚取奖励",
+                    startEarning: "开始赚取",
+                    searchPlaceholder: "搜索加密货币...",
+                    updated: "刚刚更新",
+                    all: "全部",
+                    gainers: "上涨",
+                    losers: "下跌",
+                    watchlist: "观察列表"
+                }
+            };
+            
+            const texts = translations[lang] || translations.en;
+            
+            // Update all text elements
+            document.querySelector('.page-title h1').textContent = texts.dashboardTitle;
+            document.querySelector('.page-subtitle').textContent = texts.dashboardSubtitle;
+            document.querySelectorAll('.section-title')[0].textContent = texts.totalBalance;
+            document.querySelectorAll('.section-title')[1].textContent = texts.walletActions;
+            document.querySelector('.actions-section .section-subtitle').textContent = texts.walletSubtitle;
+            document.querySelectorAll('.section-title')[2].textContent = texts.marketOverview;
+            document.querySelectorAll('.section-title')[3].textContent = texts.recentActivity;
+            document.getElementById('viewAllActivity').innerHTML = `${texts.viewAll} <i class="fas fa-arrow-right"></i>`;
+            
+            // Balance labels
+            document.querySelector('.balance-card.main .balance-label').innerHTML = `<i class="fas fa-coins"></i> ${texts.totalAssets}`;
+            document.querySelector('.balance-card.secondary .balance-label').innerHTML = `<i class="fas fa-wallet"></i> ${texts.coinAssets}`;
+            document.querySelectorAll('.balance-card.secondary .balance-label')[1].innerHTML = `<i class="fas fa-dollar-sign"></i> ${texts.usdtBalance}`;
+            
+            // Wallet actions
+            document.querySelector('.action-card.send .action-title').textContent = texts.send;
+            document.querySelector('.action-card.send .action-desc').textContent = texts.sendDesc;
+            document.getElementById('sendAddress').placeholder = texts.sendPlaceholder;
+            document.querySelector('.send-btn').innerHTML = `<i class="fas fa-paper-plane"></i> ${texts.sendNow}`;
+            
+            document.querySelector('.action-card.receive .action-title').textContent = texts.receive;
+            document.querySelector('.action-card.receive .action-desc').textContent = texts.receiveDesc;
+            document.getElementById('generateWalletLink').innerHTML = `<i class="fas fa-link"></i> ${texts.generateAddress}`;
+            
+            document.querySelector('.action-card.exchange .action-title').textContent = texts.exchange;
+            document.querySelector('.action-card.exchange .action-desc').textContent = texts.exchangeDesc;
+            document.getElementById('exchangeBtn').innerHTML = `<i class="fas fa-sync-alt"></i> ${texts.exchangeNow}`;
+            
+            document.querySelector('.action-card.stake .action-title').textContent = texts.stake;
+            document.querySelector('.action-card.stake .action-desc').textContent = texts.stakeDesc;
+            document.getElementById('stakeBtn').innerHTML = `<i class="fas fa-percentage"></i> ${texts.startEarning}`;
+            
+            // Market section
+            document.getElementById('marketSearch').placeholder = texts.searchPlaceholder;
+            document.getElementById('lastUpdated').textContent = texts.updated === "Updated just now" ? texts.updated : `更新于 ${new Date().toLocaleTimeString('zh-CN', {hour: '2-digit', minute: '2-digit'})}`;
+            
+            // Filter buttons
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            filterBtns[0].textContent = texts.all;
+            filterBtns[1].textContent = texts.gainers;
+            filterBtns[2].textContent = texts.losers;
+            filterBtns[3].textContent = texts.watchlist;
+            
+            showToast(`Language switched to ${lang === 'en' ? 'English' : 'Chinese'}`, 'success');
+        }
+
+        // ==================== LOGOUT FUNCTION ====================
+        function initLogout() {
+            const logoutBtn = document.querySelector('.logout-btn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function() {
+                    if (confirm('Are you sure you want to logout?')) {
+                        showToast('Logging out...', 'info');
+                        
+                        // Clear any intervals
+                        if (refreshInterval) {
+                            clearInterval(refreshInterval);
+                        }
+                        
+                        // Simulate logout process
+                        setTimeout(() => {
+                            window.location.href = 'index.html';
+                        }, 1000);
+                    }
+                });
+            }
+        }
+
+        // ==================== UTILITY FUNCTIONS ====================
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+            
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icons = {
+                success: '✅',
+                error: '❌',
+                info: 'ℹ️',
+                warning: '⚠️'
+            };
+            
+            toast.innerHTML = `
+                <span style="font-size: 18px;">${icons[type] || icons.info}</span>
+                <span>${message}</span>
+            `;
+            
+            container.appendChild(toast);
+            
+            // Auto-remove after 4 seconds
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+        
+        function showModal(type) {
+            const modals = {
+                exchange: {
+                    title: 'Exchange Cryptocurrency',
+                    content: `
+                        <div style="padding: 20px;">
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: block; margin-bottom: 5px; color: var(--gray);">From</label>
+                                <select style="width: 100%; padding: 10px; background: rgba(30, 41, 59, 0.8); border: 1px solid var(--card-border); border-radius: var(--radius-md); color: var(--light);">
+                                    <option>BTC - Bitcoin</option>
+                                    <option>ETH - Ethereum</option>
+                                    <option>USDT - Tether</option>
+                                </select>
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: block; margin-bottom: 5px; color: var(--gray);">To</label>
+                                <select style="width: 100%; padding: 10px; background: rgba(30, 41, 59, 0.8); border: 1px solid var(--card-border); border-radius: var(--radius-md); color: var(--light);">
+                                    <option>ETH - Ethereum</option>
+                                    <option>BTC - Bitcoin</option>
+                                    <option>USDT - Tether</option>
+                                </select>
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: block; margin-bottom: 5px; color: var(--gray);">Amount</label>
+                                <input type="number" placeholder="0.00" style="width: 100%; padding: 10px; background: rgba(30, 41, 59, 0.8); border: 1px solid var(--card-border); border-radius: var(--radius-md); color: var(--light);">
+                            </div>
+                            <div style="background: rgba(14, 165, 233, 0.1); padding: 10px; border-radius: var(--radius-md); margin-bottom: 20px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                    <span style="color: var(--gray);">Exchange Rate:</span>
+                                    <span style="font-weight: 600;">1 BTC = 18.5 ETH</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span style="color: var(--gray);">Estimated Receive:</span>
+                                    <span style="font-weight: 600; color: var(--success);">9.25 ETH</span>
+                                </div>
+                            </div>
+                            <button onclick="executeExchange()" style="width: 100%; padding: 12px; background: var(--gradient-primary); color: white; border: none; border-radius: var(--radius-md); font-weight: 600; cursor: pointer;">
+                                Confirm Exchange
+                            </button>
+                        </div>
+                    `
+                },
+                stake: {
+                    title: 'Stake Cryptocurrency',
+                    content: `
+                        <div style="padding: 20px;">
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: block; margin-bottom: 5px; color: var(--gray);">Select Coin</label>
+                                <select style="width: 100%; padding: 10px; background: rgba(30, 41, 59, 0.8); border: 1px solid var(--card-border); border-radius: var(--radius-md); color: var(--light);">
+                                    <option>ETH - Ethereum (APY: 4.2%)</option>
+                                    <option>ADA - Cardano (APY: 3.8%)</option>
+                                    <option>SOL - Solana (APY: 6.1%)</option>
+                                    <option>DOT - Polkadot (APY: 12.5%)</option>
+                                </select>
+                            </div>
+                            <div style="margin-bottom: 15px;">
+                                <label style="display: block; margin-bottom: 5px; color: var(--gray);">Amount to Stake</label>
+                                <input type="number" placeholder="0.00" style="width: 100%; padding: 10px; background: rgba(30, 41, 59, 0.8); border: 1px solid var(--card-border); border-radius: var(--radius-md); color: var(--light);">
+                            </div>
+                            <div style="background: rgba(16, 185, 129, 0.1); padding: 10px; border-radius: var(--radius-md); margin-bottom: 20px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                    <span style="color: var(--gray);">Estimated Annual Reward:</span>
+                                    <span style="font-weight: 600; color: var(--success);">0.42 ETH</span>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span style="color: var(--gray);">Monthly Reward:</span>
+                                    <span style="font-weight: 600; color: var(--success);">0.035 ETH</span>
+                                </div>
+                            </div>
+                            <button onclick="executeStaking()" style="width: 100%; padding: 12px; background: var(--gradient-primary); color: white; border: none; border-radius: var(--radius-md); font-weight: 600; cursor: pointer;">
+                                Start Staking
+                            </button>
+                        </div>
+                    `
+                }
+            };
+            
+            const modal = modals[type];
+            if (!modal) return;
+            
+            // Create modal
+            const modalHTML = `
+                <div id="customModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); display: flex; justify-content: center; align-items: center; z-index: 10000;">
+                    <div style="background: var(--card-bg); border-radius: var(--radius-lg); width: 90%; max-width: 400px; border: 1px solid var(--card-border); box-shadow: var(--shadow-lg);">
+                        <div style="padding: 20px; border-bottom: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center;">
+                            <h3 style="margin: 0; font-weight: 600;">${modal.title}</h3>
+                            <button onclick="closeModal()" style="background: none; border: none; color: var(--gray); font-size: 20px; cursor: pointer;">×</button>
+                        </div>
+                        ${modal.content}
+                    </div>
+                </div>
+            `;
+            
+            // Remove any existing modal
+            const existingModal = document.getElementById('customModal');
+            if (existingModal) existingModal.remove();
+            
+            // Add new modal
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+        }
+        
+        // These functions need to be in global scope for inline onclick handlers
+        window.viewCoinDetails = function(coinId) {
+            showToast(`Opening details for ${coinId.toUpperCase()}...`, 'info');
+            // In real app, would navigate to coin details page
+        };
+        
+        window.addToWatchlist = function(coinId) {
+            showToast(`Added ${coinId.toUpperCase()} to watchlist`, 'success');
+        };
+        
+        window.executeExchange = function() {
+            showToast('Exchange executed successfully!', 'success');
+            addToActivityLog('exchange', 'BTC → ETH Exchange');
+            closeModal();
+        };
+        
+        window.executeStaking = function() {
+            showToast('Staking started successfully!', 'success');
+            addToActivityLog('stake', 'ETH Staking');
+            closeModal();
+        };
+        
+        window.closeModal = function() {
+            const modal = document.getElementById('customModal');
+            if (modal) modal.remove();
+        };
+    </script>
+</body>
+</html>
