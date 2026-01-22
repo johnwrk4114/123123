@@ -1,810 +1,1205 @@
-/* ===== CSS RESET & GLOBAL STYLES ===== */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-}
-
-:root {
-    --primary: #0ea5e9;
-    --primary-dark: #0284c7;
-    --secondary: #f59e0b;
-    --dark: #0f172a;
-    --darker: #020617;
-    --light: #f8fafc;
-    --gray: #64748b;
-    --success: #10b981;
-    --danger: #ef4444;
-    --card-bg: rgba(30, 41, 59, 0.8);
-    --card-border: rgba(255, 255, 255, 0.1);
-    --gradient-primary: linear-gradient(135deg, #0ea5e9 0%, #3b82f6 100%);
-    --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.4);
-    --shadow-md: 0 10px 20px rgba(0, 0, 0, 0.3);
-    --radius-md: 12px;
-    --radius-lg: 16px;
-}
-
-body {
-    background: var(--darker);
-    color: var(--light);
-    min-height: 100vh;
-    overflow-x: hidden;
-}
-
-/* ===== DASHBOARD LAYOUT ===== */
-.dashboard-container {
-    display: flex;
-    min-height: 100vh;
-}
-
-/* ===== SIDEBAR ===== */
-.sidebar {
-    width: 280px;
-    background: rgba(15, 23, 42, 0.95);
-    border-right: 1px solid var(--card-border);
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    height: 100vh;
-    z-index: 100;
-}
-
-.sidebar-header {
-    padding: 24px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid var(--card-border);
-}
-
-.logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.logo-icon {
-    width: 40px;
-    height: 40px;
-    background: var(--gradient-primary);
-    border-radius: var(--radius-md);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    color: white;
-    box-shadow: var(--shadow-md);
-}
-
-.logo-text {
-    font-size: 20px;
-    font-weight: 700;
-    background: linear-gradient(to right, var(--primary), var(--secondary));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.user-profile {
-    padding: 24px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    border-bottom: 1px solid var(--card-border);
-}
-
-.avatar {
-    width: 48px;
-    height: 48px;
-    background: var(--gradient-primary);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    color: white;
-}
-
-.user-name {
-    font-weight: 600;
-    font-size: 16px;
-}
-
-.user-email {
-    font-size: 14px;
-    color: var(--gray);
-}
-
-.sidebar-nav {
-    flex: 1;
-    padding: 20px 0;
-}
-
-.nav-item {
-    padding: 12px 24px;
-    margin: 4px 0;
-}
-
-.nav-item.active {
-    background: rgba(14, 165, 233, 0.1);
-    border-left: 4px solid var(--primary);
-}
-
-.nav-link {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    color: var(--light);
-    text-decoration: none;
-    font-size: 15px;
-}
-
-.nav-link i {
-    width: 20px;
-    text-align: center;
-}
-
-/* ===== MAIN CONTENT ===== */
-.main-content {
-    flex: 1;
-    margin-left: 280px;
-    min-height: 100vh;
-}
-
-/* ===== TOP BAR ===== */
-.top-bar {
-    padding: 20px 30px;
-    background: var(--card-bg);
-    border-bottom: 1px solid var(--card-border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    backdrop-filter: blur(10px);
-    position: sticky;
-    top: 0;
-    z-index: 90;
-}
-
-.page-title h1 {
-    font-size: 24px;
-    font-weight: 700;
-    margin-bottom: 4px;
-}
-
-.page-subtitle {
-    color: var(--gray);
-    font-size: 14px;
-}
-
-.top-bar-right {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-.language-switcher {
-    display: flex;
-    gap: 8px;
-    background: rgba(30, 41, 59, 0.6);
-    padding: 6px;
-    border-radius: var(--radius-md);
-}
-
-.lang-btn {
-    padding: 6px 16px;
-    border: none;
-    background: transparent;
-    color: var(--gray);
-    border-radius: 8px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.3s;
-}
-
-.lang-btn.active {
-    background: var(--primary);
-    color: white;
-}
-
-.notification-bell {
-    position: relative;
-    font-size: 20px;
-    color: var(--gray);
-    cursor: pointer;
-}
-
-.notification-count {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    background: var(--danger);
-    color: white;
-    font-size: 12px;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.user-menu {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    cursor: pointer;
-}
-
-.user-avatar {
-    width: 40px;
-    height: 40px;
-    background: var(--gradient-primary);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.logout-btn {
-    background: rgba(239, 68, 68, 0.1);
-    border: 1px solid rgba(239, 68, 68, 0.3);
-    color: var(--danger);
-    padding: 10px;
-    border-radius: var(--radius-md);
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.logout-btn:hover {
-    background: rgba(239, 68, 68, 0.2);
-}
-
-/* ===== DASHBOARD CONTENT ===== */
-.dashboard-content {
-    padding: 30px;
-    max-width: 1400px;
-    margin: 0 auto;
-}
-
-.section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-}
-
-.section-title {
-    font-size: 22px;
-    font-weight: 700;
-}
-
-/* ===== BALANCE SECTION ===== */
-.balance-cards {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
-    gap: 20px;
-    margin-bottom: 40px;
-}
-
-.balance-card {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: var(--radius-lg);
-    padding: 24px;
-    box-shadow: var(--shadow-md);
-}
-
-.balance-card.main {
-    grid-column: span 1;
-}
-
-.balance-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
-}
-
-.balance-label {
-    color: var(--gray);
-    font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.trend-indicator {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 14px;
-    font-weight: 600;
-    padding: 4px 12px;
-    border-radius: 20px;
-    background: rgba(16, 185, 129, 0.1);
-    color: var(--success);
-}
-
-.trend-indicator.positive {
-    background: rgba(16, 185, 129, 0.1);
-    color: var(--success);
-}
-
-.balance-amount {
-    font-size: 40px;
-    font-weight: 800;
-    margin-bottom: 8px;
-    background: linear-gradient(to right, var(--primary), var(--secondary));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.balance-change {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-}
-
-.change-amount {
-    font-weight: 600;
-}
-
-.change-amount.positive {
-    color: var(--success);
-}
-
-/* ===== ACTIONS SECTION ===== */
-.actions-section {
-    margin-bottom: 40px;
-}
-
-.actions-cards {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-}
-
-.action-card {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: var(--radius-lg);
-    padding: 24px;
-    text-align: center;
-    transition: all 0.3s;
-    box-shadow: var(--shadow-md);
-}
-
-.action-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-lg);
-}
-
-.action-icon {
-    width: 60px;
-    height: 60px;
-    background: var(--gradient-primary);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 20px;
-    font-size: 24px;
-    color: white;
-}
-
-.action-card.receive .action-icon {
-    background: var(--gradient-secondary);
-}
-
-.action-title {
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 8px;
-}
-
-.action-desc {
-    color: var(--gray);
-    font-size: 14px;
-    margin-bottom: 20px;
-}
-
-.action-btn {
-    background: var(--gradient-primary);
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: var(--radius-md);
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-    width: 100%;
-}
-
-.action-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(14, 165, 233, 0.3);
-}
-
-.wallet-link-container {
-    margin-top: 20px;
-    display: flex;
-    gap: 10px;
-}
-
-.wallet-link-display {
-    flex: 1;
-    background: rgba(30, 41, 59, 0.6);
-    padding: 12px;
-    border-radius: var(--radius-md);
-    font-family: monospace;
-    font-size: 12px;
-    word-break: break-all;
-    border: 1px dashed var(--card-border);
-}
-
-.copy-btn {
-    background: rgba(30, 41, 59, 0.8);
-    border: 1px solid var(--card-border);
-    color: var(--light);
-    padding: 12px;
-    border-radius: var(--radius-md);
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.copy-btn:hover {
-    background: var(--primary);
-    color: white;
-}
-
-/* ===== MARKET SECTION ===== */
-.market-section {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: var(--radius-lg);
-    padding: 24px;
-    margin-bottom: 40px;
-    box-shadow: var(--shadow-md);
-}
-
-.header-left, .header-right {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-.market-filters {
-    display: flex;
-    gap: 10px;
-}
-
-.filter-btn {
-    padding: 8px 16px;
-    background: rgba(30, 41, 59, 0.6);
-    border: 1px solid var(--card-border);
-    color: var(--gray);
-    border-radius: var(--radius-md);
-    cursor: pointer;
-    transition: all 0.3s;
-    font-size: 14px;
-}
-
-.filter-btn.active {
-    background: var(--primary);
-    color: white;
-}
-
-.search-box {
-    position: relative;
-}
-
-.search-box i {
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--gray);
-}
-
-.search-box input {
-    padding: 10px 10px 10px 36px;
-    background: rgba(30, 41, 59, 0.6);
-    border: 1px solid var(--card-border);
-    border-radius: var(--radius-md);
-    color: var(--light);
-    width: 250px;
-}
-
-.refresh-info {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: var(--gray);
-    font-size: 14px;
-}
-
-.market-table-container {
-    overflow-x: auto;
-    margin: 20px 0;
-}
-
-.market-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.market-table th {
-    text-align: left;
-    padding: 16px;
-    color: var(--gray);
-    font-weight: 600;
-    border-bottom: 1px solid var(--card-border);
-    white-space: nowrap;
-}
-
-.market-table td {
-    padding: 16px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.market-table tr:hover {
-    background: rgba(255, 255, 255, 0.03);
-}
-
-.sortable {
-    cursor: pointer;
-    user-select: none;
-}
-
-.sortable:hover {
-    color: var(--light);
-}
-
-/* ===== ACTIVITY SECTION ===== */
-.activity-section {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: var(--radius-lg);
-    padding: 24px;
-    box-shadow: var(--shadow-md);
-}
-
-.view-all {
-    color: var(--primary);
-    text-decoration: none;
-    font-weight: 500;
-}
-
-.view-all:hover {
-    text-decoration: underline;
-}
-
-.activity-list {
-    margin-top: 20px;
-}
-
-.activity-item {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 16px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.activity-item:last-child {
-    border-bottom: none;
-}
-
-.activity-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.activity-icon.success {
-    background: rgba(16, 185, 129, 0.1);
-    color: var(--success);
-}
-
-.activity-icon.sent {
-    background: rgba(239, 68, 68, 0.1);
-    color: var(--danger);
-}
-
-.activity-details {
-    flex: 1;
-}
-
-.activity-title {
-    font-weight: 600;
-    margin-bottom: 4px;
-}
-
-.activity-meta {
-    color: var(--gray);
-    font-size: 13px;
-}
-
-.activity-amount {
-    font-weight: 600;
-    font-size: 16px;
-}
-
-.activity-amount.positive {
-    color: var(--success);
-}
-
-.activity-amount.negative {
-    color: var(--danger);
-}
-
-/* ===== RESPONSIVE DESIGN ===== */
-@media (max-width: 1200px) {
-    .balance-cards {
-        grid-template-columns: 1fr;
-    }
-    
-    .actions-cards {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .main-content {
-        margin-left: 0;
-    }
-    
-    .sidebar {
-        transform: translateX(-100%);
-        transition: transform 0.3s ease;
-    }
-    
-    .sidebar.active {
-        transform: translateX(0);
-    }
-    
-    .sidebar-toggle {
-        display: block;
-        position: fixed;
-        top: 20px;
-        left: 20px;
-        z-index: 1000;
-        background: var(--primary);
-        color: white;
-    }
-}
-
-@media (max-width: 768px) {
-    .dashboard-content {
-        padding: 20px 15px;
-    }
-    
-    .top-bar {
-        padding: 15px;
-        flex-direction: column;
-        gap: 15px;
-        align-items: flex-start;
-    }
-    
-    .top-bar-right {
-        width: 100%;
-        justify-content: space-between;
-    }
-    
-    .actions-cards {
-        grid-template-columns: 1fr;
-    }
-    
-    .header-left, .header-right {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-    }
-    
-    .search-box input {
-        width: 100%;
-    }
-}
-
-/* ===== TOAST NOTIFICATION ===== */
-.toast-container {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 10000;
-}
-
-.toast {
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: var(--radius-md);
-    padding: 16px 20px;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    box-shadow: var(--shadow-lg);
-    animation: slideIn 0.3s ease;
-}
-
-@keyframes slideIn {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
-}
-
-/* ===== LOADING STATES ===== */
-.loading-spinner {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding: 40px;
-    color: var(--gray);
-}
-
-.fa-spin {
-    animation: fa-spin 2s infinite linear;
-}
-
-@keyframes fa-spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* ===== UTILITY CLASSES ===== */
-.positive { color: var(--success); }
-.negative { color: var(--danger); }
-.neutral { color: var(--gray); }
-
-.btn-icon {
-    background: rgba(30, 41, 59, 0.6);
-    border: 1px solid var(--card-border);
-    color: var(--light);
-    padding: 8px 16px;
-    border-radius: var(--radius-md);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.3s;
-}
-
-.btn-icon:hover {
-    background: var(--primary);
-    color: white;
-}
-
-/* Chart placeholder */
-.balance-chart {
-    height: 80px;
-    margin-top: 20px;
-    background: linear-gradient(90deg, 
-        rgba(14, 165, 233, 0.3) 0%, 
-        rgba(59, 130, 246, 0.2) 20%, 
-        rgba(245, 158, 11, 0.1) 40%, 
-        transparent 100%);
-    border-radius: var(--radius-md);
-    position: relative;
-}
-
-.balance-chart::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: repeating-linear-gradient(
-        90deg,
-        transparent,
-        transparent 2px,
-        rgba(255, 255, 255, 0.03) 2px,
-        rgba(255, 255, 255, 0.03) 4px
-    );
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CryptoWallet Pro | Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ===== CSS RESET & GLOBAL STYLES ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        :root {
+            --primary: #0ea5e9;
+            --primary-dark: #0284c7;
+            --secondary: #f59e0b;
+            --dark: #0f172a;
+            --darker: #020617;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --card-bg: rgba(30, 41, 59, 0.8);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --gradient-primary: linear-gradient(135deg, #0ea5e9 0%, #3b82f6 100%);
+            --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.4);
+            --shadow-md: 0 10px 20px rgba(0, 0, 0, 0.3);
+            --radius-md: 12px;
+            --radius-lg: 16px;
+        }
+
+        body {
+            background: var(--darker);
+            color: var(--light);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ===== DASHBOARD LAYOUT ===== */
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ===== SIDEBAR ===== */
+        .sidebar {
+            width: 280px;
+            background: rgba(15, 23, 42, 0.95);
+            border-right: 1px solid var(--card-border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .user-profile {
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .avatar {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .user-email {
+            font-size: 14px;
+            color: var(--gray);
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 20px 0;
+        }
+
+        .nav-item {
+            padding: 12px 24px;
+            margin: 4px 0;
+        }
+
+        .nav-item.active {
+            background: rgba(14, 165, 233, 0.1);
+            border-left: 4px solid var(--primary);
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--light);
+            text-decoration: none;
+            font-size: 15px;
+        }
+
+        .nav-link i {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            min-height: 100vh;
+        }
+
+        /* ===== TOP BAR ===== */
+        .top-bar {
+            padding: 20px 30px;
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 90;
+        }
+
+        .page-title h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .page-subtitle {
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        .top-bar-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .language-switcher {
+            display: flex;
+            gap: 8px;
+            background: rgba(30, 41, 59, 0.6);
+            padding: 6px;
+            border-radius: var(--radius-md);
+        }
+
+        .lang-btn {
+            padding: 6px 16px;
+            border: none;
+            background: transparent;
+            color: var(--gray);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .lang-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .notification-bell {
+            position: relative;
+            font-size: 20px;
+            color: var(--gray);
+            cursor: pointer;
+        }
+
+        .notification-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger);
+            color: white;
+            font-size: 12px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--danger);
+            padding: 10px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        /* ===== DASHBOARD CONTENT ===== */
+        .dashboard-content {
+            padding: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        /* ===== BALANCE SECTION ===== */
+        .balance-cards {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .balance-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .balance-card.main {
+            grid-column: span 1;
+        }
+
+        .balance-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .balance-label {
+            color: var(--gray);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .trend-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .trend-indicator.positive {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .balance-amount {
+            font-size: 40px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .balance-change {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .change-amount {
+            font-weight: 600;
+        }
+
+        .change-amount.positive {
+            color: var(--success);
+        }
+
+        /* ===== ACTIONS SECTION ===== */
+        .actions-section {
+            margin-bottom: 40px;
+        }
+
+        .actions-cards {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .action-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            text-align: center;
+            transition: all 0.3s;
+            box-shadow: var(--shadow-md);
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .action-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 24px;
+            color: white;
+        }
+
+        .action-card.receive .action-icon {
+            background: var(--gradient-secondary);
+        }
+
+        .action-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .action-desc {
+            color: var(--gray);
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .action-btn {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(14, 165, 233, 0.3);
+        }
+
+        .wallet-link-container {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .wallet-link-display {
+            flex: 1;
+            background: rgba(30, 41, 59, 0.6);
+            padding: 12px;
+            border-radius: var(--radius-md);
+            font-family: monospace;
+            font-size: 12px;
+            word-break: break-all;
+            border: 1px dashed var(--card-border);
+        }
+
+        .copy-btn {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid var(--card-border);
+            color: var(--light);
+            padding: 12px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .copy-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* ===== MARKET SECTION ===== */
+        .market-section {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .header-left, .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .market-filters {
+            display: flex;
+            gap: 10px;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid var(--card-border);
+            color: var(--gray);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+
+        .search-box input {
+            padding: 10px 10px 10px 36px;
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            color: var(--light);
+            width: 250px;
+        }
+
+        .refresh-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        .market-table-container {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        .market-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .market-table th {
+            text-align: left;
+            padding: 16px;
+            color: var(--gray);
+            font-weight: 600;
+            border-bottom: 1px solid var(--card-border);
+            white-space: nowrap;
+        }
+
+        .market-table td {
+            padding: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .market-table tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .sortable {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .sortable:hover {
+            color: var(--light);
+        }
+
+        /* ===== ACTIVITY SECTION ===== */
+        .activity-section {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .view-all {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .view-all:hover {
+            text-decoration: underline;
+        }
+
+        .activity-list {
+            margin-top: 20px;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .activity-icon.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+        }
+
+        .activity-icon.sent {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger);
+        }
+
+        .activity-details {
+            flex: 1;
+        }
+
+        .activity-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .activity-meta {
+            color: var(--gray);
+            font-size: 13px;
+        }
+
+        .activity-amount {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .activity-amount.positive {
+            color: var(--success);
+        }
+
+        .activity-amount.negative {
+            color: var(--danger);
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 1200px) {
+            .balance-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .actions-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .sidebar-toggle {
+                display: block;
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                z-index: 1000;
+                background: var(--primary);
+                color: white;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-content {
+                padding: 20px 15px;
+            }
+            
+            .top-bar {
+                padding: 15px;
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+            
+            .top-bar-right {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .actions-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-left, .header-right {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .search-box input {
+                width: 100%;
+            }
+        }
+
+        /* ===== TOAST NOTIFICATION ===== */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+        }
+
+        .toast {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: 16px 20px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: var(--shadow-lg);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* ===== LOADING STATES ===== */
+        .loading-spinner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 40px;
+            color: var(--gray);
+        }
+
+        .fa-spin {
+            animation: fa-spin 2s infinite linear;
+        }
+
+        @keyframes fa-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ===== UTILITY CLASSES ===== */
+        .positive { color: var(--success); }
+        .negative { color: var(--danger); }
+        .neutral { color: var(--gray); }
+
+        .btn-icon {
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid var(--card-border);
+            color: var(--light);
+            padding: 8px 16px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .btn-icon:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Chart placeholder */
+        .balance-chart {
+            height: 80px;
+            margin-top: 20px;
+            background: linear-gradient(90deg, 
+                rgba(14, 165, 233, 0.3) 0%, 
+                rgba(59, 130, 246, 0.2) 20%, 
+                rgba(245, 158, 11, 0.1) 40%, 
+                transparent 100%);
+            border-radius: var(--radius-md);
+            position: relative;
+        }
+
+        .balance-chart::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 2px,
+                rgba(255, 255, 255, 0.03) 2px,
+                rgba(255, 255, 255, 0.03) 4px
+            );
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-wallet"></i>
+                    </div>
+                    <div class="logo-text">CryptoWallet Pro</div>
+                </div>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+
+            <div class="user-profile">
+                <div class="avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-info">
+                    <div class="user-name">Alex Johnson</div>
+                    <div class="user-email">alex@cryptowallet.com</div>
+                </div>
+                <div class="user-status">
+                    <div class="status-dot active"></div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="nav-item active">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-home"></i>
+                            <span class="nav-text">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-chart-line"></i>
+                            <span class="nav-text">Portfolio</span>
+                            <span class="nav-badge">New</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-exchange-alt"></i>
+                            <span class="nav-text">Transactions</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-coins"></i>
+                            <span class="nav-text">Assets</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-chart-pie"></i>
+                            <span class="nav-text">Analytics</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-cog"></i>
+                            <span class="nav-text">Settings</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="sidebar-footer">
+                    <div class="wallet-status">
+                        <div class="status-label">Wallet Status</div>
+                        <div class="status-value connected">
+                            <i class="fas fa-circle"></i> Connected
+                        </div>
+                    </div>
+                    <button class="sidebar-help">
+                        <i class="fas fa-question-circle"></i> Help & Support
+                    </button>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <header class="top-bar">
+                <div class="top-bar-left">
+                    <div class="page-title">
+                        <h1>Wallet Dashboard</h1>
+                        <p class="page-subtitle">Welcome back! Here's your financial overview</p>
+                    </div>
+                </div>
+                
+                <div class="top-bar-right">
+                    <div class="language-switcher">
+                        <button class="lang-btn active" data-lang="en">EN</button>
+                        <button class="lang-btn" data-lang="cn">中文</button>
+                    </div>
+                    
+                    <div class="notification-bell">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-count">3</span>
+                    </div>
+                    
+                    <div class="user-menu">
+                        <div class="user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="user-dropdown">
+                            <span class="user-email">alex@cryptowallet.com</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    
+                    <button class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Main Dashboard Content -->
+            <div class="dashboard-content">
+                <!-- Balance Section -->
+                <div class="balance-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Total Balance</h2>
+                        <div class="balance-actions">
+                            <button class="btn-icon">
+                                <i class="fas fa-sync-alt"></i> Update
+                            </button>
+                            <button class="btn-icon">
+                                <i class="fas fa-download"></i> Export
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="balance-cards">
+                        <div class="balance-card main">
+                            <div class="balance-header">
+                                <span class="balance-label">Total Assets (USD)</span>
+                                <div class="trend-indicator positive">
+                                    <i class="fas fa-arrow-up"></i> 12.5% today
+                                </div>
+                            </div>
+                            <div class="balance-amount">$ 42,689.50</div>
+                            <div class="balance-change">
+                                <span class="change-amount positive">+$ 4,235.60</span>
+                                <span class="change-period">(24h change)</span>
+                            </div>
+                            <div class="balance-chart" id="balanceChart"></div>
+                        </div>
+                        
+                        <div class="balance-card secondary">
+                            <div class="balance-header">
+                                <span class="balance-label">BTC Balance</span>
+                                <i class="fab fa-bitcoin"></i>
+                            </div>
+                            <div class="balance-amount">0.8245 BTC</div>
+                            <div class="balance-value">≈ $ 24,320.18</div>
+                        </div>
+                        
+                        <div class="balance-card secondary">
+                            <div class="balance-header">
+                                <span class="balance-label">ETH Balance</span>
+                                <i class="fab fa-ethereum"></i>
+                            </div>
+                            <div class="balance-amount">4.28 ETH</div>
+                            <div class="balance-value">≈ $ 12,450.75</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wallet Actions -->
+                <div class="actions-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Wallet Actions</h2>
+                        <p class="section-subtitle">Send, receive or manage your funds</p>
+                    </div>
+                    
+                    <div class="actions-cards">
+                        <div class="action-card send">
+                            <div class="action-icon">
+                                <i class="fas fa-paper-plane"></i>
+                            </div>
+                            <h3 class="action-title">Send</h3>
+                            <p class="action-desc">Transfer crypto to another wallet</p>
+                            <button class="action-btn">
+                                <i class="fas fa-arrow-right"></i> Send Funds
+                            </button>
+                        </div>
+                        
+                        <div class="action-card receive">
+                            <div class="action-icon">
+                                <i class="fas fa-qrcode"></i>
+                            </div>
+                            <h3 class="action-title">Receive</h3>
+                            <p class="action-desc">Generate address or QR code</p>
+                            <button class="action-btn" id="generateWalletLink">
+                                <i class="fas fa-link"></i> Generate Link
+                            </button>
+                            <div class="wallet-link-container">
+                                <div class="wallet-link-display" id="walletLinkDisplay">
+                                    Click "Generate Link" to create address
+                                </div>
+                                <button class="copy-btn" id="copyWalletLink">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                            <div class="qr-code-container" id="qrCodeContainer">
+                                <!-- QR Code will be generated here -->
+                            </div>
+                        </div>
+                        
+                        <div class="action-card exchange">
+                            <div class="action-icon">
+                                <i class="fas fa-exchange-alt"></i>
+                            </div>
+                            <h3 class="action-title">Exchange</h3>
+                            <p class="action-desc">Swap between cryptocurrencies</p>
+                            <button class="action-btn">
+                                <i class="fas fa-sync-alt"></i> Swap Now
+                            </button>
+                        </div>
+                        
+                        <div class="action-card stake">
+                            <div class="action-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <h3 class="action-title">Stake & Earn</h3>
+                            <p class="action-desc">Earn rewards on your holdings</p>
+                            <button class="action-btn">
+                                <i class="fas fa-percentage"></i> Start Earning
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Market Overview -->
+                <div class="market-section">
+                    <div class="section-header">
+                        <div class="header-left">
+                            <h2 class="section-title">Market Overview</h2>
+                            <div class="market-filters">
+                                <button class="filter-btn active">All</button>
+                                <button class="filter-btn">Gainers</button>
+                                <button class="filter-btn">Losers</button>
+                                <button class="filter-btn">Watchlist</button>
+                            </div>
+                        </div>
+                        <div class="header-right">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="marketSearch" placeholder="Search cryptocurrencies...">
+                            </div>
+                            <div class="refresh-info">
+                                <i class="fas fa-clock"></i>
+                                <span id="lastUpdated">Updated just now</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="market-table-container">
+                        <table class="market-table">
+                            <thead>
+                                <tr>
+                                    <th class="sortable" data-sort="asset">
+                                        Asset <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th class="sortable" data-sort="price">
+                                        Price (USD) <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th class="sortable" data-sort="change">
+                                        24h Change <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th>Market Cap</th>
+                                    <th>24h Volume</th>
+                                    <th>Trend (7D)</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="marketTableBody">
+                                <!-- Market data will be populated here -->
+                                <tr class="loading-row">
+                                    <td colspan="7">
+                                        <div class="loading-spinner">
+                                            <i class="fas fa-spinner fa-spin"></i> Loading market data...
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="market-footer">
+                        <div class="pagination">
+                            <button class="page-btn disabled">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <span class="page-info">1-10 of 100</span>
+                            <button class="page-btn">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                        <div class="view-options">
+                            <span>Show:</span>
+                            <select id="rowsPerPage">
+                                <option value="10">10</option>
+                                <option value="25">25</option>
+                                <option value="50">50</option>
+                            </select>
+                            <span>rows</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Activity -->
+                <div class="activity-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Recent Activity</h2>
+                        <a href="#" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                    
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <div class="activity-icon success">
+                                <i class="fas fa-arrow-down"></i>
+                            </div>
+                            <div class="activity-details">
+                                <div class="activity-title">Received Bitcoin</div>
+                                <div class="activity-meta">From: 0x1a2b...3c4d • 2 hours ago</div>
+                            </div>
+                            <div class="activity-amount positive">+0.05 BTC</div>
+                        </div>
+                        
+                        <div class="activity-item">
+                            <div class="activity-icon sent">
+                                <i class="fas fa-arrow-up"></i>
+                            </div>
+                            <div class="activity-details">
+                                <div class="activity-title">Sent Ethereum</div>
+                                <div class="activity-meta">To: 0x5e6f...7g8h • 5 hours ago</div>
+                            </div>
+                            <div class="activity-amount negative">-2.1 ETH</div>
+                        </div>
+                        
+                        <div class="activity-item">
+                            <div class="activity-icon exchange">
+                                <i class="fas fa-exchange-alt"></i>
+                            </div>
+                            <div class="activity-details">
+                                <div class="activity-title">Swap Completed</div>
+                                <div class="activity-meta">BTC → ETH • Yesterday</div>
+                            </div>
+                            <div class="activity-amount neutral">Swap</div>
+                        </div>
+                        
+                        <div class="activity-item">
+                            <div class="activity-icon stake">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="activity-details">
+                                <div class="activity-title">Staking Rewards</div>
+                                <div class="activity-meta">ADA Staking • 2 days ago</div>
+                            </div>
+                            <div class="activity-amount positive">+42.5 ADA</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // Dashboard JavaScript - All in one file
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Dashboard initialized');
+            
+            // Initialize wallet actions
+            const generateBtn = document.getElementById('generateWalletLink');
+           
