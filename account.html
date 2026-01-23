@@ -1330,6 +1330,22 @@
             submitBtn.disabled = !agreeCheckbox.checked;
         }
 
+        // ===== 登出功能 =====
+        function handleLogout() {
+            // 显示确认对话框
+            if (confirm('Are you sure you want to logout from CryptoWallet Pro?')) {
+                // 清除用户数据（模拟登出）
+                localStorage.removeItem('userSession');
+                localStorage.removeItem('verificationData');
+                
+                // 显示登出消息
+                alert('You have been successfully logged out.');
+                
+                // 跳转到登录页面
+                window.location.href = 'login.html';
+            }
+        }
+
         // ===== 提交验证 =====
         function submitVerification() {
             // 创建提交数据
@@ -1360,25 +1376,7 @@
             // 通知用户
             alert('Verification submitted successfully! Our team will review your information within 1-3 business days.');
         }
-        // ===== 登出功能 =====
-        function handleLogout() {
-            // 显示确认对话框
-            if (confirm('Are you sure you want to logout from CryptoWallet Pro?')) {
-                // 清除用户数据（模拟登出）
-                localStorage.removeItem('userSession');
-                localStorage.removeItem('verificationData');
-                
-                // 显示登出消息
-                alert('You have been successfully logged out.');
-                
-                // 跳转到登录页面
-                window.location.href = 'login.html';
-            }
-        }
-        
-        // ===== 初始化 =====
-        document.addEventListener('DOMContentLoaded', function() {
-        
+
         // ===== 初始化 =====
         document.addEventListener('DOMContentLoaded', function() {
             // 监听条款复选框
