@@ -625,6 +625,13 @@
             line-height: 1.6;
         }
 
+        /* 修改后的成功页面按钮样式 - 居中显示 */
+        .verification-complete .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
         /* ===== 响应式调整 ===== */
         @media (max-width: 768px) {
             .top-nav {
@@ -997,12 +1004,10 @@
                 Our team will review your information within 1-3 business days. 
                 You will receive an email notification once your account is verified.
             </p>
-            <div style="display: flex; gap: 15px; justify-content: center; margin-top: 30px;">
+            <!-- 修改后的按钮容器 - 只保留一个按钮并居中 -->
+            <div class="button-container">
                 <button class="btn btn-secondary" onclick="window.location.href='dashboard.html'">
                     <i class="fas fa-home"></i> Back to Dashboard
-                </button>
-                <button class="btn btn-primary" onclick="window.location.href='account.html'">
-                    <i class="fas fa-history"></i> Check Status
                 </button>
             </div>
         </div>
@@ -1252,7 +1257,15 @@
 
         function displayFileInfo(file, side) {
             const fileList = document.getElementById(`${side}FileList`);
-            const fileSize = (file.size / 1024 / 1024).toFixed(2);
+            // 修复文件大小显示问题 - 精确显示KB或MB
+            let fileSizeText;
+            if (file.size < 1024 * 1024) {
+                // 小于1MB显示KB
+                fileSizeText = (file.size / 1024).toFixed(2) + ' KB';
+            } else {
+                // 大于等于1MB显示MB
+                fileSizeText = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
+            }
             
             fileList.innerHTML = `
                 <div class="file-item">
@@ -1262,7 +1275,7 @@
                         </div>
                         <div>
                             <div class="file-name">${file.name}</div>
-                            <div class="file-size">${fileSize} MB</div>
+                            <div class="file-size">${fileSizeText}</div>
                         </div>
                     </div>
                     <div class="file-remove" onclick="removeFile('${side}')">
