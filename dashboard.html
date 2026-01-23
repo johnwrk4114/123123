@@ -2036,7 +2036,7 @@
                 receive: "接收",
                 receiveDesc: "生成您的钱包地址以接收资金",
                 generateAddress: "生成地址",
-                clickGenerate: "点击上方"生成地址"",
+                clickGenerate: "点击上方\"生成地址\"",
                 
                 // Exchange card
                 exchange: "兑换",
@@ -2183,7 +2183,7 @@
             updatePendingCount();
             updateRecentActivityDisplay();
             
-            // Load initial data
+            // Load initial data - 关键修复：确保调用loadMarketData()
             loadMarketData();
             updateAllBalances();
             
