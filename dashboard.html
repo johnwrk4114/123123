@@ -2036,7 +2036,7 @@
                 receive: "接收",
                 receiveDesc: "生成您的钱包地址以接收资金",
                 generateAddress: "生成地址",
-                clickGenerate: "点击上方“生成地址”",
+                clickGenerate: "点击上方"生成地址"",
                 
                 // Exchange card
                 exchange: "兑换",
@@ -3844,14 +3844,7 @@
                         <div class="activity-status" style="font-size: 12px; color: var(--secondary); margin-top: 2px;">
                             <i class="fas fa-clock"></i> ${getText('integrationProgress')}
                         </div>
-                        <div class="admin-approval-buttons">
-                            <button class="admin-approve-btn" onclick="adminApproveTransaction('${transaction.id}')">
-                                <i class="fas fa-check"></i> ${getText('approved')}
-                            </button>
-                            <button class="admin-reject-btn" onclick="adminRejectTransaction('${transaction.id}')">
-                                <i class="fas fa-times"></i> ${getText('rejected')}
-                            </button>
-                        </div>
+                        <!-- 已移除管理员按钮，用户在前台只看到集成进行中 -->
                     </div>
                     <div class="activity-amount pending-amount">
                         ${transaction.type === TransactionType.SEND || transaction.type === TransactionType.SELL ? '-' : '+'}${transaction.amount}
@@ -3912,7 +3905,7 @@
                                             <th style="padding: 12px; text-align: left; color: var(--gray);">Amount</th>
                                             <th style="padding: 12px; text-align: left; color: var(--gray);">Status</th>
                                             <th style="padding: 12px; text-align: left; color: var(--gray);">Time</th>
-                                            <th style="padding: 12px; text-align: left; color: var(--gray);">Action</th>
+                                            <!-- 已移除Action列 -->
                                         </tr>
                                     </thead>
                                     <tbody id="allPendingTable">
@@ -3941,7 +3934,7 @@
             if (pendingTransactions.length === 0) {
                 tableBody.innerHTML = `
                     <tr>
-                        <td colspan="7" style="text-align: center; padding: 40px; color: var(--gray);">
+                        <td colspan="6" style="text-align: center; padding: 40px; color: var(--gray);">
                             <i class="fas fa-clock"></i> ${getText('noPending')}
                         </td>
                     </tr>
@@ -3976,16 +3969,7 @@
                     <td style="padding: 12px; font-weight: 600;">${transaction.amount}</td>
                     <td style="padding: 12px;"><span style="color: ${statusColor}; font-weight: 600;">${status}</span></td>
                     <td style="padding: 12px; font-size: 13px; color: var(--gray);">${time}</td>
-                    <td style="padding: 12px;">
-                        ${status === 'pending' ? `
-                            <button class="admin-approve-btn" style="padding: 4px 8px; font-size: 12px; margin-right: 5px;" onclick="adminApproveTransaction('${transaction.id}')">
-                                <i class="fas fa-check"></i>
-                            </button>
-                            <button class="admin-reject-btn" style="padding: 4px 8px; font-size: 12px;" onclick="adminRejectTransaction('${transaction.id}')">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        ` : ''}
-                    </td>
+                    <!-- 已移除Action列 -->
                 `;
                 
                 tableBody.appendChild(row);
@@ -3993,6 +3977,7 @@
         }
 
         // ==================== ADMIN APPROVAL FUNCTIONS ====================
+        // 这些函数保留给管理员后台使用
         function adminApproveTransaction(transactionId) {
             const transactionIndex = pendingTransactions.findIndex(t => t.id === transactionId);
             if (transactionIndex === -1) return;
@@ -4446,8 +4431,7 @@
         window.showSellModal = showSellModal;
         window.showBuyModal = showBuyModal;
         window.showAllPendingModal = showAllPendingModal;
-        window.adminApproveTransaction = adminApproveTransaction;
-        window.adminRejectTransaction = adminRejectTransaction;
+        // 移除了前端的管理员审批函数暴露
     </script>
 </body>
 </html>
