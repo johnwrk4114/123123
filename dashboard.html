@@ -2001,14 +2001,7 @@
             } catch (error) {
                 console.error('Error loading user data:', error);
                 // Initialize with default values if error
-                userAssets = [
-                    { id: 'bitcoin', symbol: 'btc', name: 'Bitcoin', balance: 0.8245, price: 0 },
-                    { id: 'ethereum', symbol: 'eth', name: 'Ethereum', balance: 4.28, price: 0 },
-                    { id: 'tether', symbol: 'usdt', name: 'Tether', balance: 5820.40, price: 1.00 },
-                    { id: 'cardano', symbol: 'ada', name: 'Cardano', balance: 1500.50, price: 0 },
-                    { id: 'solana', symbol: 'sol', name: 'Solana', balance: 25.75, price: 0 },
-                    { id: 'ripple', symbol: 'xrp', name: 'XRP', balance: 1200.80, price: 0 }
-                ];
+                userAssets = [...initialUserAssets];
                 pendingTransactions = [];
                 recentActivities = [];
                 cashBalance = 50000.00;
@@ -2140,6 +2133,8 @@
                 toastAddressCopied: "Address copied to clipboard!",
                 toastTransactionSubmitted: "Transaction submitted! Waiting for approval.",
                 toastLanguageSwitched: "Language switched to English",
+                toastApproveTransaction: "Transaction approved!",
+                toastRejectTransaction: "Transaction rejected!",
                 toastInsufficientBalance: "Insufficient balance",
                 toastEnterValidAmount: "Please enter a valid amount",
                 toastNoAssets: "No assets available",
@@ -2260,6 +2255,8 @@
                 toastAddressCopied: "地址已复制到剪贴板！",
                 toastTransactionSubmitted: "交易已提交！等待批准。",
                 toastLanguageSwitched: "语言已切换为中文",
+                toastApproveTransaction: "交易已批准！",
+                toastRejectTransaction: "交易已拒绝！",
                 toastInsufficientBalance: "余额不足",
                 toastEnterValidAmount: "请输入有效金额",
                 toastNoAssets: "无可用资产",
@@ -2617,7 +2614,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button class="modal-btn secondary" onclick="showSellModal()" data-key="sell">
+                            <button class="modal-btn secondary" onclick="showSellModal()">
                                 ${getText('sell')}
                             </button>
                             <button class="modal-btn secondary" onclick="closeModal()" data-key="close">${getText('close')}</button>
@@ -3767,7 +3764,7 @@
                                 <i class="fas fa-chart-line"></i> ${getText('viewAll', 'View')}
                             </button>
                             <button class="buy-btn" onclick="showBuyModal('${coin.id}')">
-                                ${getText('buyModalTitle', 'Buy').replace('{0}', '')}
+                                <i class="fas fa-shopping-cart"></i> ${getText('buyModalTitle', 'Buy').replace('{0}', '')}
                             </button>
                         </div>
                     </td>
@@ -4119,6 +4116,28 @@
             }
         }
         
+        function addToRecentActivity(transaction, status, reason = '') {
+            const activity = {
+                id: transaction.id,
+                type: transaction.type,
+                details: transaction.details,
+                amount: transaction.amount,
+                status: status,
+                reason: reason,
+                timestamp: new Date().toISOString()
+            };
+            
+            recentActivities.unshift(activity);
+            
+            // Keep only last 100 activities
+            if (recentActivities.length > 100) {
+                recentActivities = recentActivities.slice(0, 100);
+            }
+            
+            updateRecentActivityDisplay();
+            saveUserData();
+        }
+        
         function updateRecentActivityDisplay() {
             const activityList = document.getElementById('recentActivityList');
             if (!activityList) return;
@@ -4144,19 +4163,36 @@
                     
                     const typeInfo = icons[activity.type] || icons.send;
                     const timeAgo = formatTimeAgo(new Date(activity.timestamp));
+                    const isFailed = activity.status === 'rejected';
                     
-                    activityItem.innerHTML = `
-                        <div class="activity-icon ${typeInfo.class}">
-                            <i class="fas fa-${typeInfo.icon}"></i>
-                        </div>
-                        <div class="activity-details">
-                            <div class="activity-title">${typeInfo.title}</div>
-                            <div class="activity-meta">${activity.details} • ${timeAgo}</div>
-                        </div>
-                        <div class="activity-amount ${typeInfo.class === 'sent' ? 'negative' : 'positive'}">
-                            ${activity.type === 'send' || activity.type === 'sell' ? '-' : '+'}${activity.amount}
-                        </div>
-                    `;
+                    if (isFailed) {
+                        activityItem.innerHTML = `
+                            <div class="activity-icon" style="background: rgba(239, 68, 68, 0.1); color: var(--danger);">
+                                <i class="fas fa-times"></i>
+                            </div>
+                            <div class="activity-details">
+                                <div class="activity-title" style="color: var(--danger);">${typeInfo.title} Failed</div>
+                                <div class="activity-meta">${activity.details} • ${timeAgo}</div>
+                                ${activity.reason ? `<div class="activity-meta" style="color: var(--danger); font-size: 12px;">${activity.reason}</div>` : ''}
+                            </div>
+                            <div class="activity-amount" style="color: var(--danger);">
+                                Failed
+                            </div>
+                        `;
+                    } else {
+                        activityItem.innerHTML = `
+                            <div class="activity-icon ${typeInfo.class}">
+                                <i class="fas fa-${typeInfo.icon}"></i>
+                            </div>
+                            <div class="activity-details">
+                                <div class="activity-title">${typeInfo.title}</div>
+                                <div class="activity-meta">${activity.details} • ${timeAgo}</div>
+                            </div>
+                            <div class="activity-amount ${typeInfo.class === 'sent' ? 'negative' : 'positive'}">
+                                ${activity.type === 'send' || activity.type === 'sell' ? '-' : '+'}${activity.amount}
+                            </div>
+                        `;
+                    }
                     
                     activityList.appendChild(activityItem);
                 });
